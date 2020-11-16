@@ -1,4 +1,4 @@
-import { Gua, GuaConfiguration, Elements, relatives, EarthlyBranch } from './gua.interface';
+import { Gua, GuaConfiguration, Elements, relatives, EarthlyBranch, ShihYingPosition } from './gua.interface';
 
 /**
  * 把數字轉成卦，目前未用到。先留著
@@ -54,6 +54,8 @@ export class GuaGenerator {
         HEAVENLY_STEM_COLOR: '#000', // 天干顏色
         MUTUAL: '#000', // 動爻顏色
         HIDDEN_COLOR: '#000', // 伏藏顏色
+
+        SHIH_YING_COLOR: '#CE7975', // 世應顏色
 
     }
     constructor(config?: GuaConfiguration) {
@@ -419,5 +421,100 @@ export class GuaGenerator {
     }
     // ************************ step 2: 裝卦:地支、六親 子功能 END ************************
     // ************************ step 3: 裝卦:天干、世爻 子功能 START ************************
+    private drawMainAndHeavenlyStem(down: Gua, up: Gua): string {
+        let text = '';
+        const shihYingPosition = this.calculateShinYing(down, up);
+        const x = 178.5;
+        // TODO: 要根據shihYingPosition計算y值
+        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="shih" y="181.5" x="${x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">世</text>\n`;
+        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="svg_18" y="63.5" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">應</text>\n`;
+        return text;
+    }
+    /**
+     * 計算幾世卦
+     * @param down 下卦
+     * @param up 上卦
+     * @return 幾世卦
+     */
+    private calculateShinYing(down: Gua, up: Gua): ShihYingPosition {
+
+
+        if (down === up) {
+            return { shih: 6, ying: 3 };
+        }
+
+        if ((up === '天' && down === '風') ||
+            (up === '風' && down === '天') ||
+            (up === '澤' && down === '水') ||
+            (up === '水' && down === '澤') ||
+            (up === '火' && down === '山') ||
+            (up === '山' && down === '火') ||
+            (up === '雷' && down === '地') ||
+            (up === '地' && down === '雷')) {
+            return { shih: 1, ying: 4 };
+        }
+
+        if ((up === '天' && down === '山') ||
+            (up === '山' && down === '天') ||
+            (up === '澤' && down === '地') ||
+            (up === '地' && down === '澤') ||
+            (up === '火' && down === '風') ||
+            (up === '風' && down === '火') ||
+            (up === '雷' && down === '水') ||
+            (up === '水' && down === '雷')) {
+            return { shih: 2, ying: 5 };
+        }
+
+        if ((up === '天' && down === '地') ||
+            (up === '地' && down === '天') ||
+            (up === '澤' && down === '山') ||
+            (up === '山' && down === '澤') ||
+            (up === '火' && down === '水') ||
+            (up === '水' && down === '火') ||
+            (up === '雷' && down === '風') ||
+            (up === '風' && down === '雷') ||
+            (up === '天' && down === '火') ||
+            (up === '火' && down === '天') ||
+            (up === '澤' && down === '雷') ||
+            (up === '雷' && down === '澤') ||
+            (up === '風' && down === '山') ||
+            (up === '山' && down === '風') ||
+            (up === '地' && down === '水') ||
+            (up === '水' && down === '地')) {
+            return { shih: 3, ying: 6 };
+        }
+
+        if ((up === '天' && down === '雷') ||
+            (up === '雷' && down === '天') ||
+            (up === '澤' && down === '火') ||
+            (up === '火' && down === '澤') ||
+            (up === '地' && down === '風') ||
+            (up === '風' && down === '地') ||
+            (up === '山' && down === '水') ||
+            (up === '水' && down === '山') ||
+            (up === '天' && down === '水') ||
+            (up === '水' && down === '天') ||
+            (up === '澤' && down === '風') ||
+            (up === '風' && down === '澤') ||
+            (up === '火' && down === '地') ||
+            (up === '地' && down === '火') ||
+            (up === '雷' && down === '山') ||
+            (up === '山' && down === '雷')) {
+            return { shih: 4, ying: 1 };
+        }
+
+        if ((up === '天' && down === '澤') ||
+            (up === '澤' && down === '天') ||
+            (up === '火' && down === '雷') ||
+            (up === '雷' && down === '火') ||
+            (up === '風' && down === '水') ||
+            (up === '水' && down === '風') ||
+            (up === '山' && down === '地') ||
+            (up === '地' && down === '山')) {
+            return { shih: 5, ying: 2 };
+        }
+
+        return { shih: 0, ying: 0 };
+    }
     // ************************ step 3: 裝卦:天干、世爻 子功能 END ************************
 }
