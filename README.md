@@ -10,3 +10,5 @@
 * change lines / Mutual 動爻
 * Heavenly Stem 天干
 * Earthly Branches 地支
+* Gung 宮
+* five elements 五行
