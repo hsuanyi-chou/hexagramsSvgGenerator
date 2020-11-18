@@ -59,6 +59,7 @@ export class GuaGenerator {
     }
 
     private readonly YAO_X_POSITION = 130; // 爻的X軸位置常數
+
     private readonly UP_FIRST_YAO_RELATIVE_POSITION = 121; // 上卦第一爻相對位置常數
     private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
     private UP_FIRST_YAO = this.config.DOWN_FIRST_YAO - this.UP_FIRST_YAO_RELATIVE_POSITION; // 上卦第一爻初始位置 (y軸)
@@ -127,10 +128,21 @@ export class GuaGenerator {
         const x = 171;
         const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (shihYingPosition.shih - 1);
         const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (shihYingPosition.ying - 1);
+
         text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="shih" y="${shihY}" x="${x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">世</text>\n`;
         text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="ying" y="${yingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">應</text>\n`;
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${shihY - this.config.YAO_GAP}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${yingY - this.config.YAO_GAP}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
+
+        const heavenlyStemShihY = shihY - this.config.YAO_GAP;
+        const heavenlyStemYingY = yingY - this.config.YAO_GAP;
+        if (shihYingPosition.shih >= 4) {
+            // 世爻在上
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${heavenlyStemShihY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${heavenlyStemYingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
+        } else {
+            // 世爻在下
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${heavenlyStemShihY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${heavenlyStemYingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
+        }
         return text;
     }
 
