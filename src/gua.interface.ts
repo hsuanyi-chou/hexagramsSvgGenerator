@@ -2,10 +2,45 @@ export type Gua = '天' | '澤' | '火' | '雷' | '風' | '水' | '山' | '地';
 
 export type Elements = '金' | '木' | '水' | '火' | '土';
 
-export type relatives = '官鬼' | '父母' | '兄弟' | '子孫' | '妻財';
+export type Relative = '官鬼' | '父母' | '兄弟' | '子孫' | '妻財';
 
 export type HeavenlyStem = '甲' | '乙' | '丙' | '丁' | '戊' | '己' | '庚' | '辛' | '壬' | '癸';
 export type EarthlyBranch = '子' | '丑' | '寅' | '卯' | '辰' | '巳' | '午' | '未' | '申' | '酉' | '戌' | '亥';
+
+export type GungName = '乾' | '兌' | '離' | '震' | '巽' | '坎' | '艮' | '坤';
+
+export interface Yao {
+    earthlyBranch: EarthlyBranch; // 地支
+    relative: Relative; // 六親
+}
+export interface SixYao {
+    one: Yao;
+    two: Yao;
+    three: Yao;
+    four: Yao;
+    five: Yao;
+    six: Yao;
+}
+
+export interface HeavenlyStems {
+    shih: HeavenlyStem;
+    shihPosition: number;
+    ying: HeavenlyStem;
+    yingPosition: number;
+}
+export interface Gung {
+    name: GungName;
+    element: Elements;
+}
+export interface IFullGua {
+    name: string; // 卦名
+    description: string; // 四字卦辭
+    yao: SixYao;  // 六爻 - 地支、六親
+    hidden: Yao[]; // 伏藏
+    HeavenlyStems: HeavenlyStems // 天干、世應位置
+    gung: Gung; // 宮
+    hint?: string[]; // 提示
+}
 
 export interface ShihYingPosition {
     shih: number; // 世爻位置
