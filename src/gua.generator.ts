@@ -1,4 +1,4 @@
-import { Gua, GuaConfiguration, Elements, relatives, EarthlyBranch, ShihYingPosition, HeavenlyStem } from './gua.interface';
+import { Gua, GuaConfiguration, Elements, Relative, EarthlyBranch, ShihYingPosition, HeavenlyStem } from './gua.interface';
 
 /**
  * 把數字轉成卦，目前未用到。先留著
@@ -324,12 +324,12 @@ export class GuaGenerator {
      * @param earthlyBranch 地支
      * @return 該爻六親
      */
-    private getRelative(gung: Elements, earthlyBranch: string): relatives {
+    private getRelative(gung: Elements, earthlyBranch: string): Relative {
         const element = this.getElement(earthlyBranch);
         if (gung === element) {
             return '兄弟';
         }
-        let text: relatives = '' as relatives;
+        let text: Relative = '' as Relative;
         switch (gung) {
             case '金':
                 switch (element) {
