@@ -1,4 +1,4 @@
-import { Gua, GuaConfiguration, Elements, relatives, EarthlyBranch, ShihYingPosition } from './gua.interface';
+import { Gua, GuaConfiguration, Elements, relatives, EarthlyBranch, ShihYingPosition, HeavenlyStem } from './gua.interface';
 
 /**
  * 把數字轉成卦，目前未用到。先留著
@@ -38,7 +38,7 @@ function transToWord(digit: number): Gua {
 export class GuaGenerator {
     private config: GuaConfiguration = {
         WIDTH: 290,  // 圖片寬度
-        HEIGHT: 250, // 圖片長度
+        HEIGHT: 320, // 圖片長度
         YAO_COLOR: '#000', // 爻顏色
         YAO_BOLD: 15, // 爻的粗度
         YAO_GAP: 40, // 每一爻的間距
@@ -46,8 +46,7 @@ export class GuaGenerator {
         YIN_LENGTH: 40, // 陰爻長度
         YIN_GAP: 20, // 陰爻中間的空白 (20約18點字體的空間)
 
-        DOWN_FIRST_YAO: 227, // 下卦第一爻初始位置 (y軸)
-        UP_FIRST_YAO: 106, // 上卦第一爻初始位置 (y軸)
+        DOWN_FIRST_YAO: 290, // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
 
         FONT_FAMILY: 'Helvetica, Arial, sans-serif', // 文字字型
         EARTHLY_BRANCH_COLOR: '#729C62', // 地支顏色
@@ -58,9 +57,18 @@ export class GuaGenerator {
         SHIH_YING_COLOR: '#CE7975', // 世應顏色
 
     }
+
+    private readonly YAO_X_POSITION = 130; // 爻的X軸位置常數
+    private readonly UP_FIRST_YAO_RELATIVE_POSITION = 121; // 上卦第一爻相對位置常數
+    private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
+    private UP_FIRST_YAO = this.config.DOWN_FIRST_YAO - this.UP_FIRST_YAO_RELATIVE_POSITION; // 上卦第一爻初始位置 (y軸)
+    private SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
+
     constructor(config?: GuaConfiguration) {
         if (config) {
             this.config = config;
+            this.UP_FIRST_YAO = config.DOWN_FIRST_YAO - this.UP_FIRST_YAO_RELATIVE_POSITION;
+            this.SHIH_FIRST_YAO = config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
         }
     }
 
@@ -90,9 +98,10 @@ export class GuaGenerator {
     private drawFullGua(down: Gua, up: Gua): string {
         let gua = `<g>
             <title>Layer 1</title>\n`;
-        gua += this.drawGua(down, 'down', 130, this.config.DOWN_FIRST_YAO);
-        gua += this.drawGua(up, 'up', 130, this.config.UP_FIRST_YAO);
+        gua += this.drawGua(down, 'down', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
+        gua += this.drawGua(up, 'up', this.YAO_X_POSITION, this.UP_FIRST_YAO);
         gua += this.drawEarthlyBranches(down, up);
+        gua += this.drawShihYingAndHeavenlyStem(down, up);
         gua += `\n</g>\n`
         return gua;
     }
@@ -101,7 +110,6 @@ export class GuaGenerator {
      * step 2: 裝卦：地支、六親
      */
     private drawEarthlyBranches(down: Gua, up: Gua): string {
-        // TODO: 開發裝卦
         let gua = '';
         gua += this.drawEarthlyBranch(down, 'DOWN');
         gua += this.drawEarthlyBranch(up, 'UP');
@@ -109,12 +117,21 @@ export class GuaGenerator {
     }
 
     /**
-     * step 3: 裝卦：天干、世應
+     * step 3: 繪製天干、世應
+     * @param down 下卦
+     * @param up 上卦
      */
-    private drawHeavenlyStem(): string {
-        // TODO: 開發裝卦
-
-        return '';
+    private drawShihYingAndHeavenlyStem(down: Gua, up: Gua): string {
+        let text = '';
+        const shihYingPosition = this.calculateShinYing(down, up);
+        const x = 171;
+        const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (shihYingPosition.shih - 1);
+        const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (shihYingPosition.ying - 1);
+        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="shih" y="${shihY}" x="${x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">世</text>\n`;
+        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="ying" y="${yingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">應</text>\n`;
+        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${shihY - this.config.YAO_GAP}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
+        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${yingY - this.config.YAO_GAP}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
+        return text;
     }
 
     // ************************ step 1: 繪製全卦子功能 START ************************
@@ -278,7 +295,7 @@ export class GuaGenerator {
         const xForEarthlyBranch = 240; // 地支x軸
         const xForRelative = 75; // 六親x軸
 
-        let y = position === 'DOWN' ? this.config.DOWN_FIRST_YAO + 10 : this.config.UP_FIRST_YAO + 10;
+        let y = position === 'DOWN' ? this.config.DOWN_FIRST_YAO + 10 : this.UP_FIRST_YAO + 10;
 
         for (const earthlyBranch of earthlyBranches) {
             const relative = this.getRelative('木', earthlyBranch);
@@ -421,15 +438,6 @@ export class GuaGenerator {
     }
     // ************************ step 2: 裝卦:地支、六親 子功能 END ************************
     // ************************ step 3: 裝卦:天干、世爻 子功能 START ************************
-    private drawMainAndHeavenlyStem(down: Gua, up: Gua): string {
-        let text = '';
-        const shihYingPosition = this.calculateShinYing(down, up);
-        const x = 178.5;
-        // TODO: 要根據shihYingPosition計算y值
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="shih" y="181.5" x="${x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">世</text>\n`;
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="svg_18" y="63.5" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">應</text>\n`;
-        return text;
-    }
     /**
      * 計算幾世卦
      * @param down 下卦
@@ -515,6 +523,49 @@ export class GuaGenerator {
         }
 
         return { shih: 0, ying: 0 };
+    }
+
+    /**
+     * 取得天干
+     * @param gua 卦
+     * @param type 上或下卦 (僅坤使用)
+     */
+    private getHeavenlyStem(gua: Gua, type: 'UP' | 'DOWN'): HeavenlyStem {
+        let text = '' as HeavenlyStem;
+        switch (gua) {
+            case '天':
+                text = '甲';
+                break;
+            case '澤':
+                text = '丁';
+                break;
+            case '火':
+                text = '己';
+                break;
+            case '雷':
+                text = '庚';
+                break;
+            case '風':
+                text = '辛';
+                break;
+            case '水':
+                text = '戊';
+                break;
+            case '山':
+                text = '丙';
+                break;
+            case '地':
+                switch (type) {
+                    case 'UP':
+                        text = '癸';
+                        break;
+                    case 'DOWN':
+                        text = '乙';
+                        break;
+                }
+                break;
+        }
+        return text;
     }
     // ************************ step 3: 裝卦:天干、世爻 子功能 END ************************
 }

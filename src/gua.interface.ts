@@ -21,8 +21,7 @@ export interface GuaConfiguration {
     YANG_LENGTH: number; // 陽爻長度
     YIN_LENGTH: number; // 陰爻長度
     YIN_GAP: number; // 陰爻中間的空白 (20約18點字體的空間)
-    DOWN_FIRST_YAO: number; // 下卦第一爻初始位置 (y軸)
-    UP_FIRST_YAO: number; // 上卦第一爻初始位置 (y軸)
+    DOWN_FIRST_YAO: number; // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
 
     FONT_FAMILY: string; // 文字字型
     EARTHLY_BRANCH_COLOR: string; // 地支顏色
