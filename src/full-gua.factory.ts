@@ -153,10 +153,9 @@ export class FullGuaFactory {
                         this.genHeavenlyStems(down, up), this.genGung('巽'),
                         undefined, mutual);
                 } else if (down === '風') {
-                    return new FullGua('', '', this.genSixYao(down, up, this.getGungElement('震')),
-                        this.genHeavenlyStems(down, up), this.genGung('震'),
-                        [{ earthlyBranch: '卯', relative: '父母', position: 2 }],
-                        mutual, this.wanderHint);
+                    return new FullGua('火風鼎', '餓人饑食', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        [{ earthlyBranch: '卯', relative: '父母', position: 2 }], mutual);
                 } else if (down === '水') {
                     return new FullGua('火水未濟', '憂中望喜', this.genSixYao(down, up, this.getGungElement('離')),
                         this.genHeavenlyStems(down, up), this.genGung('離'),
