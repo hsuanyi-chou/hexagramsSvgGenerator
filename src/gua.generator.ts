@@ -49,12 +49,12 @@ export class GuaGenerator {
         DOWN_FIRST_YAO: 290, // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
 
         FONT_FAMILY: 'Helvetica, Arial, sans-serif', // 文字字型
-        EARTHLY_BRANCH_COLOR: '#729C62', // 地支顏色
-        HEAVENLY_STEM_COLOR: '#000', // 天干顏色
+        EARTHLY_BRANCH_COLOR: '#dbaa23', // 地支顏色
+        HEAVENLY_STEM_COLOR: '#4b7ee3', // 天干顏色
         MUTUAL: '#000', // 動爻顏色
         HIDDEN_COLOR: '#000', // 伏藏顏色
 
-        SHIH_YING_COLOR: '#CE7975', // 世應顏色
+        SHIH_YING_COLOR: '#729C62', // 世應顏色
 
     }
 
@@ -136,12 +136,12 @@ export class GuaGenerator {
         const heavenlyStemYingY = yingY - this.config.YAO_GAP;
         if (shihYingPosition.shih >= 4) {
             // 世爻在上
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${heavenlyStemShihY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${heavenlyStemYingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${heavenlyStemShihY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.HEAVENLY_STEM_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${heavenlyStemYingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.HEAVENLY_STEM_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
         } else {
             // 世爻在下
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${heavenlyStemShihY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${heavenlyStemYingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${heavenlyStemShihY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.HEAVENLY_STEM_COLOR}">${this.getHeavenlyStem(down, 'DOWN')}</text>\n`;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${heavenlyStemYingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.HEAVENLY_STEM_COLOR}">${this.getHeavenlyStem(up, 'UP')}</text>\n`;
         }
         return text;
     }
