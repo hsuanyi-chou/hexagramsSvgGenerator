@@ -13,6 +13,11 @@ export interface Yao {
     earthlyBranch: EarthlyBranch; // 地支
     relative: Relative; // 六親
 }
+
+export interface PositionYao extends Yao {
+    position: number;
+}
+
 export interface SixYao {
     one: Yao;
     two: Yao;
