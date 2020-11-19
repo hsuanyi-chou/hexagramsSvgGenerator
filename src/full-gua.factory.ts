@@ -172,6 +172,42 @@ export class FullGuaFactory {
                 }
                 break;
             case '雷':
+                if (down === '天') {
+                    return new FullGua('雷天大壯', '先曲後順', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        undefined, mutual, this.collisionHint);
+                } else if (down === '澤') {
+                    return new FullGua('雷澤歸妹', '浮雲蔽日', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        [{ earthlyBranch: '亥', relative: '子孫', position: 4 }],
+                        mutual, this.returnHint);
+                } else if (down === '火') {
+                    return new FullGua('雷火豐', '古鏡重明', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        undefined, mutual);
+                } else if (down === '雷') {
+                    return new FullGua('震為雷', '金鐘夜響', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        undefined, mutual, this.collisionHint);
+                } else if (down === '風') {
+                    return new FullGua('雷風恆', '日月常明', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '寅', relative: '兄弟', position: 2 }], mutual);
+                } else if (down === '水') {
+                    return new FullGua('雷水解', '困人出獄', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '子', relative: '父母', position: 1 }], mutual);
+                } else if (down === '山') {
+                    return new FullGua('雷山小過', '過獨木橋', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }, { earthlyBranch: '亥', relative: '子孫', position: 4 }],
+                        mutual, this.wanderHint);
+                } else if (down === '地') {
+                    return new FullGua('雷地豫', '青龍得位', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '子', relative: '父母', position: 1 }],
+                        mutual, this.suitHint);
+                }
                 break;
             case '風':
                 break;
