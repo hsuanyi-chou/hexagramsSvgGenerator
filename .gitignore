@@ -16,3 +16,5 @@ volumes
 
 /coverage
 /lib
+# svg圖片輸出區 #
+/genSVG
