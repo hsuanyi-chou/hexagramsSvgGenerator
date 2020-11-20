@@ -126,8 +126,8 @@ export class GuaGenerator {
         for (const yao of this.SIX_YAO_ARRAY) {
             const earthlyBranch = fullGua.yao[yao].earthlyBranch;
             const relative = fullGua.yao[yao].relative;
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="24" id="earthlyBranch_${idIndex++}" y="${y}" x="${xForEarthlyBranch}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.EARTHLY_BRANCH_COLOR}">${earthlyBranch}</text>\n`;
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="24" id="relative_${idIndex++}" y="${y}" x="${xForRelative}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.EARTHLY_BRANCH_COLOR}">${relative}</text>\n`;
+            text += this.genSvgTextComponent({ id: `earthlyBranch_${idIndex++}`, text: earthlyBranch, fontSize: 24, x: xForEarthlyBranch, y });
+            text += this.genSvgTextComponent({ id: `relative_${idIndex++}`, text: relative, fontSize: 24, x: xForRelative, y });
             y -= this.config.YAO_GAP;
         }
 
@@ -146,14 +146,14 @@ export class GuaGenerator {
         const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
         const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
 
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="shih" y="${shihY}" x="${x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">世</text>\n`;
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="ying" y="${yingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">應</text>\n`;
+        text += this.genSvgTextComponent({ id: `shih`, text: '世', fontSize: 18, x, y: shihY });
+        text += this.genSvgTextComponent({ id: `ying`, text: '應', fontSize: 18, x, y: yingY });
 
         const heavenlyStemShihY = shihY - this.config.YAO_GAP;
         const heavenlyStemYingY = yingY - this.config.YAO_GAP;
 
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_1" y="${heavenlyStemShihY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.HEAVENLY_STEM_COLOR}">${fullGua.HeavenlyStems.shih}</text>\n`;
-        text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="18" id="heavenlyStem_2" y="${heavenlyStemYingY}" x="${x}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.HEAVENLY_STEM_COLOR}">${fullGua.HeavenlyStems.ying}</text>\n`;
+        text += this.genSvgTextComponent({ id: `heavenlyStem_1`, text: fullGua.HeavenlyStems.shih, fontSize: 18, x, y: heavenlyStemShihY });
+        text += this.genSvgTextComponent({ id: `heavenlyStem_2`, text: fullGua.HeavenlyStems.ying, fontSize: 18, x, y: heavenlyStemYingY });
 
         return text;
     }
@@ -247,5 +247,14 @@ export class GuaGenerator {
      */
     private drawYangYao(id: string, x: number, y: number) {
         return `<line stroke="${this.config.YAO_COLOR}" id="${id}" x1="${x}" y1="${y}" x2="${x + this.config.YANG_LENGTH}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n`;
+    }
+
+    /**
+     * 產生svg text 元件
+     * @param svgTextConfig 
+     */
+    private genSvgTextComponent(svgTextConfig: { id: string, text: string, fontSize: number, x: number, y: number }) {
+        return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
+            `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${svgTextConfig.text}</text>\n`;
     }
 }
