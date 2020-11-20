@@ -1,4 +1,5 @@
 import { Gua, GuaConfiguration, Elements, Relative, EarthlyBranch, ShihYingPosition, HeavenlyStem } from './gua.interface';
+import { FullGuaFactory, FullGua } from './full-gua-factory';
 
 /**
  * 把數字轉成卦，目前未用到。先留著
@@ -36,6 +37,9 @@ function transToWord(digit: number): Gua {
 }
 
 export class GuaGenerator {
+
+    private readonly fullGuaFactory = new FullGuaFactory();
+    private readonly SIX_YAO_ARRAY = ['one', 'two', 'three', 'four', 'five', 'six'] as Array<'one' | 'two' | 'three' | 'four' | 'five' | 'six'>
     private config: GuaConfiguration = {
         WIDTH: 290,  // 圖片寬度
         HEIGHT: 320, // 圖片長度
@@ -60,15 +64,12 @@ export class GuaGenerator {
 
     private readonly YAO_X_POSITION = 130; // 爻的X軸位置常數
 
-    private readonly UP_FIRST_YAO_RELATIVE_POSITION = 121; // 上卦第一爻相對位置常數
     private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
-    private UP_FIRST_YAO = this.config.DOWN_FIRST_YAO - this.UP_FIRST_YAO_RELATIVE_POSITION; // 上卦第一爻初始位置 (y軸)
     private SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
 
     constructor(config?: GuaConfiguration) {
         if (config) {
             this.config = config;
-            this.UP_FIRST_YAO = config.DOWN_FIRST_YAO - this.UP_FIRST_YAO_RELATIVE_POSITION;
             this.SHIH_FIRST_YAO = config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
         }
     }
@@ -80,13 +81,15 @@ export class GuaGenerator {
      * @return svg 純文字內容
      */
     buildGua(up: Gua, down: Gua) {
+        const gua = this.fullGuaFactory.create(up, down) as FullGua;
+
         let svg = `<!-- Created By Hexagrams-SVG-Generator -->
             <svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">
             <g>
                 <title>background</title>
-                <rect fill="#ffffff" id="GUA" height="252" width="292" y="-1" x="-1"/>
+                <rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>
             </g>`;
-        svg += this.drawFullGua(down, up);
+        svg += this.drawFullGua(down, up, gua);
         svg += '</svg>';
         return svg;
     }
@@ -96,12 +99,12 @@ export class GuaGenerator {
      * @param down 下卦
      * @param up 上卦
      */
-    private drawFullGua(down: Gua, up: Gua): string {
+    private drawFullGua(down: Gua, up: Gua, fullGua: FullGua): string {
         let gua = `<g>
             <title>Layer 1</title>\n`;
         gua += this.drawGua(down, 'down', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
-        gua += this.drawGua(up, 'up', this.YAO_X_POSITION, this.UP_FIRST_YAO);
-        gua += this.drawEarthlyBranches(down, up);
+        gua += this.drawGua(up, 'up', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * 3);
+        gua += this.drawEarthlyBranchesAndRelatives(fullGua);
         gua += this.drawShihYingAndHeavenlyStem(down, up);
         gua += `\n</g>\n`
         return gua;
@@ -109,12 +112,26 @@ export class GuaGenerator {
 
     /**
      * step 2: 裝卦：地支、六親
+     * @param fullGua 全卦
+     * @return 填寫地支、六親
      */
-    private drawEarthlyBranches(down: Gua, up: Gua): string {
-        let gua = '';
-        gua += this.drawEarthlyBranch(down, 'DOWN');
-        gua += this.drawEarthlyBranch(up, 'UP');
-        return gua;
+    private drawEarthlyBranchesAndRelatives(fullGua: FullGua): string {
+        let text = '';
+        let idIndex = 0;
+        const xForEarthlyBranch = 240; // 地支x軸
+        const xForRelative = 75; // 六親x軸
+
+        let y = this.config.DOWN_FIRST_YAO + 10;
+
+        for (const yao of this.SIX_YAO_ARRAY) {
+            const earthlyBranch = fullGua.yao[yao].earthlyBranch;
+            const relative = fullGua.yao[yao].relative;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="24" id="earthlyBranch_${idIndex++}" y="${y}" x="${xForEarthlyBranch}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.EARTHLY_BRANCH_COLOR}">${earthlyBranch}</text>\n`;
+            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="24" id="relative_${idIndex++}" y="${y}" x="${xForRelative}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.EARTHLY_BRANCH_COLOR}">${relative}</text>\n`;
+            y -= this.config.YAO_GAP;
+        }
+
+        return text;
     }
 
     /**
@@ -239,84 +256,6 @@ export class GuaGenerator {
     }
     // ************************ step 1: 繪製全卦子功能 END ************************
     // ************************ step 2: 裝卦:地支、六親 子功能 START ************************
-
-    /**
-     * 
-     * @param gua 卦
-     * @param position UP或DOWN，傳入上卦或下卦
-     * @return 填寫地支
-     */
-    private drawEarthlyBranch(gua: Gua, position: 'UP' | 'DOWN'): string {
-
-        let earthlyBranches: EarthlyBranch[] = [];
-        switch (gua) {
-            case '天':
-            case '雷':
-                if (position === 'DOWN') {
-                    earthlyBranches = ['子', '寅', '辰'];
-                } else {
-                    earthlyBranches = ['午', '申', '戌'];
-                }
-                break;
-            case '澤':
-                if (position === 'DOWN') {
-                    earthlyBranches = ['巳', '卯', '丑'];
-                } else {
-                    earthlyBranches = ['亥', '酉', '未'];
-                }
-                break;
-            case '火':
-                if (position === 'DOWN') {
-                    earthlyBranches = ['卯', '丑', '亥'];
-                } else {
-                    earthlyBranches = ['酉', '未', '巳'];
-                }
-                break;
-            case '風':
-                if (position === 'DOWN') {
-                    earthlyBranches = ['丑', '亥', '酉'];
-                } else {
-                    earthlyBranches = ['未', '巳', '卯'];
-                }
-                break;
-            case '水':
-                if (position === 'DOWN') {
-                    earthlyBranches = ['寅', '辰', '午'];
-                } else {
-                    earthlyBranches = ['申', '戌', '子'];
-                }
-                break;
-            case '山':
-                if (position === 'DOWN') {
-                    earthlyBranches = ['辰', '午', '申'];
-                } else {
-                    earthlyBranches = ['戌', '子', '寅'];
-                }
-                break;
-            case '地':
-                if (position === 'DOWN') {
-                    earthlyBranches = ['未', '巳', '卯'];
-                } else {
-                    earthlyBranches = ['丑', '亥', '酉'];
-                }
-                break;
-        }
-
-        let text = '';
-        let idIndex = 0;
-        const xForEarthlyBranch = 240; // 地支x軸
-        const xForRelative = 75; // 六親x軸
-
-        let y = position === 'DOWN' ? this.config.DOWN_FIRST_YAO + 10 : this.UP_FIRST_YAO + 10;
-
-        for (const earthlyBranch of earthlyBranches) {
-            const relative = this.getRelative('木', earthlyBranch);
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="24" id="earthlyBranch_${idIndex++}" y="${y}" x="${xForEarthlyBranch}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.EARTHLY_BRANCH_COLOR}">${earthlyBranch}</text>\n`;
-            text += `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="24" id="relative_${idIndex++}" y="${y}" x="${xForRelative}" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.EARTHLY_BRANCH_COLOR}">${relative}</text>\n`;
-            y -= this.config.YAO_GAP;
-        }
-        return text;
-    }
 
     /**
      * 根據宮與地支，取得該爻之六親
