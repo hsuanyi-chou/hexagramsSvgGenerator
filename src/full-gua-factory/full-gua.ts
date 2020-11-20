@@ -1,7 +1,4 @@
-import {
-    Gua, EarthlyBranch, Elements, Relative, IFullGua, SixYao,
-    Yao, HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, PositionYao
-} from '../gua.interface';
+import { IFullGua, SixYao, Yao, HeavenlyStems, Gung, PositionYao } from '../gua.interface';
 
 export class FullGua implements IFullGua {
     name!: string;
