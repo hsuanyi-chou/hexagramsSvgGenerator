@@ -1,6 +1,6 @@
 import {
-    Gua, EarthlyBranch, Elements, Relative, IFullGua, SixYao,
-    Yao, HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, PositionYao
+    Gua, EarthlyBranch, Elements, Relative, SixYao,
+    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem
 } from '../gua.interface';
 import { FullGua } from './full-gua';
 
