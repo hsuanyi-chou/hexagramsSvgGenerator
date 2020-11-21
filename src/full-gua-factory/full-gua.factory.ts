@@ -213,7 +213,7 @@ export class FullGuaFactory {
                 break;
             case '水':
                 if (down === '天') {
-                    return new FullGua('水山需', '明珠出土', this.genSixYao(down, up, this.getGungElement('坤')),
+                    return new FullGua('水天需', '明珠出土', this.genSixYao(down, up, this.getGungElement('坤')),
                         this.genHeavenlyStems(down, up), this.genGung('坤'),
                         [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
                         mutual);
