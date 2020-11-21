@@ -6,7 +6,7 @@ import { Gua } from './gua.interface';
 // 測試區
 export default GuaGenerator;
 const guaGen = new GuaGenerator();
-const res = guaGen.buildGua('火', '地');
+const res = guaGen.buildGua('風', '澤');
 console.log(res);
 
 // const fullGuaFactory = new FullGuaFactory();
@@ -36,7 +36,7 @@ function svgGenerator() {
         for (const j of guaArray) {
             console.log(`目前產生的卦：${i.gua}${j.gua}`);
             const svg = guaGen.buildGua(i.gua, j.gua);
-            fs.writeFileSync(`${i.id}${j.id}.svg`, svg);
+            fs.writeFileSync(`${process.cwd()}/genSVGFile/${i.id}${j.id}.svg`, svg);
         }
     }
     console.log(`產生svg完成！`);
