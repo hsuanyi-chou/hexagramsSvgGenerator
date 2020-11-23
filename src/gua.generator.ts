@@ -272,13 +272,17 @@ export class GuaGenerator {
      */
     private drawHidden(hidden: PositionYao[]): string {
         const y = this.config.DOWN_FIRST_YAO + 10;
-
-        return hidden.map((h, index) =>
+        let text = this.genSvgTextComponent({
+            id: `hidden_tittle`, text: '伏藏', color: '#BBBBBB',
+            fontSize: this.YAO_FONT_SIZE, x: 20, y: 25
+        });
+        text += hidden.map((h, index) =>
             this.genSvgTextComponent({
-                id: `hidden_${index}`, text: `${h.relative}  ${h.earthlyBranch}`, color: '#BBBBBB',
+                id: `hidden_${index}`, text: `${h.relative} ${h.earthlyBranch}`, color: '#BBBBBB',
                 fontSize: this.YAO_FONT_SIZE, x: 5, y: y - h.position * this.config.YAO_GAP
-            })
-        ).join('');
+            })).join('');
+
+        return text;
     }
 
     /**
