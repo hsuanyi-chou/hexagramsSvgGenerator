@@ -41,7 +41,7 @@ export class GuaGenerator {
     private readonly fullGuaFactory = new FullGuaFactory();
     private readonly SIX_YAO_ARRAY = ['one', 'two', 'three', 'four', 'five', 'six'] as Array<'one' | 'two' | 'three' | 'four' | 'five' | 'six'>
     private config: GuaConfiguration = {
-        WIDTH: 290,  // 圖片寬度
+        WIDTH: 450,  // 圖片寬度
         HEIGHT: 320, // 圖片長度
         YAO_COLOR: '#000', // 爻顏色
         YAO_BOLD: 15, // 爻的粗度
@@ -64,7 +64,7 @@ export class GuaGenerator {
 
     private readonly YAO_FONT_SIZE = 24;
 
-    private readonly YAO_X_POSITION = 130; // 爻的X軸位置常數
+    private readonly YAO_X_POSITION = 190; // 爻的X軸位置常數
 
     private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
     private SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
@@ -121,8 +121,8 @@ export class GuaGenerator {
     private drawEarthlyBranchesAndRelatives(fullGua: FullGua): string {
         let text = '';
         let idIndex = 0;
-        const xForEarthlyBranch = 240; // 地支x軸
-        const xForRelative = 75; // 六親x軸
+        const xForEarthlyBranch = 300; // 地支x軸
+        const xForRelative = 135; // 六親x軸
 
         let y = this.config.DOWN_FIRST_YAO + 10;
 
@@ -153,7 +153,7 @@ export class GuaGenerator {
     private drawShihYingAndHeavenlyStem(fullGua: FullGua): string {
 
         let text = '';
-        const x = 171;
+        const x = 232;
         const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
         const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
 
