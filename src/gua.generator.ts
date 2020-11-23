@@ -1,4 +1,4 @@
-import { Gua, GuaConfiguration } from './gua.interface';
+import { Gua, GuaConfiguration, PositionYao } from './gua.interface';
 import { FullGuaFactory, FullGua } from './full-gua-factory';
 
 /**
@@ -62,6 +62,8 @@ export class GuaGenerator {
 
     }
 
+    private readonly YAO_FONT_SIZE = 24;
+
     private readonly YAO_X_POSITION = 130; // 爻的X軸位置常數
 
     private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
@@ -106,6 +108,7 @@ export class GuaGenerator {
         gua += this.drawGua(up, 'up', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * 3);
         gua += this.drawEarthlyBranchesAndRelatives(fullGua);
         gua += this.drawShihYingAndHeavenlyStem(fullGua);
+        gua += this.drawHidden(fullGua.hidden);
         gua += `\n</g>\n`
         return gua;
     }
@@ -126,8 +129,16 @@ export class GuaGenerator {
         for (const yao of this.SIX_YAO_ARRAY) {
             const earthlyBranch = fullGua.yao[yao].earthlyBranch;
             const relative = fullGua.yao[yao].relative;
-            text += this.genSvgTextComponent({ id: `earthlyBranch_${idIndex++}`, text: earthlyBranch, fontSize: 24, x: xForEarthlyBranch, y });
-            text += this.genSvgTextComponent({ id: `relative_${idIndex++}`, text: relative, fontSize: 24, x: xForRelative, y });
+            // 地支
+            text += this.genSvgTextComponent({
+                id: `earthlyBranch_${idIndex++}`, text: earthlyBranch,
+                color: this.config.EARTHLY_BRANCH_COLOR, fontSize: this.YAO_FONT_SIZE, x: xForEarthlyBranch, y
+            });
+            // 六親
+            text += this.genSvgTextComponent({
+                id: `relative_${idIndex++}`, text: relative,
+                color: this.config.EARTHLY_BRANCH_COLOR, fontSize: this.YAO_FONT_SIZE, x: xForRelative, y
+            });
             y -= this.config.YAO_GAP;
         }
 
@@ -146,14 +157,20 @@ export class GuaGenerator {
         const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
         const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
 
-        text += this.genSvgTextComponent({ id: `shih`, text: '世', fontSize: 18, x, y: shihY });
-        text += this.genSvgTextComponent({ id: `ying`, text: '應', fontSize: 18, x, y: yingY });
+        text += this.genSvgTextComponent({ id: `shih`, text: '世', color: this.config.SHIH_YING_COLOR, fontSize: 18, x, y: shihY });
+        text += this.genSvgTextComponent({ id: `ying`, text: '應', color: this.config.SHIH_YING_COLOR, fontSize: 18, x, y: yingY });
 
         const heavenlyStemShihY = shihY - this.config.YAO_GAP;
         const heavenlyStemYingY = yingY - this.config.YAO_GAP;
 
-        text += this.genSvgTextComponent({ id: `heavenlyStem_1`, text: fullGua.HeavenlyStems.shih, fontSize: 18, x, y: heavenlyStemShihY });
-        text += this.genSvgTextComponent({ id: `heavenlyStem_2`, text: fullGua.HeavenlyStems.ying, fontSize: 18, x, y: heavenlyStemYingY });
+        text += this.genSvgTextComponent({
+            id: `heavenlyStem_1`, text: fullGua.HeavenlyStems.shih, color: this.config.SHIH_YING_COLOR,
+            fontSize: 18, x, y: heavenlyStemShihY
+        });
+        text += this.genSvgTextComponent({
+            id: `heavenlyStem_2`, text: fullGua.HeavenlyStems.ying, color: this.config.SHIH_YING_COLOR,
+            fontSize: 18, x, y: heavenlyStemYingY
+        });
 
         return text;
     }
@@ -250,11 +267,26 @@ export class GuaGenerator {
     }
 
     /**
+     * step 2: 繪製伏藏
+     * @param hidden 伏藏
+     */
+    private drawHidden(hidden: PositionYao[]): string {
+        const y = this.config.DOWN_FIRST_YAO + 10;
+
+        return hidden.map((h, index) =>
+            this.genSvgTextComponent({
+                id: `hidden_${index}`, text: `${h.relative}  ${h.earthlyBranch}`, color: '#BBBBBB',
+                fontSize: this.YAO_FONT_SIZE, x: 5, y: y - h.position * this.config.YAO_GAP
+            })
+        ).join('');
+    }
+
+    /**
      * 產生svg text 元件
      * @param svgTextConfig 
      */
-    private genSvgTextComponent(svgTextConfig: { id: string, text: string, fontSize: number, x: number, y: number }) {
+    private genSvgTextComponent(svgTextConfig: { id: string, text: string, color: string, fontSize: number, x: number, y: number }) {
         return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
-            `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${this.config.SHIH_YING_COLOR}">${svgTextConfig.text}</text>\n`;
+            `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
     }
 }
