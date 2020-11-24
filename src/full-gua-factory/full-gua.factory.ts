@@ -81,7 +81,7 @@ export class FullGuaFactory {
                         [{ earthlyBranch: '寅', relative: '兄弟', position: 2 }, { earthlyBranch: '午', relative: '子孫', position: 4 }],
                         mutual, this.wanderHint);
                 } else if (down === '水') {
-                    return new FullGua('澤水困', '守已待時', this.genSixYao(down, up, this.getGungElement('兌')),
+                    return new FullGua('澤水困', '守己待時', this.genSixYao(down, up, this.getGungElement('兌')),
                         this.genHeavenlyStems(down, up), this.genGung('兌'),
                         undefined, mutual, this.suitHint);
                 } else if (down === '山') {
