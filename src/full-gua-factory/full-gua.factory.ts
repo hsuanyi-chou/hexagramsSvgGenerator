@@ -25,7 +25,7 @@ export class FullGuaFactory {
                         this.genHeavenlyStems(down, up), this.genGung('乾'),
                         undefined, mutual, this.collisionHint);
                 } else if (down === '澤') {
-                    return new FullGua('天澤履', '如履薄冰', this.genSixYao(down, up, this.getGungElement('艮')),
+                    return new FullGua('天澤履', '行走薄冰', this.genSixYao(down, up, this.getGungElement('艮')),
                         this.genHeavenlyStems(down, up), this.genGung('艮'),
                         [{ earthlyBranch: '子', relative: '妻財', position: 5 }], mutual);
                 } else if (down === '火') {
@@ -33,7 +33,7 @@ export class FullGuaFactory {
                         this.genHeavenlyStems(down, up), this.genGung('離'),
                         undefined, mutual, this.returnHint);
                 } else if (down === '雷') {
-                    return new FullGua('天雷無妄', '宜守本份', this.genSixYao(down, up, this.getGungElement('巽')),
+                    return new FullGua('天雷無妄', '宜守本分', this.genSixYao(down, up, this.getGungElement('巽')),
                         this.genHeavenlyStems(down, up), this.genGung('巽'),
                         undefined, mutual, this.collisionHint);
                 } else if (down === '風') {
