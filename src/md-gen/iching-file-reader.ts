@@ -2,6 +2,7 @@ import * as XLSX from 'xlsx';
 
 export interface IChingResult {
     count: number;
+    guaIndex: string;
     name: string; // 掛名
     fourMean: string; // 四字訣
     one: string;
@@ -30,6 +31,7 @@ export function iChingFileReader() {
     for (const c of cols) {
         const r: IChingResult = {
             count: colIndex,
+            guaIndex: '',
             name: '', // 掛名
             fourMean: '', // 四字訣
             one: '',
@@ -56,6 +58,7 @@ export function iChingFileReader() {
                 case 1:
                     const name = value.split('──');
                     r.name = value;
+                    r.guaIndex = name[0].split('、')[1];
                     r.fourMean = name[1];
                     break;
                 case 2:

@@ -11,7 +11,7 @@ for (const fullGua of fullGuaArray) {
     console.log(`markdown檔案產生中…正在產生${fullGua.fileName}.md檔案內容`);
     console.log(`卦：${fullGua.fullGua.name}`);
     let text = buildMdHeader(fullGua.fullGua, '2020-11-21');
-    const fileGua = file.find(f => f.fourMean === fullGua.fullGua.description);
+    const fileGua = file.find(f => f.guaIndex === fullGua.fullGua.name);
     if (fileGua) {
         text += buildContent(fileGua, fullGua.fileName);
     }
