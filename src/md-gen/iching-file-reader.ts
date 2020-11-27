@@ -5,6 +5,7 @@ export interface IChingResult {
     guaIndex: string;
     name: string; // 掛名
     fourMean: string; // 四字訣
+    mean: string; // 釋
     one: string;
     two: string;
     three: string;
@@ -34,6 +35,7 @@ export function iChingFileReader() {
             guaIndex: '',
             name: '', // 掛名
             fourMean: '', // 四字訣
+            mean: '', // 釋
             one: '',
             two: '',
             three: '',
@@ -62,6 +64,7 @@ export function iChingFileReader() {
                     r.fourMean = name[1];
                     break;
                 case 2:
+                    r.mean = value;
                     break;
                 case 3:
                     r.one = value;
