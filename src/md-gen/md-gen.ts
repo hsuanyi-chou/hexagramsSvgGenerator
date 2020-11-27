@@ -10,7 +10,7 @@ const fullGuaArray = genFullGuaArray() as Array<{ fileName: string, fullGua: Ful
 for (const fullGua of fullGuaArray) {
     console.log(`markdown檔案產生中…正在產生${fullGua.fileName}.md檔案內容`);
     console.log(`卦：${fullGua.fullGua.name}`);
-    let text = buildMdHeader(fullGua.fullGua, '2020-11-21');
+    let text = buildMdHeader(fullGua.fullGua, '2020-11-26');
     const fileGua = file.find(f => f.guaIndex === fullGua.fullGua.name);
     if (fileGua) {
         text += buildContent(fileGua, fullGua.fileName);
@@ -27,7 +27,7 @@ function buildMdHeader(fullGua: FullGua, date: string) {
     text += `title: ${fullGua.name}\n`
     text += `date: ${date}\n`;
     text += `categories:\n`;
-    text += `${TAB_SPACE}- ${fullGua.gung.name}\n`;
+    text += `${TAB_SPACE}- 64卦\n`;
     text += `tags:\n`;
     text += `${TAB_SPACE}- ${fullGua.gung.name}\n`;
     if (fullGua.hint.length !== 0) {
@@ -39,25 +39,26 @@ function buildMdHeader(fullGua: FullGua, date: string) {
 
 function buildContent(fileGua: IChingResult, fileName: string) {
     let text = `## ${fileGua.name}\n`;
-    text += `\n![](/images/gua/${fileName}.svg)\n`;
-    text += `### 初爻\n${fileGua.one}\n`;
-    text += `### 二爻\n${fileGua.two}\n`;
-    text += `### 三爻\n${fileGua.three}\n`;
-    text += `### 四爻\n${fileGua.four}\n`;
-    text += `### 五爻\n${fileGua.five}\n`;
-    text += `### 上爻\n${fileGua.six}\n`;
-    text += `## 五路財神經\n${fileGua.fiveMoney}\n`;
-    text += `## 稽首七十二天師加持世界和平共轉法輪寶誥\n`;
+    text += `\n![](/images/gua/${fileName}.svg)\n\n`;
+    text += `### 釋\n\n${fileGua.mean}\n\n`;
+    text += `### 初爻\n\n${fileGua.one}\n\n`;
+    text += `### 二爻\n\n${fileGua.two}\n\n`;
+    text += `### 三爻\n\n${fileGua.three}\n\n`;
+    text += `### 四爻\n\n${fileGua.four}\n\n`;
+    text += `### 五爻\n\n${fileGua.five}\n\n`;
+    text += `### 上爻\n\n${fileGua.six}\n\n`;
+    text += `## 五路財神經\n\n${fileGua.fiveMoney}\n\n`;
+    text += `## 稽首七十二天師加持世界和平共轉法輪寶誥\n\n`;
     if (fileGua.seventyTwoGod.length === 2) {
-        text += `${fileGua.seventyTwoGod.join('\n')}\n`;
+        text += `${fileGua.seventyTwoGod.join('\n')}\n\n`;
     } else {
         text += `${fileGua.seventyTwoGod[0]}\n${fileGua.seventyTwoGod[1]}\n\n`;
-        text += `${fileGua.seventyTwoGod[2]}\n\n${fileGua.seventyTwoGod[3]}\n`;
+        text += `${fileGua.seventyTwoGod[2]}\n\n${fileGua.seventyTwoGod[3]}\n\n`;
     }
-    text += `## 序卦傳\n${fileGua.serialGua}\n`;
-    text += `## 唯心用易歌訣\n${fileGua.heartSong}\n\n`;
+    text += `## 序卦傳\n\n${fileGua.serialGua}\n\n`;
+    text += `## 唯心用易歌訣\n\n${fileGua.heartSong}\n\n`;
     if (fileGua.description) {
-        text += `${fileGua.description}\n`;
+        text += `${fileGua.description}\n\n`;
     }
     return text;
 }
