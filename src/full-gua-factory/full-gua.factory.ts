@@ -178,7 +178,7 @@ export class FullGuaFactory {
                 } else if (down === '澤') {
                     return new FullGua('風澤中孚', '謹慎保守', this.genSixYao(down, up, this.getGungElement('艮')),
                         this.genHeavenlyStems(down, up), this.genGung('艮'),
-                        [{ earthlyBranch: '申', relative: '子孫', position: 2 }, { earthlyBranch: '子', relative: '妻財', position: 5 }],
+                        [{ earthlyBranch: '申', relative: '子孫', position: 3 }, { earthlyBranch: '子', relative: '妻財', position: 5 }],
                         mutual, this.wanderHint);
                 } else if (down === '火') {
                     return new FullGua('風火家人', '鏡中觀花', this.genSixYao(down, up, this.getGungElement('巽')),
@@ -202,7 +202,7 @@ export class FullGuaFactory {
                 } else if (down === '山') {
                     return new FullGua('風山漸', '飄浮不定', this.genSixYao(down, up, this.getGungElement('艮')),
                         this.genHeavenlyStems(down, up), this.genGung('艮'),
-                        [{ earthlyBranch: '酉', relative: '妻財', position: 4 }, { earthlyBranch: '亥', relative: '官鬼', position: 3 }],
+                        [{ earthlyBranch: '子', relative: '妻財', position: 5 }],
                         mutual, this.returnHint);
                 } else if (down === '地') {
                     return new FullGua('風地觀', '接受觀摩', this.genSixYao(down, up, this.getGungElement('乾')),
