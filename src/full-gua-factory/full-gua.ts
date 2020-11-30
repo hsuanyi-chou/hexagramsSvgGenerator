@@ -1,16 +1,22 @@
 import { IFullGua, SixYao, Yao, HeavenlyStems, Gung, PositionYao } from '../gua.interface';
-
 export class FullGua implements IFullGua {
-    name!: string;
-    description!: string;
-    yao!: SixYao;
-    hidden: PositionYao[] = [];
-    HeavenlyStems!: HeavenlyStems;
-    gung!: Gung;
+    name!: string; // 卦名
+    description!: string; // 四字偈-描述
+    yao!: SixYao; // 六爻
+    hidden: PositionYao[] = []; // 伏藏
+    HeavenlyStems!: HeavenlyStems; // 天干
+    gung!: Gung; // 宮
 
-    mutual: Yao[] = [];
+    mutual: Yao[] = []; // 動爻
 
-    hint: string[] = [];
+    hint: string[] = []; // 提示
+
+    solarDate = ''; // 國曆日期
+    lunarDate = ''; // 農曆數字日期
+    lunarYear = ''; // 年干支
+    lunarMonth = ''; // 月干支
+    lunarDay = ''; // 日干支
+
     constructor(name: string, description: string, yao: SixYao, heavenlyStems: HeavenlyStems, gung: Gung,
         hidden?: PositionYao[], mutual?: Yao[], hint?: string[]) {
 
@@ -38,5 +44,12 @@ export class FullGua implements IFullGua {
      */
     addHint(hint: string): void {
         this.hint.push(hint);
+    }
+
+    /**
+     * 取得農曆完整日期
+     */
+    getFullLunarDate() {
+        return `${this.lunarDate}(${this.lunarYear}-${this.lunarMonth}-${this.lunarDay})`;
     }
 }
