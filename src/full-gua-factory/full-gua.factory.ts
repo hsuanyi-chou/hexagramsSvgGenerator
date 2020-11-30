@@ -5,12 +5,33 @@ import {
 import { FullGua } from './full-gua';
 
 const lunarCalendar = require('lunar-calendar-zh');
+
+
+enum MONSTER {
+    DRAGON = 0, // 青龍
+    LINNET = 1, // 朱雀
+    GOU_CHEN = 2, // 勾陳
+    SNAKE = 3, // 呈蛇
+    TIGER = 4, // 白虎
+    TORTOISE = 5, // 玄武
+}
+
 export class FullGuaFactory {
 
     private readonly collisionHint = ['六沖卦'];
     private readonly suitHint = ['六合卦'];
     private readonly wanderHint = ['遊魂卦'];
     private readonly returnHint = ['歸魂卦'];
+
+    private readonly SIX_YAO_ARRAY = [
+        'one',
+        'two',
+        'three',
+        'four',
+        'five',
+        'six',
+    ] as Array<'one' | 'two' | 'three' | 'four' | 'five' | 'six'>;
+    private readonly MONSTERS_ARRAY = ['青龍', '朱雀', '勾陳', '呈蛇', '白虎', '玄武'];
 
     private readonly lunarCalendar = lunarCalendar;
     /**
@@ -351,6 +372,7 @@ export class FullGuaFactory {
         }
         if (date) {
             this.genDate(fullGua, date);
+            this.genMonster(fullGua);
         }
         return fullGua!;
     }
@@ -448,6 +470,40 @@ export class FullGuaFactory {
         fullGua.lunarDay = fullLunar.GanZhiDay;
     }
 
+    private genMonster(fullGua: FullGua) {
+        const stem: HeavenlyStem = fullGua.lunarDay.substring(0, 1) as HeavenlyStem;
+        switch (stem) {
+            case '甲':
+            case '乙':
+                this.filledMonster(fullGua, MONSTER.TIGER);
+                break;
+            case '丙':
+            case '丁':
+                this.filledMonster(fullGua, MONSTER.LINNET);
+                break;
+            case '戊':
+                this.filledMonster(fullGua, MONSTER.GOU_CHEN);
+                break;
+            case '己':
+                this.filledMonster(fullGua, MONSTER.SNAKE);
+                break;
+            case '庚':
+            case '辛':
+                this.filledMonster(fullGua, MONSTER.TIGER);
+                break;
+            case '壬':
+            case '癸':
+                this.filledMonster(fullGua, MONSTER.TORTOISE);
+                break;
+        }
+    }
+
+    private filledMonster(fullGua: FullGua, begin: number) {
+        for (const yao of this.SIX_YAO_ARRAY) {
+            fullGua.yao[yao].monster = this.MONSTERS_ARRAY[begin];
+            begin = (begin + 1) % 6;
+        }
+    }
     /**
      *
      * @param gua 卦

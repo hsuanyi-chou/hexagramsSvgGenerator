@@ -12,6 +12,8 @@ export type GungName = '乾' | '兌' | '離' | '震' | '巽' | '坎' | '艮' | '
 export interface Yao {
     earthlyBranch: EarthlyBranch; // 地支
     relative: Relative; // 六親
+    monster?: string; // 六獸
+    void?: boolean; // 空亡
 }
 
 export interface PositionYao extends Yao {
