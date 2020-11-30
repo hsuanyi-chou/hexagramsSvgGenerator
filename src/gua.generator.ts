@@ -355,7 +355,7 @@ export class GuaGenerator {
           color: '#BBBBBB',
           fontSize: this.YAO_FONT_SIZE,
           x: 5,
-          y: y - h.position * this.config.YAO_GAP,
+          y: y - (h.position - 1) * this.config.YAO_GAP,
         }),
       )
       .join('');
