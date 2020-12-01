@@ -1,4 +1,4 @@
-import { Gua, GuaConfiguration, PositionYao, SixYaoArray } from './gua.interface';
+import { Gua, GuaConfiguration, Yao } from './gua.interface';
 import { FullGuaFactory, FullGua } from './full-gua-factory';
 
 /**
@@ -38,7 +38,6 @@ function transToWord(digit: number): Gua {
 
 export class GuaGenerator {
   private readonly fullGuaFactory = new FullGuaFactory();
-private readonly SIX_YAO_ARRAY: SixYaoArray[] = ['one', 'two', 'three', 'four', 'five', 'six'];
   private config: GuaConfiguration = {
     WIDTH: 450, // 圖片寬度
     HEIGHT: 320, // 圖片長度
@@ -136,9 +135,9 @@ private readonly SIX_YAO_ARRAY: SixYaoArray[] = ['one', 'two', 'three', 'four', 
 
     let y = this.config.DOWN_FIRST_YAO + 10;
 
-    for (const yao of this.SIX_YAO_ARRAY) {
-      const earthlyBranch = fullGua.yao[yao].earthlyBranch;
-      const relative = fullGua.yao[yao].relative;
+    for (let i = 0; i < 6; i++) {
+      const earthlyBranch = fullGua.yao[i].earthlyBranch;
+      const relative = fullGua.yao[i].relative;
       // 地支
       text += this.genSvgTextComponent({
         id: `earthlyBranch_${idIndex++}`,
@@ -325,7 +324,7 @@ private readonly SIX_YAO_ARRAY: SixYaoArray[] = ['one', 'two', 'three', 'four', 
    * step 2: 繪製伏藏
    * @param hidden 伏藏
    */
-  private drawHidden(hidden: PositionYao[]): string {
+  private drawHidden(hidden: Yao[]): string {
     const y = this.config.DOWN_FIRST_YAO + 10;
 
     if (hidden.length === 0) {

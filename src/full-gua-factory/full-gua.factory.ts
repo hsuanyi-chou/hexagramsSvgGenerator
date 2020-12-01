@@ -1,9 +1,10 @@
 import {
-    Gua, EarthlyBranch, Elements, Relative, SixYao,
-    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, SixYaoArray
+    Gua, EarthlyBranch, Elements, Relative,
+    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao
 } from '../gua.interface';
 import { FullGua } from './full-gua';
 
+// tslint:disable-next-line: no-var-requires
 const lunarCalendar = require('lunar-calendar-zh');
 
 enum MONSTER {
@@ -22,7 +23,6 @@ export class FullGuaFactory {
     private readonly wanderHint = ['遊魂卦'];
     private readonly returnHint = ['歸魂卦'];
 
-    private readonly SIX_YAO_ARRAY: SixYaoArray[] = ['one', 'two', 'three', 'four', 'five', 'six'];
     private readonly MONSTERS_ARRAY = ['青龍', '朱雀', '勾陳', '呈蛇', '白虎', '玄武'];
 
     private readonly HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
@@ -379,34 +379,9 @@ export class FullGuaFactory {
      * @param gungElement 宮的五行
      * @return 六爻(地支 + 六親)
      */
-    private genSixYao(down: Gua, up: Gua, gungElement: Elements): SixYao {
+    private genSixYao(down: Gua, up: Gua, gungElement: Elements): Yao[] {
         const earthlyBranches = [...this.getEarthlyBranch(down, 'DOWN'), ...this.getEarthlyBranch(up, 'UP')];
-        return {
-            one: {
-                earthlyBranch: earthlyBranches[0],
-                relative: this.getRelative(gungElement, earthlyBranches[0])
-            },
-            two: {
-                earthlyBranch: earthlyBranches[1],
-                relative: this.getRelative(gungElement, earthlyBranches[1])
-            },
-            three: {
-                earthlyBranch: earthlyBranches[2],
-                relative: this.getRelative(gungElement, earthlyBranches[2])
-            },
-            four: {
-                earthlyBranch: earthlyBranches[3],
-                relative: this.getRelative(gungElement, earthlyBranches[3])
-            },
-            five: {
-                earthlyBranch: earthlyBranches[4],
-                relative: this.getRelative(gungElement, earthlyBranches[4])
-            },
-            six: {
-                earthlyBranch: earthlyBranches[5],
-                relative: this.getRelative(gungElement, earthlyBranches[5])
-            }
-        };
+        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i}))
     }
 
     /**
@@ -496,16 +471,16 @@ export class FullGuaFactory {
     }
 
     private filledMonster(fullGua: FullGua, begin: number) {
-        for (const yao of this.SIX_YAO_ARRAY) {
-            fullGua.yao[yao].monster = this.MONSTERS_ARRAY[begin];
+        fullGua.yao.forEach( y => {
+            y.monster = this.MONSTERS_ARRAY[begin];
             begin = (begin + 1) % 6;
-        }
+        });
     }
 
     private filledVoid(fullGua: FullGua) {
-        for (const yao of this.SIX_YAO_ARRAY) {
+        for (let i = 0; i < 6; i++) {
             for (const v of fullGua.void) {
-                fullGua.yao[yao].void = fullGua.yao[yao].earthlyBranch === v;
+                fullGua.yao[i].void = fullGua.yao[i].earthlyBranch === v;
             }
         }
     }
@@ -798,14 +773,11 @@ export class FullGuaFactory {
      * @return 空亡陣列
      */
     private calculateVoid(stem: HeavenlyStem, earthly: EarthlyBranch): EarthlyBranch[] {
-        console.log(`${stem}, ${earthly}`);
         const beginIndex = this.EARTHLY_BRANCHES.findIndex(e => e === earthly); // 找到地支起點
         const backwardCount = this.HEAVENLY_STEMS.findIndex(s => s === stem); // 往後數天干
 
-        const voidIndex = (beginIndex - backwardCount) % 12 - 2;
+        const voidIndex = beginIndex - backwardCount - 2;
         const voidBegin = voidIndex < 0 ? 12 - Math.abs(voidIndex) : voidIndex;
-        console.log(voidBegin);
-        console.log(`----------------------`);
         return [this.EARTHLY_BRANCHES[voidBegin], this.EARTHLY_BRANCHES[voidBegin + 1]];
     }
 

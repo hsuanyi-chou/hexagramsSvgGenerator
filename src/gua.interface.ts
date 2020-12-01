@@ -14,19 +14,7 @@ export interface Yao {
     relative: Relative; // 六親
     monster?: string; // 六獸
     void?: boolean; // 空亡
-}
-
-export interface PositionYao extends Yao {
-    position: number;
-}
-
-export interface SixYao {
-    one: Yao;
-    two: Yao;
-    three: Yao;
-    four: Yao;
-    five: Yao;
-    six: Yao;
+    position: number; // 位置 (配合陣列，由0開始)
 }
 
 export interface HeavenlyStems {
@@ -42,7 +30,7 @@ export interface Gung {
 export interface IFullGua {
     name: string; // 卦名
     description: string; // 四字卦辭
-    yao: SixYao;  // 六爻 - 地支、六親
+    yao: Yao[];  // 六爻 - 地支、六親
     hidden: Yao[]; // 伏藏
     HeavenlyStems: HeavenlyStems // 天干、世應位置
     gung: Gung; // 宮
@@ -73,5 +61,3 @@ export interface GuaConfiguration {
 
     SHIH_YING_COLOR: string; // 世應顏色
 }
-
-export type SixYaoArray = 'one' | 'two' | 'three' | 'four' | 'five' | 'six';

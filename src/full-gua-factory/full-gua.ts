@@ -1,9 +1,9 @@
-import { IFullGua, SixYao, Yao, HeavenlyStems, Gung, PositionYao, EarthlyBranch } from '../gua.interface';
+import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch } from '../gua.interface';
 export class FullGua implements IFullGua {
     name!: string; // 卦名
     description!: string; // 四字偈-描述
-    yao!: SixYao; // 六爻
-    hidden: PositionYao[] = []; // 伏藏
+    yao: Yao[] = []; // 六爻
+    hidden: Yao[] = []; // 伏藏
     HeavenlyStems!: HeavenlyStems; // 天干
     gung!: Gung; // 宮
 
@@ -18,8 +18,8 @@ export class FullGua implements IFullGua {
     lunarDay = ''; // 日干支
     void: EarthlyBranch[] = []; // 空亡
 
-    constructor(name: string, description: string, yao: SixYao, heavenlyStems: HeavenlyStems, gung: Gung,
-        hidden?: PositionYao[], mutual?: Yao[], hint?: string[]) {
+    constructor(name: string, description: string, yao: Yao[], heavenlyStems: HeavenlyStems, gung: Gung,
+        hidden?: Yao[], mutual?: Yao[], hint?: string[]) {
 
         this.name = name;
         this.description = description;
