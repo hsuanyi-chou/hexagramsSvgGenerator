@@ -24,7 +24,6 @@ export class FullGuaFactory {
     private readonly returnHint = ['歸魂卦'];
 
     private readonly MONSTERS_ARRAY = ['青龍', '朱雀', '勾陳', '呈蛇', '白虎', '玄武'];
-
     private readonly HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
     private readonly EARTHLY_BRANCHES: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 
@@ -442,6 +441,10 @@ export class FullGuaFactory {
         this.filledVoid(fullGua);
     }
 
+    /**
+     * 增加六獸
+     * @param fullGua 卦
+     */
     private genMonster(fullGua: FullGua): void {
         const stem: HeavenlyStem = fullGua.lunarDay.substring(0, 1) as HeavenlyStem;
         switch (stem) {
@@ -470,6 +473,9 @@ export class FullGuaFactory {
         }
     }
 
+    /**
+     * 每一爻填上六獸
+     */
     private filledMonster(fullGua: FullGua, begin: number): void {
         fullGua.yao.forEach( y => {
             y.monster = this.MONSTERS_ARRAY[begin];
@@ -477,6 +483,10 @@ export class FullGuaFactory {
         });
     }
 
+    /**
+     * 每一爻填上空亡
+     * @param fullGua 卦
+     */
     private filledVoid(fullGua: FullGua): void {
         for (let i = 0; i < 6; i++) {
             for (const v of fullGua.void) {
@@ -484,6 +494,7 @@ export class FullGuaFactory {
             }
         }
     }
+
     /**
      *
      * @param gua 卦
