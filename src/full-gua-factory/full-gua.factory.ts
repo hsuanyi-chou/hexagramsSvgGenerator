@@ -442,7 +442,7 @@ export class FullGuaFactory {
         this.filledVoid(fullGua);
     }
 
-    private genMonster(fullGua: FullGua) {
+    private genMonster(fullGua: FullGua): void {
         const stem: HeavenlyStem = fullGua.lunarDay.substring(0, 1) as HeavenlyStem;
         switch (stem) {
             case '甲':
@@ -470,14 +470,14 @@ export class FullGuaFactory {
         }
     }
 
-    private filledMonster(fullGua: FullGua, begin: number) {
+    private filledMonster(fullGua: FullGua, begin: number): void {
         fullGua.yao.forEach( y => {
             y.monster = this.MONSTERS_ARRAY[begin];
             begin = (begin + 1) % 6;
         });
     }
 
-    private filledVoid(fullGua: FullGua) {
+    private filledVoid(fullGua: FullGua): void {
         for (let i = 0; i < 6; i++) {
             for (const v of fullGua.void) {
                 fullGua.yao[i].void = fullGua.yao[i].earthlyBranch === v;
