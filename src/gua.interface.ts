@@ -9,6 +9,7 @@ export type EarthlyBranch = '子' | '丑' | '寅' | '卯' | '辰' | '巳' | '午
 
 export type GungName = '乾' | '兌' | '離' | '震' | '巽' | '坎' | '艮' | '坤';
 
+export type YingYangYao = '000' | '001' | '010' | '011' | '100' | '101' | '110' | '111';
 export interface Yao {
     earthlyBranch: EarthlyBranch; // 地支
     relative: Relative; // 六親

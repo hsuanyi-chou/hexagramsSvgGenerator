@@ -19,16 +19,13 @@ export class FullGua implements IFullGua {
     void: EarthlyBranch[] = []; // 空亡
 
     constructor(name: string, description: string, yao: Yao[], heavenlyStems: HeavenlyStems, gung: Gung,
-        hidden?: Yao[], mutual?: Yao[], hint?: string[]) {
+        hidden?: Yao[], hint?: string[]) {
 
         this.name = name;
         this.description = description;
         this.yao = yao;
         this.HeavenlyStems = heavenlyStems;
         this.gung = gung;
-        if (mutual) {
-            this.mutual = [...mutual];
-        }
 
         if (hidden) {
             this.hidden = [...hidden];
