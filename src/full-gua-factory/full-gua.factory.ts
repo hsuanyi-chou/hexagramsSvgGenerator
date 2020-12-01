@@ -439,7 +439,7 @@ export class FullGuaFactory {
         fullGua.lunarYear = fullLunar.GanZhiYear;
         fullGua.lunarMonth = fullLunar.GanZhiMonth;
         fullGua.lunarDay = fullLunar.GanZhiDay;
-        fullGua.void = this.calculateVoid(fullLunar.GanZhiDay.substring(0,1), fullLunar.GanZhiDay.substring(1, 2));
+        fullGua.void = this.calculateVoid(fullLunar.GanZhiDay.charAt(0), fullLunar.GanZhiDay.charAt(1));
         this.filledVoid(fullGua);
     }
 
@@ -485,7 +485,7 @@ export class FullGuaFactory {
         );
 
         if (mutualFullGua.name.search('為') > 0) {
-            fullGua.name += `之${mutualFullGua.name.substring(0, 1)}`;
+            fullGua.name += `之${mutualFullGua.name.charAt(0)}`;
         } else {
             fullGua.name += `之${mutualFullGua.name.substring(2)}`;
         }
