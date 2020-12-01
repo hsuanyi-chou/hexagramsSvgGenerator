@@ -1,4 +1,4 @@
-import { Gua, GuaConfiguration, PositionYao } from './gua.interface';
+import { Gua, GuaConfiguration, PositionYao, SixYaoArray } from './gua.interface';
 import { FullGuaFactory, FullGua } from './full-gua-factory';
 
 /**
@@ -38,14 +38,7 @@ function transToWord(digit: number): Gua {
 
 export class GuaGenerator {
   private readonly fullGuaFactory = new FullGuaFactory();
-  private readonly SIX_YAO_ARRAY = [
-    'one',
-    'two',
-    'three',
-    'four',
-    'five',
-    'six',
-  ] as Array<'one' | 'two' | 'three' | 'four' | 'five' | 'six'>;
+private readonly SIX_YAO_ARRAY: SixYaoArray[] = ['one', 'two', 'three', 'four', 'five', 'six'];
   private config: GuaConfiguration = {
     WIDTH: 450, // 圖片寬度
     HEIGHT: 320, // 圖片長度

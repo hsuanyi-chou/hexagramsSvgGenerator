@@ -73,3 +73,5 @@ export interface GuaConfiguration {
 
     SHIH_YING_COLOR: string; // 世應顏色
 }
+
+export type SixYaoArray = 'one' | 'two' | 'three' | 'four' | 'five' | 'six';
