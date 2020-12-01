@@ -1,11 +1,10 @@
 import {
     Gua, EarthlyBranch, Elements, Relative, SixYao,
-    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem
+    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, SixYaoArray
 } from '../gua.interface';
 import { FullGua } from './full-gua';
 
 const lunarCalendar = require('lunar-calendar-zh');
-
 
 enum MONSTER {
     DRAGON = 0, // 青龍
@@ -23,15 +22,11 @@ export class FullGuaFactory {
     private readonly wanderHint = ['遊魂卦'];
     private readonly returnHint = ['歸魂卦'];
 
-    private readonly SIX_YAO_ARRAY = [
-        'one',
-        'two',
-        'three',
-        'four',
-        'five',
-        'six',
-    ] as Array<'one' | 'two' | 'three' | 'four' | 'five' | 'six'>;
+    private readonly SIX_YAO_ARRAY: SixYaoArray[] = ['one', 'two', 'three', 'four', 'five', 'six'];
     private readonly MONSTERS_ARRAY = ['青龍', '朱雀', '勾陳', '呈蛇', '白虎', '玄武'];
+
+    private readonly HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+    private readonly EARTHLY_BRANCHES: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 
     private readonly lunarCalendar = lunarCalendar;
     /**
@@ -468,6 +463,8 @@ export class FullGuaFactory {
         fullGua.lunarYear = fullLunar.GanZhiYear;
         fullGua.lunarMonth = fullLunar.GanZhiMonth;
         fullGua.lunarDay = fullLunar.GanZhiDay;
+        fullGua.void = this.calculateVoid(fullLunar.GanZhiDay.substring(0,1), fullLunar.GanZhiDay.substring(1, 2));
+        this.filledVoid(fullGua);
     }
 
     private genMonster(fullGua: FullGua) {
@@ -502,6 +499,14 @@ export class FullGuaFactory {
         for (const yao of this.SIX_YAO_ARRAY) {
             fullGua.yao[yao].monster = this.MONSTERS_ARRAY[begin];
             begin = (begin + 1) % 6;
+        }
+    }
+
+    private filledVoid(fullGua: FullGua) {
+        for (const yao of this.SIX_YAO_ARRAY) {
+            for (const v of fullGua.void) {
+                fullGua.yao[yao].void = fullGua.yao[yao].earthlyBranch === v;
+            }
         }
     }
     /**
@@ -784,6 +789,24 @@ export class FullGuaFactory {
         }
 
         return { shih: 0, ying: 0 };
+    }
+
+    /**
+     * 計算空亡
+     * @param 日天干
+     * @param 日地支
+     * @return 空亡陣列
+     */
+    private calculateVoid(stem: HeavenlyStem, earthly: EarthlyBranch): EarthlyBranch[] {
+        console.log(`${stem}, ${earthly}`);
+        const beginIndex = this.EARTHLY_BRANCHES.findIndex(e => e === earthly); // 找到地支起點
+        const backwardCount = this.HEAVENLY_STEMS.findIndex(s => s === stem); // 往後數天干
+
+        const voidIndex = (beginIndex - backwardCount) % 12 - 2;
+        const voidBegin = voidIndex < 0 ? 12 - Math.abs(voidIndex) : voidIndex;
+        console.log(voidBegin);
+        console.log(`----------------------`);
+        return [this.EARTHLY_BRANCHES[voidBegin], this.EARTHLY_BRANCHES[voidBegin + 1]];
     }
 
     /**

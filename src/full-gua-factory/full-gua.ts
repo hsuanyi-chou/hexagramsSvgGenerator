@@ -1,4 +1,4 @@
-import { IFullGua, SixYao, Yao, HeavenlyStems, Gung, PositionYao } from '../gua.interface';
+import { IFullGua, SixYao, Yao, HeavenlyStems, Gung, PositionYao, EarthlyBranch } from '../gua.interface';
 export class FullGua implements IFullGua {
     name!: string; // 卦名
     description!: string; // 四字偈-描述
@@ -16,6 +16,7 @@ export class FullGua implements IFullGua {
     lunarYear = ''; // 年干支
     lunarMonth = ''; // 月干支
     lunarDay = ''; // 日干支
+    void: EarthlyBranch[] = []; // 空亡
 
     constructor(name: string, description: string, yao: SixYao, heavenlyStems: HeavenlyStems, gung: Gung,
         hidden?: PositionYao[], mutual?: Yao[], hint?: string[]) {
