@@ -5,13 +5,19 @@ import { Gua } from './gua.interface';
 
 // 測試區
 export default GuaGenerator;
-const guaGen = new GuaGenerator();
-const res = guaGen.buildGua('風', '澤');
-console.log(res);
+// const guaGen = new GuaGenerator();
+// const res = guaGen.buildGua('風', '澤');
+// console.log(res);
 
-// const fullGuaFactory = new FullGuaFactory();
-// const chang = fullGuaFactory.create('火', '風');
-// console.log(chang);
+const fullGuaFactory = new FullGuaFactory();
+const date = new Date();
+
+const chang = fullGuaFactory.create('地', '水', [3], date);
+console.log(chang);
+// console.log(chang.solarDate);
+// console.log(chang.getFullLunarDate());
+
+
 
 // 正式產圖區。要產時放開註解
 // svgGenerator();
