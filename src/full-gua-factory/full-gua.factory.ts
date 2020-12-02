@@ -366,9 +366,10 @@ export class FullGuaFactory {
         if (date) {
             this.genDate(fullGua, date);
             this.genMonster(fullGua);
-            if (mutual && mutual.length !== 0) {
-                this.genMutual(up, down, mutual, fullGua);
-            }
+        }
+        
+        if (mutual && mutual.length !== 0) {
+            this.genMutual(up, down, mutual, fullGua);
         }
         return fullGua;
     }
