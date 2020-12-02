@@ -103,18 +103,8 @@ export class GuaGenerator {
   private drawFullGua(down: Gua, up: Gua, fullGua: FullGua): string {
     let gua = `<g>
             <title>Layer 1</title>\n`;
-    gua += this.drawGua(
-      down,
-      'down',
-      this.YAO_X_POSITION,
-      this.config.DOWN_FIRST_YAO,
-    );
-    gua += this.drawGua(
-      up,
-      'up',
-      this.YAO_X_POSITION,
-      this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * 3,
-    );
+    gua += this.drawGua(down, 'down', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
+    gua += this.drawGua(up, 'up', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * 3);
     gua += this.drawEarthlyBranchesAndRelatives(fullGua);
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
     gua += this.drawHidden(fullGua.hidden);
@@ -170,12 +160,8 @@ export class GuaGenerator {
   private drawShihYingAndHeavenlyStem(fullGua: FullGua): string {
     let text = '';
     const x = 232;
-    const shihY =
-      this.SHIH_FIRST_YAO -
-      this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
-    const yingY =
-      this.SHIH_FIRST_YAO -
-      this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
+    const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
+    const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
 
     text += this.genSvgTextComponent({
       id: `shih`,
@@ -294,16 +280,8 @@ export class GuaGenerator {
    */
   private drawYinYao(id: string, x: number, y: number) {
     const x2 = x + this.config.YIN_LENGTH;
-    return `<line stroke="${this.config.YAO_COLOR}" id="${
-      id + '-1'
-    }" x1="${x}" y1="${y}" x2="${x2}" y2="${y}" stroke-width="${
-      this.config.YAO_BOLD
-    }" fill="none"/>
-                <line stroke="${this.config.YAO_COLOR}" id="${id + '-2'}" x1="${
-      x2 + this.config.YIN_GAP
-    }" y1="${y}" x2="${
-      x2 + this.config.YIN_GAP + this.config.YIN_LENGTH
-    }" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n`;
+    return `<line stroke="${this.config.YAO_COLOR}" id="${id + '-1'}" x1="${x}" y1="${y}" x2="${x2}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n` + 
+           `<line stroke="${this.config.YAO_COLOR}" id="${id + '-2'}" x1="${x2 + this.config.YIN_GAP}" y1="${y}" x2="${x2 + this.config.YIN_GAP + this.config.YIN_LENGTH}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n`;
   }
 
   /**
@@ -313,11 +291,7 @@ export class GuaGenerator {
    * @param y 起始爻的y
    */
   private drawYangYao(id: string, x: number, y: number) {
-    return `<line stroke="${
-      this.config.YAO_COLOR
-    }" id="${id}" x1="${x}" y1="${y}" x2="${
-      x + this.config.YANG_LENGTH
-    }" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n`;
+    return `<line stroke="${this.config.YAO_COLOR}" id="${id}" x1="${x}" y1="${y}" x2="${x + this.config.YANG_LENGTH}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n`;
   }
 
   /**
@@ -359,17 +333,9 @@ export class GuaGenerator {
    * 產生svg text 元件
    * @param svgTextConfig
    */
-  private genSvgTextComponent(svgTextConfig: {
-    id: string;
-    text: string;
-    color: string;
-    fontSize: number;
-    x: number;
-    y: number;
-  }) {
-    return (
-      `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
-      `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`
-    );
+  private genSvgTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}) {
+    return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
+           `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
+    
   }
 }
