@@ -64,14 +64,12 @@ export class GuaGenerator {
   private readonly YAO_X_POSITION = 190; // 爻的X軸位置常數
 
   private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
-  private SHIH_FIRST_YAO =
-    this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
+  private SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
 
   constructor(config?: GuaConfiguration) {
     if (config) {
       this.config = config;
-      this.SHIH_FIRST_YAO =
-        config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
+      this.SHIH_FIRST_YAO = config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
     }
   }
 
@@ -305,13 +303,13 @@ export class GuaGenerator {
       return '';
     }
 
-    let text = this.genSvgTextComponent({
-      id: `hidden_tittle`,
+    let text = this.genTitleTextComponent({
+      id: `hidden`,
       text: '伏藏',
       color: '#BBBBBB',
       fontSize: this.YAO_FONT_SIZE,
-      x: 20,
-      y: 25,
+      x: 35,
+      y: 10,
     });
     text += hidden
       .map((h, index) =>
@@ -337,5 +335,14 @@ export class GuaGenerator {
     return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
            `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
     
+  }
+
+  /**
+   * 產生svg text 元件
+   * @param svgTextConfig
+   */
+  private genTitleTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}) {
+    return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="title_${svgTextConfig.id}" style="writing-mode: tb; glyph-orientation-vertical: 0;" ` +
+           `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
   }
 }
