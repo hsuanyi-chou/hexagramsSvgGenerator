@@ -383,7 +383,8 @@ export class FullGuaFactory {
      */
     private genSixYao(down: Gua, up: Gua, gungElement: Elements): Yao[] {
         const earthlyBranches = [...this.getEarthlyBranch(down, 'DOWN'), ...this.getEarthlyBranch(up, 'UP')];
-        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i + 1}))
+        const isYangYao = [...this.genIsYangYao(down), ...this.genIsYangYao(up)];
+        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i + 1, isYangYao: isYangYao[i]}))
     }
 
     /**
@@ -580,6 +581,41 @@ export class FullGuaFactory {
         return earthlyBranches;
     }
 
+    /**
+     * @param gua 卦
+     * @return 是否陽爻陣列
+     */
+    private genIsYangYao(gua: Gua): boolean[] {
+        let isYangYao: boolean[];
+        switch (gua) {
+            case '天':
+                isYangYao = [true, true, true];
+                break;
+            case '澤':
+                isYangYao = [true, true, false];
+                break;
+            case '火':
+                isYangYao = [true, false, true];
+                break;
+            case '雷':
+                isYangYao = [true, false, false];
+                break;
+            case '風':
+                isYangYao = [false, true, true];
+                break;
+            case '水':
+                isYangYao = [false, true, false];
+                break;
+            case '山':
+                isYangYao = [false, false, true];
+                break;
+            case '地':
+                isYangYao = [false, false, false];
+                break;
+        }
+
+        return isYangYao!;
+    }
     /**
      * 根據宮與地支，取得該爻之六親
      * @param gung 宮

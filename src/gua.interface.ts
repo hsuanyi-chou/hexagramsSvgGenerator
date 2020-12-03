@@ -1,3 +1,4 @@
+import { YingYangYao } from './gua.interface';
 export type Gua = '天' | '澤' | '火' | '雷' | '風' | '水' | '山' | '地';
 
 export type Elements = '金' | '木' | '水' | '火' | '土';
@@ -16,6 +17,7 @@ export interface Yao {
     monster?: string; // 六獸
     void?: boolean; // 空亡
     position: number; // 位置 (配合陣列，由0開始)
+    isYangYao?: boolean // 陰陽爻 (true = 陽；false = 陰)
 }
 
 export interface HeavenlyStems {
