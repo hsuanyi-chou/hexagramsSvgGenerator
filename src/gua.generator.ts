@@ -115,7 +115,8 @@ export class GuaGenerator {
     const TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
     gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - TEXT_LENGTH);
     gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', '#BBBBBB', this.YAO_X_POSITION - (TEXT_LENGTH * 3 + 20));
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', '#1669f0', this.YAO_X_POSITION - TEXT_LENGTH * 2);
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', '#548ce8', this.YAO_X_POSITION - TEXT_LENGTH * 2);
+    gua += this.drawMonsters(fullGua.yao);
     gua += `\n</g>\n`;
     return gua;
   }
@@ -168,6 +169,39 @@ export class GuaGenerator {
       y: heavenlyStemYingY,
     });
 
+    return text;
+  }
+
+  /**
+   * step 3: 繪製六獸
+   * @param 六獸
+   */
+  private drawMonsters(monsters: Yao[]) {
+    const x = this.YAO_X_POSITION + 105;
+    const color = '#22a6b3';
+    if (monsters.length === 0) {
+      return '';
+    }
+
+    let text = this.genTitleTextComponent({
+      id: 'monster',
+      text: '六獸',
+      color,
+      fontSize: this.YAO_FONT_SIZE,
+      x: x + 20,
+      y: this.TITLE_CONFIG.y,
+    });
+
+    text += monsters.map( (yao, i) => 
+      this.genSvgTextComponent({
+        id: `monster_${i}`, 
+        text: `${yao.monster}`,
+        color,
+        fontSize: this.YAO_FONT_SIZE,
+        x,
+        y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
+      })
+    );
     return text;
   }
 
