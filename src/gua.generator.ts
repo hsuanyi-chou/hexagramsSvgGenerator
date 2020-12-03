@@ -117,6 +117,7 @@ export class GuaGenerator {
     gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', '#BBBBBB', this.YAO_X_POSITION - (TEXT_LENGTH * 3 + 20));
     gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', '#548ce8', this.YAO_X_POSITION - TEXT_LENGTH * 2);
     gua += this.drawMonsters(fullGua.yao);
+    gua += this.drawMutual(fullGua.yao, fullGua.mutual);
     gua += `\n</g>\n`;
     return gua;
   }
@@ -201,8 +202,22 @@ export class GuaGenerator {
         x,
         y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
       })
-    );
+    ).join('');
     return text;
+  }
+
+  private drawMutual(yaos: Yao[], mutual: Yao[]): string {
+    const circleX = this.YAO_X_POSITION + 50;
+    const crossX = this.YAO_X_POSITION + 38;
+    
+    return mutual.map(m => {
+      const circleY = this.config.DOWN_FIRST_YAO - (yaos[m.position - 1].position - 1) * this.config.YAO_GAP;
+      if (yaos[m.position - 1].isYangYao) {
+        return this.genCircleComponent(circleX, circleY, 'red');
+      } else {
+        return this.genCrossComponent(crossX, circleY - 10, 'red');
+      }
+    }).join('');
   }
 
   /**
@@ -329,7 +344,7 @@ export class GuaGenerator {
         x,
         y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
       })
-    );
+    ).join('');
     return text;
   }
 
@@ -337,7 +352,7 @@ export class GuaGenerator {
    * 產生svg text 元件
    * @param svgTextConfig
    */
-  private genSvgTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}) {
+  private genSvgTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}): string {
     return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
            `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
     
@@ -347,8 +362,29 @@ export class GuaGenerator {
    * 產生svg text 元件
    * @param svgTextConfig
    */
-  private genTitleTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}) {
+  private genTitleTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}): string {
     return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="title_${svgTextConfig.id}" style="writing-mode: tb; glyph-orientation-vertical: 0;" ` +
            `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
+  }
+
+  /**
+   * 產生O (陽爻動爻)
+   * @param x 
+   * @param y 
+   * @param color 
+   */
+  private genCircleComponent(x: number, y: number, color: string): string {
+    return `<circle cx="${x}" cy="${y}" r="11" stroke="${color}" stroke-width="2" fill-opacity="0" />\n`;
+  }
+
+  /**
+   * 產生X (陰爻動爻)
+   * @param x 
+   * @param y 
+   * @param color 
+   */
+  private genCrossComponent(x: number, y: number, color: string): string {
+    return `<line x1="${x}" y1="${y}" x2="${x + 25}" y2="${y + 20}" stroke="${color}" stroke-width="2" /> ` + 
+           `<line x1="${x + 25}" y1="${y}" x2="${x}" y2="${y + 20}" stroke="${color}" stroke-width="2" />\n`;
   }
 }
