@@ -383,7 +383,7 @@ export class FullGuaFactory {
      */
     private genSixYao(down: Gua, up: Gua, gungElement: Elements): Yao[] {
         const earthlyBranches = [...this.getEarthlyBranch(down, 'DOWN'), ...this.getEarthlyBranch(up, 'UP')];
-        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i}))
+        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i + 1}))
     }
 
     /**
