@@ -59,9 +59,15 @@ export class GuaGenerator {
     SHIH_YING_COLOR: '#729C62', // 世應顏色
   };
 
+  private readonly TITLE_CONFIG = {
+    y: 10
+  }
+  
+  private readonly TEXT_Y_POSITION = this.config.DOWN_FIRST_YAO + 10;
+
   private readonly YAO_FONT_SIZE = 24;
 
-  private readonly YAO_X_POSITION = 190; // 爻的X軸位置常數
+  private readonly YAO_X_POSITION = 285; // 爻的X軸位置常數。用來控制整個卦的位置(本卦、變爻、伏藏、六獸、天干世應，都依此來計算相對位置)
 
   private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
   private SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
@@ -77,10 +83,12 @@ export class GuaGenerator {
    * 產生卦象
    * @param up 上卦
    * @param down 下卦
+   * @param mutual 動爻
+   * @param date 日期 (六獸、空亡…等)
    * @return svg 純文字內容
    */
-  buildGua(up: Gua, down: Gua) {
-    const gua = this.fullGuaFactory.create(up, down) as FullGua;
+  buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date) {
+    const gua = this.fullGuaFactory.create(up, down, mutual, date);
 
     let svg = `<!-- Created By Hexagrams-SVG-Generator -->
             <svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">
@@ -103,61 +111,23 @@ export class GuaGenerator {
             <title>Layer 1</title>\n`;
     gua += this.drawGua(down, 'down', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
     gua += this.drawGua(up, 'up', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * 3);
-    gua += this.drawEarthlyBranchesAndRelatives(fullGua);
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
-    gua += this.drawHidden(fullGua.hidden);
+    const TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - TEXT_LENGTH);
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', '#BBBBBB', this.YAO_X_POSITION - (TEXT_LENGTH * 3 + 20));
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', '#1669f0', this.YAO_X_POSITION - TEXT_LENGTH * 2);
     gua += `\n</g>\n`;
     return gua;
   }
 
   /**
-   * step 2: 裝卦：地支、六親
-   * @param fullGua 全卦
-   * @return 填寫地支、六親
-   */
-  private drawEarthlyBranchesAndRelatives(fullGua: FullGua): string {
-    let text = '';
-    let idIndex = 0;
-    const xForEarthlyBranch = 300; // 地支x軸
-    const xForRelative = 135; // 六親x軸
-
-    let y = this.config.DOWN_FIRST_YAO + 10;
-
-    for (let i = 0; i < 6; i++) {
-      const earthlyBranch = fullGua.yao[i].earthlyBranch;
-      const relative = fullGua.yao[i].relative;
-      // 地支
-      text += this.genSvgTextComponent({
-        id: `earthlyBranch_${idIndex++}`,
-        text: earthlyBranch,
-        color: this.config.EARTHLY_BRANCH_COLOR,
-        fontSize: this.YAO_FONT_SIZE,
-        x: xForEarthlyBranch,
-        y,
-      });
-      // 六親
-      text += this.genSvgTextComponent({
-        id: `relative_${idIndex++}`,
-        text: relative,
-        color: this.config.EARTHLY_BRANCH_COLOR,
-        fontSize: this.YAO_FONT_SIZE,
-        x: xForRelative,
-        y,
-      });
-      y -= this.config.YAO_GAP;
-    }
-
-    return text;
-  }
-
-  /**
-   * step 3: 繪製天干、世應
+   * step 2: 繪製天干、世應
    * @param down 下卦
    * @param up 上卦
    */
   private drawShihYingAndHeavenlyStem(fullGua: FullGua): string {
     let text = '';
-    const x = 232;
+    const x = this.YAO_X_POSITION + 42;
     const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
     const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
 
@@ -293,37 +263,39 @@ export class GuaGenerator {
   }
 
   /**
-   * step 2: 繪製伏藏
-   * @param hidden 伏藏
+   * @param yaos 要繪製的爻
+   * @param id id
+   * @param titleText 標題文字
+   * @param color 顏色
+   * @param titleX title X 軸
+   * @param yaoX 爻X軸
+   * @param isGua 是否本卦，預設false (因本卦的六親、六獸會卡在六爻棒棒之間)
+   * @return 繪製出來的svg
    */
-  private drawHidden(hidden: Yao[]): string {
-    const y = this.config.DOWN_FIRST_YAO + 10;
-
-    if (hidden.length === 0) {
+  private drawRelativesAndEarthlyBranches(yaos: Yao[], id: string, titleText: string, color: string, x: number) {
+    if (yaos.length === 0) {
       return '';
     }
 
     let text = this.genTitleTextComponent({
-      id: `hidden`,
-      text: '伏藏',
-      color: '#BBBBBB',
+      id,
+      text: titleText,
+      color,
       fontSize: this.YAO_FONT_SIZE,
-      x: 35,
-      y: 10,
+      x: x + 45,
+      y: this.TITLE_CONFIG.y,
     });
-    text += hidden
-      .map((h, index) =>
-        this.genSvgTextComponent({
-          id: `hidden_${index}`,
-          text: `${h.relative} ${h.earthlyBranch}`,
-          color: '#BBBBBB',
-          fontSize: this.YAO_FONT_SIZE,
-          x: 5,
-          y: y - (h.position - 1) * this.config.YAO_GAP,
-        }),
-      )
-      .join('');
 
+    text += yaos.map( (yao, i) => 
+      this.genSvgTextComponent({
+        id: `${id}_${i}`, 
+        text: `${yao.relative} ${yao.earthlyBranch}`,
+        color,
+        fontSize: this.YAO_FONT_SIZE,
+        x,
+        y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
+      })
+    );
     return text;
   }
 
