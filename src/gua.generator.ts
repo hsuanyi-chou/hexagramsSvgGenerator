@@ -176,7 +176,7 @@ export class GuaGenerator {
    * step 3: 繪製六獸
    * @param 六獸
    */
-  private drawMonsters(monsters: Yao[]) {
+  private drawMonsters(monsters: Yao[]): string {
     const x = this.YAO_X_POSITION + 105;
     const color = '#22a6b3';
     if (monsters.length === 0) {
