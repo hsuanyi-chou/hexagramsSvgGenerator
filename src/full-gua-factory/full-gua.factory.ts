@@ -385,7 +385,7 @@ export class FullGuaFactory {
     private genSixYao(down: Gua, up: Gua, gungElement: Elements): Yao[] {
         const earthlyBranches = [...this.getEarthlyBranch(down, 'DOWN'), ...this.getEarthlyBranch(up, 'UP')];
         const isYangYao = [...this.genIsYangYao(down), ...this.genIsYangYao(up)];
-        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i + 1, isYangYao: isYangYao[i]}))
+        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i + 1, isYangYao: isYangYao[i], void: false}))
     }
 
     /**
@@ -483,7 +483,8 @@ export class FullGuaFactory {
         fullGua.mutual = mutual.map( n => ({
             earthlyBranch: mutualFullGua.yao[n - 1].earthlyBranch,
             position: mutualFullGua.yao[n - 1].position,
-            relative: this.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch)
+            relative: this.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch),
+            void: false
             })
         );
 
@@ -510,23 +511,17 @@ export class FullGuaFactory {
      * @param fullGua 卦
      */
     private filledVoid(fullGua: FullGua): void {
-        for (const yao of fullGua.yao) {
-            for (const v of fullGua.void) {
-                yao.void = yao.earthlyBranch === v;
-            }
-        }
+        fullGua.yao.forEach(y => {
+            y.void = fullGua.void.includes(y.earthlyBranch);
+        });
 
-        for (const yao of fullGua.mutual) {
-            for (const v of fullGua.void) {
-                yao.void = yao.earthlyBranch === v;
-            }
-        }
+        fullGua.mutual.forEach(y => {
+            y.void = fullGua.void.includes(y.earthlyBranch);
+        });
 
-        for (const yao of fullGua.hidden) {
-            for (const v of fullGua.void) {
-                yao.void = yao.earthlyBranch === v;
-            }
-        }
+        fullGua.hidden.forEach(y => {
+            y.void = fullGua.void.includes(y.earthlyBranch);
+        });
     }
 
     /**
