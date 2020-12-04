@@ -88,17 +88,10 @@ export class GuaGenerator {
    * @return svg 純文字內容
    */
   buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date) {
-    const gua = this.fullGuaFactory.create(up, down, mutual, date);
-
-    let svg = `<!-- Created By Hexagrams-SVG-Generator -->
-            <svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-            <g>
-                <title>background</title>
-                <rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>
-            </g>`;
-    svg += this.drawFullGua(down, up, gua);
-    svg += '</svg>';
-    return svg;
+    return `<!-- Created By Hexagrams-SVG-Generator -->\n` +
+           `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
+           `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
+           `${this.drawFullGua(this.fullGuaFactory.create(up, down, mutual, date))}</svg>`;
   }
 
   /**
@@ -106,11 +99,9 @@ export class GuaGenerator {
    * @param down 下卦
    * @param up 上卦
    */
-  private drawFullGua(down: Gua, up: Gua, fullGua: FullGua): string {
-    let gua = `<g>
-            <title>Layer 1</title>\n`;
-    gua += this.drawGua(down, 'down', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
-    gua += this.drawGua(up, 'up', this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * 3);
+  private drawFullGua(fullGua: FullGua): string {
+    let gua = `<g>\n<title>Layer 1</title>\n`;
+    gua += this.drawSixYao(fullGua.yao, this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
     const TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
     gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - TEXT_LENGTH);
@@ -206,6 +197,11 @@ export class GuaGenerator {
     return text;
   }
 
+  /**
+   * step 4: 繪製動爻OX
+   * @param yaos 六爻
+   * @param mutual 動爻
+   */
   private drawMutual(yaos: Yao[], mutual: Yao[]): string {
     const circleX = this.YAO_X_POSITION + 50;
     const crossX = this.YAO_X_POSITION + 38;
@@ -221,72 +217,16 @@ export class GuaGenerator {
   }
 
   /**
-   * step 1.1: 繪製全卦的子功能
-   * @param gua 卦
-   * @param idPrefix id前置名稱
-   * @param x 起始爻的x
-   * @param y 起始爻的y
+   * step 1.1: 繪製六爻
+   * @param yaos 爻
+   * @param x
+   * @param y
    */
-  private drawGua(gua: Gua, idPrefix: string, x: number, y: number): string {
-    let yao = '';
-    let idIndex = 0;
-    switch (gua) {
-      case '天':
-        for (let i = 1; i <= 3; i++) {
-          yao += this.drawYangYao(`${idPrefix}_${i}`, x, y);
-          y -= this.config.YAO_GAP;
-        }
-        break;
-      case '澤':
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        break;
-      case '火':
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        break;
-      case '雷':
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        break;
-      case '風':
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        break;
-      case '水':
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        break;
-      case '山':
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYinYao(`${idPrefix}_${idIndex++}`, x, y);
-        y -= this.config.YAO_GAP;
-        yao += this.drawYangYao(`${idPrefix}_${idIndex++}`, x, y);
-        break;
-      case '地':
-        for (let i = 1; i <= 3; i++) {
-          yao += this.drawYinYao(`${idPrefix}_${i}`, x, y);
-          y -= this.config.YAO_GAP;
-        }
-        break;
-    }
-    return yao;
+  private drawSixYao(yaos: Yao[], x: number, y: number): string {
+    return yaos.map( (yao, i) => yao.isYangYao ? 
+      this.drawYangYao(`yao_${i}`, x, y - this.config.YAO_GAP * i) : 
+      this.drawYinYao(`yao_${i}`, x, y - this.config.YAO_GAP * i)
+    ).join('');
   }
 
   /**
