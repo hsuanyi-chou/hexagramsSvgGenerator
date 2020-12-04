@@ -455,7 +455,7 @@ export class FullGuaFactory {
         switch (stem) {
             case '甲':
             case '乙':
-                this.filledMonster(fullGua, MONSTER.TIGER);
+                this.filledMonster(fullGua, MONSTER.DRAGON);
                 break;
             case '丙':
             case '丁':
