@@ -363,13 +363,14 @@ export class FullGuaFactory {
                 }
                 break;
         }
+
+        if (mutual && mutual.length !== 0) {
+            this.genMutual(up, down, mutual, fullGua);
+        }
+
         if (date) {
             this.genDate(fullGua, date);
             this.genMonster(fullGua);
-        }
-        
-        if (mutual && mutual.length !== 0) {
-            this.genMutual(up, down, mutual, fullGua);
         }
         return fullGua;
     }
@@ -509,9 +510,21 @@ export class FullGuaFactory {
      * @param fullGua 卦
      */
     private filledVoid(fullGua: FullGua): void {
-        for (let i = 0; i < 6; i++) {
+        for (const yao of fullGua.yao) {
             for (const v of fullGua.void) {
-                fullGua.yao[i].void = fullGua.yao[i].earthlyBranch === v;
+                yao.void = yao.earthlyBranch === v;
+            }
+        }
+
+        for (const yao of fullGua.mutual) {
+            for (const v of fullGua.void) {
+                yao.void = yao.earthlyBranch === v;
+            }
+        }
+
+        for (const yao of fullGua.hidden) {
+            for (const v of fullGua.void) {
+                yao.void = yao.earthlyBranch === v;
             }
         }
     }
