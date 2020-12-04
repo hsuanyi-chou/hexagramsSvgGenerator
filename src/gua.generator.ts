@@ -211,7 +211,7 @@ export class GuaGenerator {
     const crossX = this.YAO_X_POSITION + 38;
     
     return mutual.map(m => {
-      const circleY = this.config.DOWN_FIRST_YAO - (yaos[m.position - 1].position - 1) * this.config.YAO_GAP;
+      const circleY = this.config.DOWN_FIRST_YAO - (m.position - 1) * this.config.YAO_GAP;
       if (yaos[m.position - 1].isYangYao) {
         return this.genCircleComponent(circleX, circleY, 'red');
       } else {
