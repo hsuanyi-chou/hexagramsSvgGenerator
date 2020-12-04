@@ -62,6 +62,9 @@ export class GuaGenerator {
   private readonly TITLE_CONFIG = {
     y: 10
   }
+
+  private readonly TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
+  private readonly HIDDEN_SPACE = 20; // 變爻跟伏藏之間的距離
   
   private readonly TEXT_Y_POSITION = this.config.DOWN_FIRST_YAO + 10;
 
@@ -103,12 +106,12 @@ export class GuaGenerator {
     let gua = `<g>\n<title>Layer 1</title>\n`;
     gua += this.drawSixYao(fullGua.yao, this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
-    const TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - TEXT_LENGTH);
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', '#BBBBBB', this.YAO_X_POSITION - (TEXT_LENGTH * 3 + 20));
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', '#548ce8', this.YAO_X_POSITION - TEXT_LENGTH * 2);
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - this.TEXT_LENGTH);
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', '#BBBBBB', this.YAO_X_POSITION - (this.TEXT_LENGTH * 3 + this.HIDDEN_SPACE));
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', '#548ce8', this.YAO_X_POSITION - this.TEXT_LENGTH * 2);
     gua += this.drawMonsters(fullGua.yao);
     gua += this.drawMutual(fullGua.yao, fullGua.mutual);
+    gua += this.drawVoid(fullGua);
     gua += `\n</g>\n`;
     return gua;
   }
@@ -209,11 +212,32 @@ export class GuaGenerator {
     return mutual.map(m => {
       const circleY = this.config.DOWN_FIRST_YAO - (m.position - 1) * this.config.YAO_GAP;
       if (yaos[m.position - 1].isYangYao) {
-        return this.genCircleComponent(circleX, circleY, 'red');
+        return this.genCircleComponent(`mutual_${m.position}`, circleX, circleY, 11, 'red');
       } else {
         return this.genCrossComponent(crossX, circleY - 10, 'red');
       }
     }).join('');
+  }
+
+  /**
+   * step 5: 空亡打圈
+   * @param fullGua 全卦
+   */
+  private drawVoid(fullGua: FullGua): string {
+    const x = 267;
+    const r = 14;
+    const color = '#858585';
+    let voidCircle = '';
+    voidCircle += fullGua.yao.map(y => y.void ? 
+      this.genCircleComponent(`yao_void_${y.position}`, x, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
+    ).join('');
+    voidCircle += fullGua.yao.map(y => y.void ?
+      this.genCircleComponent(`mutual_void_${y.position}`, x - this.TEXT_LENGTH, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
+      ).join('');
+    voidCircle += fullGua.hidden.map(y => y.void ?
+      this.genCircleComponent(`hidden_void_${y.position}`, x - (this.TEXT_LENGTH * 2 + this.HIDDEN_SPACE),
+        this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color): '').join('');
+    return voidCircle;
   }
 
   /**
@@ -313,8 +337,8 @@ export class GuaGenerator {
    * @param y 
    * @param color 
    */
-  private genCircleComponent(x: number, y: number, color: string): string {
-    return `<circle cx="${x}" cy="${y}" r="11" stroke="${color}" stroke-width="2" fill-opacity="0" />\n`;
+  private genCircleComponent(id: string, x: number, y: number, r: number, color: string): string {
+    return `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="${color}" stroke-width="2" fill-opacity="0" />\n`;
   }
 
   /**
