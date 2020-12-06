@@ -5,17 +5,18 @@ import { Gua } from './gua.interface';
 
 // 測試區
 export default GuaGenerator;
-// const guaGen = new GuaGenerator();
-// const res = guaGen.buildGua('風', '澤');
-// console.log(res);
+const date = new Date('2020-12-04T00:00:00.000+08:00');
+console.log(date);
+const guaGen = new GuaGenerator();
+const res = guaGen.buildGua('火', '澤', undefined, date);
+console.log(res);
 
 const fullGuaFactory = new FullGuaFactory();
-const date = new Date();
 
-const chang = fullGuaFactory.create('地', '水', [3], date);
+const chang = fullGuaFactory.create('火', '澤', undefined, date);
 console.log(chang);
-// console.log(chang.solarDate);
-// console.log(chang.getFullLunarDate());
+console.log(chang.solarDate);
+console.log(chang.getFullLunarDate());
 
 
 
