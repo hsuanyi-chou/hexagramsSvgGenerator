@@ -231,7 +231,7 @@ export class GuaGenerator {
     voidCircle += fullGua.yao.map(y => y.void ? 
       this.genCircleComponent(`yao_void_${y.position}`, x, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
     ).join('');
-    voidCircle += fullGua.yao.map(y => y.void ?
+    voidCircle += fullGua.mutual.map(y => y.void ?
       this.genCircleComponent(`mutual_void_${y.position}`, x - this.TEXT_LENGTH, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
       ).join('');
     voidCircle += fullGua.hidden.map(y => y.void ?
