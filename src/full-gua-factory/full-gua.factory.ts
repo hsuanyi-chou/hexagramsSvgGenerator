@@ -451,7 +451,7 @@ export class FullGuaFactory {
      * @param fullGua 卦
      */
     private genMonster(fullGua: FullGua): void {
-        const stem: HeavenlyStem = fullGua.lunarDay.substring(0, 1) as HeavenlyStem;
+        const stem: HeavenlyStem = fullGua.lunarDay.charAt(0) as HeavenlyStem;
         switch (stem) {
             case '甲':
             case '乙':
