@@ -172,11 +172,12 @@ export class GuaGenerator {
    * @param 六獸
    */
   private drawMonsters(monsters: Yao[]): string {
-    const x = this.YAO_X_POSITION + 105;
-    const color = '#22a6b3';
-    if (monsters.length === 0) {
+    if (!monsters[0].monster) {
       return '';
     }
+
+    const x = this.YAO_X_POSITION + 105;
+    const color = '#22a6b3';
 
     let text = this.genTitleTextComponent({
       id: 'monster',
