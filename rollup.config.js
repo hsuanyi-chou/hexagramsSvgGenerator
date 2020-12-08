@@ -1,5 +1,5 @@
 import typescript from 'rollup-plugin-typescript2'
-
+import nodeResolve from '@rollup/plugin-node-resolve';
 export default [
   {
     input: './src/index.ts',
@@ -8,11 +8,9 @@ export default [
       format: 'esm',
     },
     plugins: [
+      nodeResolve(),
       typescript(),
     ],
-    external: [
-        'lunar-calendar-zh'
-    ]
   },
   {
     input: './src/index.ts',
@@ -21,11 +19,9 @@ export default [
       format: 'cjs',
     },
     plugins: [
+      nodeResolve(),
       typescript(),
     ],
-    external: [
-        'lunar-calendar-zh'
-    ]
   },
   
 ]
