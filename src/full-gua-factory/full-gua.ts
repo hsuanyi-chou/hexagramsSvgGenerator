@@ -50,4 +50,11 @@ export class FullGua implements IFullGua {
     getFullLunarDate() {
         return `${this.lunarDate}(${this.lunarYear}-${this.lunarMonth}-${this.lunarDay})`;
     }
+
+    /**
+     * 取得干支年月日
+     */
+    getChineseLunarDate() {
+        return `${this.lunarYear} 年 ${this.lunarMonth} 月 ${this.lunarDay} 日`;
+    }
 }

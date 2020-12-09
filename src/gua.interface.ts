@@ -60,6 +60,6 @@ export interface GuaConfiguration {
     HEAVENLY_STEM_COLOR: string; // 天干顏色
     MUTUAL: string; // 動爻顏色
     HIDDEN_COLOR: string; // 伏藏顏色
-
     SHIH_YING_COLOR: string; // 世應顏色
+    SIDE_INFO_COLOR: string; // 側邊資訊處顏色
 }

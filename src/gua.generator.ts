@@ -39,8 +39,8 @@ function transToWord(digit: number): Gua {
 export class GuaGenerator {
   private readonly fullGuaFactory = new FullGuaFactory();
   private config: GuaConfiguration = {
-    WIDTH: 450, // 圖片寬度
-    HEIGHT: 320, // 圖片長度
+    WIDTH: 650, // 圖片寬度
+    HEIGHT: 550, // 圖片長度
     YAO_COLOR: '#000', // 爻顏色
     YAO_BOLD: 15, // 爻的粗度
     YAO_GAP: 40, // 每一爻的間距
@@ -55,8 +55,8 @@ export class GuaGenerator {
     HEAVENLY_STEM_COLOR: '#4b7ee3', // 天干顏色
     MUTUAL: '#000', // 動爻顏色
     HIDDEN_COLOR: '#000', // 伏藏顏色
-
     SHIH_YING_COLOR: '#729C62', // 世應顏色
+    SIDE_INFO_COLOR: '#595b83', // 側邊資訊顏色
   };
 
   private readonly TITLE_CONFIG = {
@@ -94,7 +94,7 @@ export class GuaGenerator {
     return `<!-- Created By Hexagrams-SVG-Generator -->\n` +
            `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
            `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
-           `${this.drawFullGua(this.fullGuaFactory.create(up, down, mutual, date))}</svg>`;
+           `${this.drawFullGua(this.fullGuaFactory.create(up, down, mutual, date), date)}</svg>`;
   }
 
   /**
@@ -102,7 +102,7 @@ export class GuaGenerator {
    * @param down 下卦
    * @param up 上卦
    */
-  private drawFullGua(fullGua: FullGua): string {
+  private drawFullGua(fullGua: FullGua, date?: Date): string {
     let gua = `<g>\n<title>Layer 1</title>\n`;
     gua += this.drawSixYao(fullGua.yao, this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
@@ -112,6 +112,7 @@ export class GuaGenerator {
     gua += this.drawMonsters(fullGua.yao);
     gua += this.drawMutual(fullGua.yao, fullGua.mutual);
     gua += this.drawVoid(fullGua);
+    gua += this.drawSideInfo(fullGua, date);
     gua += `\n</g>\n`;
     return gua;
   }
@@ -239,6 +240,33 @@ export class GuaGenerator {
       this.genCircleComponent(`hidden_void_${y.position}`, x - (this.TEXT_LENGTH * 2 + this.HIDDEN_SPACE),
         this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color): '').join('');
     return voidCircle;
+  }
+
+  /**
+   * step 6: 繪製側邊基本資訊
+   * @param fullGua 全卦
+   * @param date 占期
+   */
+  private drawSideInfo(fullGua: FullGua, date?: Date): string {
+    let text = '';
+    const TITLE_GAP = 40;
+    let leftSideX = this.config.DOWN_FIRST_YAO + 150; // 無六獸的位置
+    let count = 0;
+    let voidText = '';
+    const COMMON_CONFIG = {color: this.config.SIDE_INFO_COLOR, fontSize: this.YAO_FONT_SIZE, y: this.TITLE_CONFIG.y};
+    if (date) {
+      leftSideX += 50;
+      text += this.genTitleTextComponent({id:'side_date', text:`占期：${fullGua.getChineseLunarDate()}`, x: leftSideX,  ...COMMON_CONFIG});
+      count++;
+      voidText = `空：${fullGua.void.join('、')}`;
+    }
+    text += this.genTitleTextComponent({id:'side_gung', text:`宮：${fullGua.gung.name} ─ ${fullGua.gung.element}    ${voidText}`,
+            x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
+    count++;
+    text += this.genTitleTextComponent({id:'side_gua_name', text:`卦名：${fullGua.name}（${fullGua.description}）`,
+            x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
+    count++;
+    return text;
   }
 
   /**
