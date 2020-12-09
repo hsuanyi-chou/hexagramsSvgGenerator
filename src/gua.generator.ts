@@ -90,11 +90,13 @@ export class GuaGenerator {
    * @param date 日期 (六獸、空亡…等)
    * @return svg 純文字內容
    */
-  buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date) {
-    return `<!-- Created By Hexagrams-SVG-Generator -->\n` +
-           `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
-           `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
-           `${this.drawFullGua(this.fullGuaFactory.create(up, down, mutual, date), date)}</svg>`;
+  buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date): {fullGua: FullGua, svg: string} {
+    const fullGua = this.fullGuaFactory.create(up, down, mutual, date);
+    const svg = `<!-- Created By Hexagrams-SVG-Generator -->\n` +
+                `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
+                `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
+                `${this.drawFullGua(fullGua, date)}</svg>`;
+    return { fullGua, svg };
   }
 
   /**
