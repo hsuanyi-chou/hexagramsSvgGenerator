@@ -1,5 +1,4 @@
 import { GuaGenerator } from './gua.generator';
-// import { FullGuaFactory } from './full-gua-factory';
 // import * as fs from 'fs';
 // import { Gua } from './gua.interface';
 
