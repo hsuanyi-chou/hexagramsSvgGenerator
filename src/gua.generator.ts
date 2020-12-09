@@ -171,8 +171,8 @@ export class GuaGenerator {
    * step 3: 繪製六獸
    * @param 六獸
    */
-  private drawMonsters(monsters: Yao[]): string {
-    if (!monsters[0].monster) {
+  private drawMonsters(yaos: Yao[]): string {
+    if (!yaos[0].monster) {
       return '';
     }
 
@@ -188,7 +188,7 @@ export class GuaGenerator {
       y: this.TITLE_CONFIG.y,
     });
 
-    text += monsters.map( (yao, i) => 
+    text += yaos.map( (yao, i) => 
       this.genSvgTextComponent({
         id: `monster_${i}`, 
         text: `${yao.monster}`,
