@@ -50,7 +50,7 @@ export class GuaGenerator {
 
     DOWN_FIRST_YAO: 290, // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
 
-    FONT_FAMILY: 'Helvetica, Arial, sans-serif', // 文字字型
+    FONT_FAMILY: `Roboto, Arial, sans-serif`, // 文字字型
     EARTHLY_BRANCH_COLOR: '#dbaa23', // 地支顏色
     HEAVENLY_STEM_COLOR: '#4b7ee3', // 天干顏色
     MUTUAL: '#000', // 動爻顏色
@@ -94,6 +94,9 @@ export class GuaGenerator {
     const fullGua = this.fullGuaFactory.create(up, down, mutual, date);
     const svg = `<!-- Created By Hexagrams-SVG-Generator -->\n` +
                 `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
+                `<defs><style type="text/css">
+                @import url('https://fonts.google.com/specimen/Roboto+Condensed?selection.family=Roboto+Condensed');
+                </style></defs>` +
                 `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
                 `${this.drawFullGua(fullGua, date)}</svg>`;
     return { fullGua, svg };
@@ -262,10 +265,10 @@ export class GuaGenerator {
       count++;
       voidText = `空：${fullGua.void.join('、')}`;
     }
-    text += this.genTitleTextComponent({id:'side_gung', text:`宮：${fullGua.gung.name} ─ ${fullGua.gung.element}    ${voidText}`,
+    text += this.genTitleTextComponent({id:'side_gung', text:`宮：${fullGua.gung.name}︵${fullGua.gung.element}︶   ${voidText}`,
             x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
     count++;
-    text += this.genTitleTextComponent({id:'side_gua_name', text:`卦名：${fullGua.name}（${fullGua.description}）`,
+    text += this.genTitleTextComponent({id:'side_gua_name', text:`卦名：${fullGua.name}︵${fullGua.description}︶`,
             x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
     count++;
     return text;
