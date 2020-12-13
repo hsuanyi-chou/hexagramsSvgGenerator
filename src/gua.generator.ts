@@ -50,7 +50,7 @@ export class GuaGenerator {
 
     DOWN_FIRST_YAO: 290, // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
 
-    FONT_FAMILY: `Roboto, Arial, sans-serif`, // 文字字型
+    FONT_FAMILY: `Roboto, Helvetica, Arial, sans-serif`, // 文字字型
     EARTHLY_BRANCH_COLOR: '#dbaa23', // 地支顏色
     HEAVENLY_STEM_COLOR: '#4b7ee3', // 天干顏色
     MUTUAL: '#000', // 動爻顏色
