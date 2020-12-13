@@ -59,10 +59,7 @@ export class GuaGenerator {
     SIDE_INFO_COLOR: '#595b83', // 側邊資訊顏色
   };
 
-  private readonly TITLE_CONFIG = {
-    y: 10
-  }
-
+  private readonly TITLE_TOP_Y = 10; // 標題上方的高度
   private readonly TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
   private readonly HIDDEN_SPACE = 20; // 變爻跟伏藏之間的距離
   
@@ -191,7 +188,7 @@ export class GuaGenerator {
       color,
       fontSize: this.YAO_FONT_SIZE,
       x: x + 20,
-      y: this.TITLE_CONFIG.y,
+      y: this.TITLE_TOP_Y,
     });
 
     text += yaos.map( (yao, i) => 
@@ -258,7 +255,7 @@ export class GuaGenerator {
     let leftSideX = this.config.DOWN_FIRST_YAO + 150; // 無六獸的位置
     let count = 0;
     let voidText = '';
-    const COMMON_CONFIG = {color: this.config.SIDE_INFO_COLOR, fontSize: this.YAO_FONT_SIZE, y: this.TITLE_CONFIG.y};
+    const COMMON_CONFIG = {color: this.config.SIDE_INFO_COLOR, fontSize: this.YAO_FONT_SIZE, y: this.TITLE_TOP_Y};
     if (date) {
       leftSideX += 50;
       text += this.genTitleTextComponent({id:'side_date', text:`占期：${fullGua.getChineseLunarDate()}`, x: leftSideX,  ...COMMON_CONFIG});
@@ -330,7 +327,7 @@ export class GuaGenerator {
       color,
       fontSize: this.YAO_FONT_SIZE,
       x: x + 45,
-      y: this.TITLE_CONFIG.y,
+      y: this.TITLE_TOP_Y,
     });
 
     text += yaos.map( (yao, i) => 
