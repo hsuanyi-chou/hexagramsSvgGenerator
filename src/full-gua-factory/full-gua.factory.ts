@@ -1,8 +1,9 @@
 import {
     Gua, EarthlyBranch, Elements, Relative,
-    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao
+    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao, LunarDate
 } from '../gua.interface';
 import { FullGua } from './full-gua';
+import * as dayjs from 'dayjs';
 
 // tslint:disable-next-line: no-var-requires
 const lunarCalendar = require('lunar-calendar-zh');
@@ -33,6 +34,7 @@ export class FullGuaFactory {
      * @param up 上卦
      * @param down 下卦
      * @param mutual 動爻(數字陣列)
+     * @return 全卦
      */
     create(up: Gua, down: Gua, mutual?: number[], date?: Date): FullGua {
         if (up !== '天' && up !== '澤' && up !== '火' && up !== '雷' &&
@@ -376,6 +378,22 @@ export class FullGuaFactory {
     }
 
     /**
+     * 產生命卦
+     * @param Date 日期
+     * @return 命卦
+     */
+    createFateGua(date: Date): FullGua {
+        const fullDate = this.transLunarDate(date);
+        const lunarM = this.transMonthToDigit(fullDate.lunarDate.lunarMonthName);
+        const lunarD = fullDate.lunarDate.lunarDay;
+        const mutual: number[] = [];
+        // 動爻還沒處理
+        const zh_twDay = dayjs(date, {locale: 'zh-tw'});
+        this.timeToMutual(zh_twDay.hour(), zh_twDay.minute());
+        
+        return this.create(this.transDigitToGua(lunarD % 8), this.transDigitToGua(lunarM % 8), mutual, date);
+    }
+    /**
      * 產生六爻(地支 + 六親)
      * @param down 下卦
      * @param up 上卦
@@ -433,17 +451,27 @@ export class FullGuaFactory {
      * @param date 國曆日期
      */
     private genDate(fullGua: FullGua, date: Date): void {
+        const fullDate = this.transLunarDate(date);
+        fullGua.solarDate = fullDate.solarDate;
+        fullGua.lunarDate = fullDate.lunarDate;
+        fullGua.lunarYear = fullDate.fullDate.GanZhiYear;
+        fullGua.lunarMonth = fullDate.fullDate.GanZhiMonth;
+        fullGua.lunarDay = fullDate.fullDate.GanZhiDay;
+        fullGua.void = this.calculateVoid(fullDate.fullDate.GanZhiDay.charAt(0) as HeavenlyStem, fullDate.fullDate.GanZhiDay.charAt(1) as EarthlyBranch);
+        this.filledVoid(fullGua);
+    }
+
+    /**
+     * @param js日期
+     */
+    private transLunarDate(date: Date): {fullDate: LunarDate, lunarDate:string, solarDate: string} {
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         const day = date.getDate();
-        fullGua.solarDate = `${year}-${month}-${day}`;
-        const fullLunar = this.lunarCalendar.solarToLunar(year, month, day);
-        fullGua.lunarDate = `${fullLunar.lunarYear}-${fullLunar.lunarMonth}-${fullLunar.lunarDay}`;
-        fullGua.lunarYear = fullLunar.GanZhiYear;
-        fullGua.lunarMonth = fullLunar.GanZhiMonth;
-        fullGua.lunarDay = fullLunar.GanZhiDay;
-        fullGua.void = this.calculateVoid(fullLunar.GanZhiDay.charAt(0), fullLunar.GanZhiDay.charAt(1));
-        this.filledVoid(fullGua);
+        const fullDate = this.lunarCalendar.solarToLunar(year, month, day);
+        const lunarDate = `${fullDate.lunarDate.lunarYear}-${this.transMonthToDigit(fullDate.lunarDate.lunarMonthName)}-${fullDate.lunarDate.lunarDay}`;
+        const solarDate = `${year}-${month}-${day}`;
+        return { fullDate, lunarDate, solarDate };
     }
 
     /**
@@ -1023,6 +1051,123 @@ export class FullGuaFactory {
                 break;
         }
         return gua;
+    }
+
+    /**
+     * 農曆國曆數字 轉換 數字 (命卦用)
+     * @param month 農曆國曆數字
+     */
+    private transMonthToDigit(month: string): number {
+        let digit = 0;
+        switch(month) {
+            case '一月':
+            case '閏一月':
+                digit = 1;
+                break;
+            case '二月':
+            case '閏二月':
+                digit = 2;
+                break;
+            case '三月':
+            case '閏三月':
+                digit = 3;
+                break;
+            case '四月':
+            case '閏四月':
+                digit = 4;
+                break;
+            case '五月':
+            case '閏五月':
+                digit = 5;
+                break;
+            case '六月':
+            case '閏六月':
+                digit = 6;
+                break;
+            case '七月':
+            case '閏七月':
+                digit = 7;
+                break;
+            case '八月':
+            case '閏八月':
+                digit = 8;
+                break;
+            case '九月':
+            case '閏九月':
+                digit = 9;
+                break;
+            case '十月':
+            case '閏十月':
+                digit = 10;
+                break;
+            case '十一月':
+            case '閏十一月':
+                digit = 11;
+                break;
+            case '十二月':
+            case '閏十二月':
+                digit = 12;
+                break;
+        }
+        return digit;
+    }
+
+    /**
+     * 數字 轉換 卦 (命卦用)
+     * @param digit 數字
+     * @return 卦
+     */
+    private transDigitToGua(digit: number): Gua {
+        let gua: Gua = '天';
+        switch (digit) {
+            case 1:
+                gua = '天';
+                break;
+            case 2:
+                gua = '澤';
+                break;
+            case 3:
+                gua = '火';
+                break;
+            case 4:
+                gua = '雷';
+                break;
+            case 5:
+                gua = '風';
+                break;
+            case 6:
+                gua = '水';
+                break;
+            case 7:
+                gua = '山';
+                break;
+            case 8:
+                gua = '地';
+                break;
+        }
+        return gua;
+    }
+
+    /**
+     * 時間 轉換 時辰動爻(未完成)
+     */
+    private timeToMutual(hour: number, minute: number) {
+        switch (hour) {
+            case 23: // 子時
+            case 0:
+            case 1:
+            case 11: // 午時
+            case 12:
+            case 13:
+                return 1;
+                break;
+            case 2:
+            case 14:
+            case 3:
+            case 15:
+                return 2;
+                break;
+        }
     }
 
     /**

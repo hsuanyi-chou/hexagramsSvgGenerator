@@ -63,3 +63,20 @@ export interface GuaConfiguration {
     SHIH_YING_COLOR: string; // 世應顏色
     SIDE_INFO_COLOR: string; // 側邊資訊處顏色
 }
+
+export interface LunarDate {
+    zodiac: string;
+    GanZhiYear: 'string;
+    GanZhiMonth: string;
+    GanZhiDay: 'string;
+    worktime: number;
+    term: any;
+    lunarYear: number;
+    lunarMonth: number;
+    lunarDay: number;
+    lunarMonthName: string;
+    lunarDayName: string;
+    lunarLeapMonth: number;
+    solarFestival: any;
+    lunarFestival: any;
+}
