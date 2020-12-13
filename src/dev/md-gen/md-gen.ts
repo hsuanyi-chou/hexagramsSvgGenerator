@@ -1,6 +1,6 @@
 import { iChingFileReader, IChingResult } from './iching-file-reader';
-import { FullGuaFactory, FullGua } from '../full-gua-factory';
-import { Gua } from '../gua.interface';
+import { FullGuaFactory, FullGua } from '../../full-gua-factory';
+import { Gua } from '../../gua.interface';
 import * as fs from 'fs';
 
 const file: IChingResult[] = iChingFileReader();

@@ -1,12 +1,15 @@
 {
   "name": "Hexagrams-SVG-Generator",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "易經64卦SVG產生器",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "rollup -c",
+    "dev": "ts-node src/dev/dev.ts",
+    "gen64guaSvg": "ts-node src/dev/64gua-svg-generator.ts",
+    "md-gen": "ts-node src/dev/md-gen/md-gen.ts",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
@@ -14,11 +17,7 @@
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "start": "ts-node src/index.ts",
-    "filler-start": "-----------------------------------------------------",
-    "md-gen": "ts-node src/md-gen/md-gen.ts",
-    "filler-desc": "有要放上npm時，記得刪掉xlsx套件跟md-gen的程式與script",
-    "filler-end": "-----------------------------------------------------"
+    "start": "ts-node src/index.ts"
   },
   "repository": {
     "type": "git",
