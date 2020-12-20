@@ -28,7 +28,6 @@ export class FullGuaFactory {
     private readonly HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
     private readonly EARTHLY_BRANCHES: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 
-    private readonly lunarCalendar = lunarCalendar;
     /**
      * 產生全卦
      * @param up 上卦
@@ -383,15 +382,12 @@ export class FullGuaFactory {
      * @return 命卦
      */
     createFateGua(date: Date): FullGua {
-        const fullDate = this.transLunarDate(date);
-        const lunarM = this.transMonthToDigit(fullDate.lunarDate.lunarMonthName);
-        const lunarD = fullDate.lunarDate.lunarDay;
-        const mutual: number[] = [];
-        // 動爻還沒處理
-        const zh_twDay = dayjs(date, {locale: 'zh-tw'});
-        this.timeToMutual(zh_twDay.hour(), zh_twDay.minute());
+        const fullDate = this.transLunarDate(this.transDateAfter2300(date));
+        const lunarM = this.transMonthToDigit(fullDate.fullDate.lunarMonthName);
+        const lunarD = fullDate.fullDate.lunarDay;
         
-        return this.create(this.transDigitToGua(lunarD % 8), this.transDigitToGua(lunarM % 8), mutual, date);
+        return this.create(this.transDigitToGua(lunarD % 8), this.transDigitToGua(lunarM % 8), 
+                            this.timeToMutual(date), date);
     }
     /**
      * 產生六爻(地支 + 六親)
@@ -451,27 +447,32 @@ export class FullGuaFactory {
      * @param date 國曆日期
      */
     private genDate(fullGua: FullGua, date: Date): void {
-        const fullDate = this.transLunarDate(date);
+        const fullDate = this.transLunarDate(this.transDateAfter2300(date));
         fullGua.solarDate = fullDate.solarDate;
         fullGua.lunarDate = fullDate.lunarDate;
         fullGua.lunarYear = fullDate.fullDate.GanZhiYear;
         fullGua.lunarMonth = fullDate.fullDate.GanZhiMonth;
         fullGua.lunarDay = fullDate.fullDate.GanZhiDay;
+        fullGua.lunarChineseDate = fullDate.lunarChineseDate;
+        fullGua.timePeriod = this.getTimePeriod(date);
         fullGua.void = this.calculateVoid(fullDate.fullDate.GanZhiDay.charAt(0) as HeavenlyStem, fullDate.fullDate.GanZhiDay.charAt(1) as EarthlyBranch);
         this.filledVoid(fullGua);
     }
 
     /**
-     * @param js日期
+     * @param Date 日期
      */
-    private transLunarDate(date: Date): {fullDate: LunarDate, lunarDate:string, solarDate: string} {
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        const fullDate = this.lunarCalendar.solarToLunar(year, month, day);
-        const lunarDate = `${fullDate.lunarDate.lunarYear}-${this.transMonthToDigit(fullDate.lunarDate.lunarMonthName)}-${fullDate.lunarDate.lunarDay}`;
+    private transLunarDate(d: Date): {fullDate: LunarDate, lunarDate:string, solarDate: string, lunarChineseDate: string} {
+        const date = dayjs(d);
+        const year = date.year();
+        const month = date.month() + 1;
+        const day = date.date();
+        const fullDate = lunarCalendar.solarToLunar(year, month, day) as LunarDate;
+        const lunarDate = `${fullDate.lunarYear}-${this.transMonthToDigit(fullDate.lunarMonthName)}-${fullDate.lunarDay}`;
         const solarDate = `${year}-${month}-${day}`;
-        return { fullDate, lunarDate, solarDate };
+        const lunarChineseDate = `${fullDate.lunarMonthName}-${fullDate.lunarDayName}`;
+
+        return { fullDate, lunarDate, solarDate, lunarChineseDate };
     }
 
     /**
@@ -1149,25 +1150,120 @@ export class FullGuaFactory {
     }
 
     /**
-     * 時間 轉換 時辰動爻(未完成)
+     * 取得命卦、裝卦使用日期 (以子時為主)
+     * 如06-25 23:00以後，日期要以06-26來排命卦、裝六獸、空亡
+     * @param date
+     * @return Date
      */
-    private timeToMutual(hour: number, minute: number) {
-        switch (hour) {
-            case 23: // 子時
-            case 0:
-            case 1:
-            case 11: // 午時
-            case 12:
-            case 13:
-                return 1;
+    private transDateAfter2300(date: Date): Date {
+        const currentDate = dayjs(date);
+        const cutTime = currentDate.hour(23).minute(0).second(0);
+        return currentDate.isSame(cutTime) || currentDate.isAfter(cutTime) ? 
+               currentDate.add(1, 'day').toDate() : currentDate.toDate();
+    }
+
+    /**
+     * 時間 轉換 時辰動爻
+     * @param dayjs時間
+     * @return 動爻陣列
+     */
+    private timeToMutual(date: Date): number[] {
+        const mutual: number[]= [];
+        switch(this.getTimePeriod(date)) {
+            case '子':
+            case '午':
+                mutual.push(1);
                 break;
-            case 2:
-            case 14:
-            case 3:
-            case 15:
-                return 2;
+            case '丑':
+            case '未':
+                mutual.push(2);
+                break;
+            case '寅':
+            case '申':
+                mutual.push(3);
+                break;
+            case '卯':
+            case '酉':
+                mutual.push(4);
+                break;
+            case '辰':
+            case '戌':
+                mutual.push(5);
+                break;
+            case '巳':
+            case '亥':
+                mutual.push(6);
+                break;   
+        }
+
+        if (mutual.length === 0) {
+            console.error('時辰轉換動爻失敗。')
+            throw new Error('時辰轉換動爻失敗。');
+        }
+        return mutual;
+    }
+
+    /**
+     * 時間 轉換 時辰
+     * @param date 日期
+     * @return 時辰
+     */
+    private getTimePeriod(date: Date): EarthlyBranch {
+        const time = dayjs(date).format('HH:mm');
+        for (const earthlyBranch of this.EARTHLY_BRANCHES) {
+            if (time.match(this.genTimeRegExp(earthlyBranch))) {
+                return earthlyBranch;
+            }
+        }
+        console.error('無法取得時辰。')
+        throw new Error('無法取得時辰。');
+    }
+
+    /**
+     * 依據想要的時辰，產生相應時辰的RegExp
+     * @param 地支
+     */
+    private genTimeRegExp(earthlyBranch: EarthlyBranch): RegExp {
+        let regExp: RegExp;
+        switch(earthlyBranch) {
+            case '子':
+                regExp = /(23|00):\d{2}/;
+                break;
+            case '丑':
+                regExp = /(01|02):\d{2}/;
+                break;
+            case '寅':
+                regExp = /(03|04):\d{2}/;
+                break;
+            case '卯':
+                regExp = /(05|06):\d{2}/;
+                break;
+            case '辰':
+                regExp = /(07|08):\d{2}/;
+                break;
+            case '巳':
+                regExp = /(09|10):\d{2}/;
+                break;
+            case '午':
+                regExp = /(11|12):\d{2}/;
+                break;
+            case '未':
+                regExp = /(13|14):\d{2}/;
+                break;
+            case '申':
+                regExp = /(15|16):\d{2}/;
+                break;
+            case '酉':
+                regExp = /(17|18):\d{2}/;
+                break;
+            case '戌':
+                regExp = /(19|20):\d{2}/;
+                break;
+            case '亥':
+                regExp = /(21|22):\d{2}/;
                 break;
         }
+        return regExp!;
     }
 
     /**
