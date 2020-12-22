@@ -24,8 +24,13 @@ export default [
         typescript: require('typescript'),
         useTsconfigDeclarationDir: true
     }),
-      nodeResolve(),
-      commonjs({transformMixedEsModules: true}),
+    nodeResolve({
+      moduleDirectories: ['node_modules', 'node_modules/lunar-calendar-zh', 'node_modules/dayjs'],
+    }),
+    commonjs({
+      transformMixedEsModules: true,
+      include: 'node_modules/**',
+    }),
       // 跟下面的差別就是少了terser()。若有異動上述功能要記得兩邊一起改
     ],
   },
@@ -49,9 +54,14 @@ export default [
         typescript: require('typescript'),
         useTsconfigDeclarationDir: true
     }),
-      nodeResolve(),
-      commonjs({transformMixedEsModules: true}),
-      terser(), // 若要測試一起打包lunar-Calender-zh的話，則先註解此段
+    nodeResolve({
+      moduleDirectories: ['node_modules', 'node_modules/lunar-calendar-zh', 'node_modules/dayjs'],
+    }),
+    commonjs({
+      transformMixedEsModules: true,
+      include: 'node_modules/**',
+    }),
+    terser(),
     ],
   },
   

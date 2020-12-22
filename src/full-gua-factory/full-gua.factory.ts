@@ -3,7 +3,7 @@ import {
     HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao, LunarDate
 } from '../gua.interface';
 import { FullGua } from './full-gua';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 // tslint:disable-next-line: no-var-requires
 const lunarCalendar = require('lunar-calendar-zh');
