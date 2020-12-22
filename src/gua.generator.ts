@@ -1,4 +1,4 @@
-import { Gua, GuaConfiguration, Yao } from './gua.interface';
+import { Gua, GuaConfiguration, Yao, GuaResult } from './gua.interface';
 import { FullGuaFactory, FullGua } from './full-gua-factory';
 
 /**
@@ -87,17 +87,35 @@ export class GuaGenerator {
    * @param date 日期 (六獸、空亡…等)
    * @return svg 純文字內容
    */
-  buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date): {fullGua: FullGua, svg: string} {
+  buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date): GuaResult {
     const fullGua = this.fullGuaFactory.create(up, down, mutual, date);
-    const svg = `<!-- Created By Hexagrams-SVG-Generator -->\n` +
-                `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
-                `<defs><style type="text/css">
-                @import url('https://fonts.google.com/specimen/Roboto+Condensed?selection.family=Roboto+Condensed');
-                </style></defs>` +
-                `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
-                `${this.drawFullGua(fullGua, date)}</svg>`;
-    return { fullGua, svg };
+    return { fullGua, svg: this.createSvg(fullGua, date) };
   }
+
+  /**
+   * 產生命卦
+   * @param date 日期
+   */
+  buildFateGua(date: Date): GuaResult {
+    const fullGua = this.fullGuaFactory.createFateGua(date);
+    return { fullGua, svg: this.createSvg(fullGua, date) };
+  }
+
+  /**
+   * 產生SVG外層骨架
+   * @param fullGua 全卦
+   * @param date 日期
+   */
+  private createSvg(fullGua: FullGua, date?: Date): string {
+    return `<!-- Created By Hexagrams-SVG-Generator -->\n` +
+           `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
+           `<defs><style type="text/css">
+              @import url('https://fonts.google.com/specimen/Roboto+Condensed?selection.family=Roboto+Condensed');
+            </style></defs>` +
+           `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
+           `${this.drawFullGua(fullGua, date)}</svg>`;
+  }
+
 
   /**
    * step 1: 繪製全卦

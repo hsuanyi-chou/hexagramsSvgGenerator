@@ -1,3 +1,5 @@
+import { FullGua } from "./full-gua-factory";
+
 export type Gua = '天' | '澤' | '火' | '雷' | '風' | '水' | '山' | '地';
 
 export type Elements = '金' | '木' | '水' | '火' | '土';
@@ -79,4 +81,9 @@ export interface LunarDate {
     lunarLeapMonth: number;
     solarFestival: any;
     lunarFestival: any;
+}
+
+export interface GuaResult {
+    fullGua: FullGua;
+    svg: string
 }
