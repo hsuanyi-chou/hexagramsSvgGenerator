@@ -276,14 +276,14 @@ export class GuaGenerator {
     const COMMON_CONFIG = {color: this.config.SIDE_INFO_COLOR, fontSize: this.YAO_FONT_SIZE, y: this.TITLE_TOP_Y};
     if (date) {
       leftSideX += 50;
-      text += this.genTitleTextComponent({id:'side_date', text:`占期：${fullGua.getChineseLunarDate()}`, x: leftSideX,  ...COMMON_CONFIG});
+      text += this.genTitleTextComponent({id: 'side_date', text:`占期：${fullGua.getChineseLunarDate()}`, x: leftSideX,  ...COMMON_CONFIG});
       count++;
       voidText = `空：${fullGua.void.join('、')}`;
     }
     text += this.genTitleTextComponent({id:'side_gung', text:`宮：${fullGua.gung.name}︵${fullGua.gung.element}︶   ${voidText}`,
             x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
     count++;
-    text += this.genTitleTextComponent({id:'side_gua_name', text:`卦名：${fullGua.name}︵${fullGua.description}︶`,
+    text += this.genTitleTextComponent({id: 'side_gua_name', text:`卦名：${fullGua.name}︵${fullGua.description}︶`,
             x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
     count++;
     return text;
