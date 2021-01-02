@@ -13,7 +13,6 @@ export class FullGua implements IFullGua {
 
     solarDate = ''; // 國曆日期
     lunarDate = ''; // 農曆數字日期
-    lunarChineseDate = ''; // 農曆中文數字日期
     timePeriod = ''; // 時辰
     lunarYear = ''; // 年干支
     lunarMonth = ''; // 月干支

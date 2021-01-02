@@ -1,6 +1,6 @@
 {
   "name": "Hexagrams-SVG-Generator",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "易經64卦SVG產生器",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -57,6 +57,6 @@
   ],
   "dependencies": {
     "dayjs": "^1.9.7",
-    "lunar-calendar-zh": "^0.1.4"
+    "solarlunar": "^2.0.7"
   }
 }

@@ -25,7 +25,7 @@ export default [
         useTsconfigDeclarationDir: true
     }),
     nodeResolve({
-      moduleDirectories: ['node_modules', 'node_modules/lunar-calendar-zh', 'node_modules/dayjs'],
+      moduleDirectories: ['node_modules', 'node_modules/dayjs', 'node_modules/solarlunar'],
     }),
     commonjs({
       transformMixedEsModules: true,
@@ -55,7 +55,7 @@ export default [
         useTsconfigDeclarationDir: true
     }),
     nodeResolve({
-      moduleDirectories: ['node_modules', 'node_modules/lunar-calendar-zh', 'node_modules/dayjs'],
+      moduleDirectories: ['node_modules', 'node_modules/dayjs', 'node_modules/solarlunar'],
     }),
     commonjs({
       transformMixedEsModules: true,

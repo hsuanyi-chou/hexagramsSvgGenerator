@@ -66,22 +66,27 @@ export interface GuaConfiguration {
     SIDE_INFO_COLOR: string; // 側邊資訊處顏色
 }
 
-export interface LunarDate {
-    zodiac: string;                     // 生肖
-    GanZhiYear: string;                 // 干支年
-    GanZhiMonth: string;                // 千支月
-    GanZhiDay: string;                  // 干支日
-    worktime: number;                   // 0: 無特殊安排；1: 工作；2: 放假
-    term: string | undefined;           // 24節氣
-    lunarYear: number;                  // 農曆年(數字)。(有閏月情況: 1~13；如目前閏九月，10表示閏9月，11表示10月)
-    lunarMonth: number;                 // 農曆月(數字)
-    lunarDay: number;                   // 農曆日(數字)
-    lunarMonthName: string;             // 農曆月(中文)
-    lunarDayName: string;               // 農曆日(中文)
-    lunarLeapMonth: number;             // 農曆閏月所在月份，0表示無閏月
-    solarFestival: string | undefined;  // 國曆節假日
-    lunarFestival: string | undefined;  // 辰曆節假日
-}
+export interface SolarLunarData {
+    lYear: number,      // 農曆年(數字)
+    lMonth: number,     // 農曆月(數字)
+    lDay: number,       // 農曆日(數字)
+    animal: string,     // 生肖
+    yearCn: string,     // 西元年(中文)
+    monthCn: string,    // 農曆月(中文)
+    dayCn: string,      // 農曆日(中文)
+    cYear: number,      // 國曆年(數字)
+    cMonth: number,     // 國曆月(數字)
+    cDay: number,       // 國曆日(數字)
+    gzYear: string,     // 干支年
+    gzMonth: string,    // 千支月
+    gzDay: string,      // 干支日
+    isToday: boolean,   // 是否今日
+    isLeap: boolean,    // 是否有閏月
+    nWeek: number,      // 星期(數字)
+    ncWeek: string,     // 星期(國字)
+    isTerm: boolean,    // 是否有24節氣
+    term: string,       // 24節氣
+};
 
 export interface GuaResult {
     fullGua: FullGua;
