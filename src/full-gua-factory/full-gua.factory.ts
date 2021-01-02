@@ -1061,6 +1061,7 @@ export class FullGuaFactory {
     private transMonthToDigit(month: string): number {
         let digit = 0;
         switch(month) {
+            case '正月':
             case '一月':
             case '閏一月':
                 digit = 1;
