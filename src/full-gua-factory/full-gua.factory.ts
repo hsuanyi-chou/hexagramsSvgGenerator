@@ -455,7 +455,12 @@ export class FullGuaFactory {
         fullGua.lunarDay = fullDate.fullDate.GanZhiDay;
         fullGua.lunarChineseDate = fullDate.lunarChineseDate;
         if (fullDate.fullDate.term) {
-            fullGua.addHint(`今日屬24節氣「${fullDate.fullDate.term}」，請注意占卦時間是否於節氣轉換之後。若是，則月令須調整為下一月份。如: 2021/5/5(三)，立夏，節氣轉換時間=14:48。14:48以前用辰月；以後用巳月`);
+            const solarTermHint = `今日屬24節氣「${fullDate.fullDate.term}」，請注意占卦時間是否於節氣轉換之後。`;
+            if (fullDate.fullDate.term === '立春') {
+                fullGua.addHint(`${solarTermHint}若是，則年、月令須調整為下一年、月份。如: 2021/2/3(三)，立春，節氣轉換時間=23:00。23:00以前：生肖屬鼠(子)、時間用子年丑月；以後生肖屬牛(丑)、時間用丑年寅月`);
+            } else {
+                fullGua.addHint(`${solarTermHint}若是，則月令須調整為下一月份。如: 2021/5/5(三)，立夏，節氣轉換時間=14:48。14:48以前用辰月；以後用巳月`);
+            }
         }
         fullGua.timePeriod = this.getTimePeriod(date);
         fullGua.void = this.calculateVoid(fullDate.fullDate.GanZhiDay.charAt(0) as HeavenlyStem, fullDate.fullDate.GanZhiDay.charAt(1) as EarthlyBranch);
