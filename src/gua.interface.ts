@@ -67,20 +67,20 @@ export interface GuaConfiguration {
 }
 
 export interface LunarDate {
-    zodiac: string;
-    GanZhiYear: 'string;
-    GanZhiMonth: string;
-    GanZhiDay: 'string;
-    worktime: number;
-    term: any;
-    lunarYear: number;
-    lunarMonth: number;
-    lunarDay: number;
-    lunarMonthName: string;
-    lunarDayName: string;
-    lunarLeapMonth: number;
-    solarFestival: any;
-    lunarFestival: any;
+    zodiac: string;                     // 生肖
+    GanZhiYear: string;                 // 干支年
+    GanZhiMonth: string;                // 千支月
+    GanZhiDay: string;                  // 干支日
+    worktime: number;                   // 0: 無特殊安排；1: 工作；2: 放假
+    term: string | undefined;           // 24節氣
+    lunarYear: number;                  // 農曆年(數字)。(有閏月情況: 1~13；如目前閏九月，10表示閏9月，11表示10月)
+    lunarMonth: number;                 // 農曆月(數字)
+    lunarDay: number;                   // 農曆日(數字)
+    lunarMonthName: string;             // 農曆月(中文)
+    lunarDayName: string;               // 農曆日(中文)
+    lunarLeapMonth: number;             // 農曆閏月所在月份，0表示無閏月
+    solarFestival: string | undefined;  // 國曆節假日
+    lunarFestival: string | undefined;  // 辰曆節假日
 }
 
 export interface GuaResult {
