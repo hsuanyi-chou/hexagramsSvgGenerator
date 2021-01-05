@@ -39,8 +39,8 @@ function transToWord(digit: number): Gua {
 export class GuaGenerator {
   private readonly fullGuaFactory = new FullGuaFactory();
   private config: GuaConfiguration = {
-    WIDTH: 650, // 圖片寬度
-    HEIGHT: 580, // 圖片長度
+    WIDTH: 600, // 圖片寬度
+    HEIGHT: 625, // 圖片長度
     YAO_COLOR: '#000', // 爻顏色
     YAO_BOLD: 15, // 爻的粗度
     YAO_GAP: 40, // 每一爻的間距
