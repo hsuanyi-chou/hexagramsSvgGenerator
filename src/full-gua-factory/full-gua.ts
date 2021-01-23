@@ -1,5 +1,6 @@
 import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch } from '../gua.interface';
 export class FullGua implements IFullGua {
+    originalName!: string; // 原本卦名(用來取得經文內容用)
     name!: string; // 卦名
     description!: string; // 四字偈-描述
     yao: Yao[] = []; // 六爻
@@ -23,6 +24,7 @@ export class FullGua implements IFullGua {
         hidden?: Yao[], hint?: string[]) {
 
         this.name = name;
+        this.originalName = name;
         this.description = description;
         this.yao = yao;
         this.HeavenlyStems = heavenlyStems;

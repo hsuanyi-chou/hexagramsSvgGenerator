@@ -32,6 +32,7 @@ export interface Gung {
     element: Elements;
 }
 export interface IFullGua {
+    originalName: string // 原本卦名(用來取得經文內容用)
     name: string; // 卦名
     description: string; // 四字卦辭
     yao: Yao[];  // 六爻 - 地支、六親
