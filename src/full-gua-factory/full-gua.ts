@@ -1,4 +1,4 @@
-import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch } from '../gua.interface';
+import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture } from '../gua.interface';
 export class FullGua implements IFullGua {
     originalName!: string; // 原本卦名(用來取得經文內容用)
     name!: string; // 卦名
@@ -10,7 +10,8 @@ export class FullGua implements IFullGua {
 
     mutual: Yao[] = []; // 動爻
 
-    hint: string[] = []; // 提示
+    hints: string[] = []; // 提示
+    scriptures: Scripture[] = []; // 經書內容
 
     solarDate = ''; // 國曆日期
     lunarDate = ''; // 農曆數字日期
@@ -21,7 +22,7 @@ export class FullGua implements IFullGua {
     void: EarthlyBranch[] = []; // 空亡
 
     constructor(name: string, description: string, yao: Yao[], heavenlyStems: HeavenlyStems, gung: Gung,
-        hidden?: Yao[], hint?: string[]) {
+        hidden?: Yao[], hints?: string[]) {
 
         this.name = name;
         this.originalName = name;
@@ -34,8 +35,8 @@ export class FullGua implements IFullGua {
             this.hidden = [...hidden];
         }
 
-        if (hint) {
-            this.hint = [...hint];
+        if (hints) {
+            this.hints = [...hints];
         }
     }
 
@@ -44,7 +45,11 @@ export class FullGua implements IFullGua {
      * @param hint 註譯
      */
     addHint(hint: string): void {
-        this.hint.push(hint);
+        this.hints.push(hint);
+    }
+
+    addScripture(scripture: Scripture): void {
+        this.scriptures.push(scripture);
     }
 
     /**

@@ -39,7 +39,13 @@ export interface IFullGua {
     hidden: Yao[]; // 伏藏
     HeavenlyStems: HeavenlyStems // 天干、世應位置
     gung: Gung; // 宮
-    hint?: string[]; // 提示
+    hints?: string[]; // 提示
+    scriptures?: Scripture[]; // 經書內容
+}
+
+export interface Scripture {
+    title: string; // 書名
+    content: string; // 內容
 }
 
 export interface ShihYingPosition {

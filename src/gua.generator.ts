@@ -89,7 +89,7 @@ export class GuaGenerator {
    */
   buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date): GuaResult {
     const fullGua = this.fullGuaFactory.create(up, down, mutual, date);
-    this.addHintFromScripture(fullGua, mutual!);
+    this.addScriptures(fullGua, mutual!);
     return { fullGua, svg: this.createSvg(fullGua, date) };
   }
 
@@ -99,7 +99,7 @@ export class GuaGenerator {
    */
   buildFateGua(date: Date): GuaResult {
     const fullGua = this.fullGuaFactory.createFateGua(date);
-    this.addHintFromScripture(fullGua, fullGua.mutual.map(m => m.position));
+    this.addScriptures(fullGua, fullGua.mutual.map(m => m.position));
     return { fullGua, svg: this.createSvg(fullGua, date) };
   }
 
@@ -296,39 +296,39 @@ export class GuaGenerator {
    * @param fullGua 卦
    * @param mutual 動爻
    */
-  private addHintFromScripture(fullGua: FullGua, mutual: number[]) {
+  private addScriptures(fullGua: FullGua, mutual: number[]) {
     const guaWord = guaWords.find(g => g.guaIndex === fullGua.originalName);
 
     if (guaWord) {
-      fullGua.addHint(`釋：${guaWord.mean}`);
+      fullGua.addScripture({title: '釋', content: guaWord.mean});
       if (mutual && mutual.length !== 0) {
         mutual.forEach(m => {
           switch(m) {
             case 1:
-              fullGua.addHint(`初爻：${guaWord.one}`);
+              fullGua.addScripture({title: '初爻', content: guaWord.one});
               break;
             case 2:
-              fullGua.addHint(`二爻：${guaWord.two}`);
+              fullGua.addScripture({title: '二爻', content: guaWord.two});
               break;
             case 3:
-              fullGua.addHint(`三爻：${guaWord.three}`);
+              fullGua.addScripture({title: '三爻', content: guaWord.three});
               break;
             case 4:
-              fullGua.addHint(`四爻：${guaWord.four}`);
+              fullGua.addScripture({title: '四爻', content: guaWord.four});
               break;
             case 5:
-              fullGua.addHint(`五爻：${guaWord.five}`);
+              fullGua.addScripture({title: '五爻', content: guaWord.five});
               break;
             case 6:
-              fullGua.addHint(`上爻：${guaWord.six}`);
+              fullGua.addScripture({title: '上爻', content: guaWord.six});
               break;
           }
         });
       }
-      fullGua.addHint(`五路財神經：${guaWord.fiveMoney}`);
-      fullGua.addHint(`稽首七十二天師加持世界和平共轉法輪寶誥：${guaWord.seventyTwoGod.join('')}`);
-      fullGua.addHint(`序卦傳：${guaWord.serialGua}`);
-      fullGua.addHint(`唯心用易歌訣：${guaWord.heartSong}`);
+      fullGua.addScripture({title: '五路財神經', content: guaWord.fiveMoney});
+      fullGua.addScripture({title: '稽首七十二天師加持世界和平共轉法輪寶誥', content: guaWord.seventyTwoGod.join('')});
+      fullGua.addScripture({title: '序卦傳', content: guaWord.serialGua});
+      fullGua.addScripture({title: '唯心用易歌訣', content: guaWord.heartSong});
     }
   }
 
