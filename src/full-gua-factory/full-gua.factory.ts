@@ -1064,6 +1064,9 @@ export class FullGuaFactory {
     private transDigitToGua(digit: number): Gua {
         let gua: Gua = '天';
         switch (digit) {
+            case 0:
+                gua = '地';
+                break;
             case 1:
                 gua = '天';
                 break;
@@ -1084,9 +1087,6 @@ export class FullGuaFactory {
                 break;
             case 7:
                 gua = '山';
-                break;
-            case 8:
-                gua = '地';
                 break;
         }
         return gua;
