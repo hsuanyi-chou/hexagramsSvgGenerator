@@ -103,7 +103,7 @@ export class FullGuaFactory {
                 } else if (down === '雷') {
                     fullGua = new FullGua('澤雷隨', '推車靠崖', this.genSixYao(down, up, this.getGungElement('震')),
                         this.genHeavenlyStems(down, up), this.genGung('震'),
-                        [{ earthlyBranch: '午', relative: '父母', position: 4 }], this.returnHint);
+                        [{ earthlyBranch: '午', relative: '子孫', position: 4 }], this.returnHint);
                 } else if (down === '風') {
                     fullGua = new FullGua('澤風大過', '夜夢金銀', this.genSixYao(down, up, this.getGungElement('震')),
                         this.genHeavenlyStems(down, up), this.genGung('震'),
