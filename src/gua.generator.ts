@@ -51,12 +51,13 @@ export class GuaGenerator {
     DOWN_FIRST_YAO: 290, // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
 
     FONT_FAMILY: `Roboto, Helvetica, Arial, sans-serif`, // 文字字型
-    EARTHLY_BRANCH_COLOR: '#dbaa23', // 地支顏色
-    HEAVENLY_STEM_COLOR: '#4b7ee3', // 天干顏色
-    MUTUAL: '#000', // 動爻顏色
-    HIDDEN_COLOR: '#000', // 伏藏顏色
-    SHIH_YING_COLOR: '#729C62', // 世應顏色
-    SIDE_INFO_COLOR: '#595b83', // 側邊資訊顏色
+    EARTHLY_BRANCH_COLOR: '#7f5618', // 本卦顏色(地支)
+    HEAVENLY_STEM_COLOR: '#4b7ee3', // 天干顏色 (暫未使用，與世應同色)
+    MUTUAL_COLOR: '#2265f3', // 變爻顏色
+    HIDDEN_COLOR: '#6f6f6f', // 伏藏顏色
+    MONSTER_COLOR: '#00747b', // 六獸顏色
+    SHIH_YING_COLOR: '#276c11', // 世應顏色
+    SIDE_INFO_COLOR: '#484a6d', // 側邊資訊顏色
   };
 
   private readonly TITLE_TOP_Y = 10; // 標題上方的高度
@@ -129,9 +130,9 @@ export class GuaGenerator {
     gua += this.drawSixYao(fullGua.yao, this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
     gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - this.TEXT_LENGTH);
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', '#BBBBBB', this.YAO_X_POSITION - (this.TEXT_LENGTH * 3 + this.HIDDEN_SPACE));
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', '#548ce8', this.YAO_X_POSITION - this.TEXT_LENGTH * 2);
-    gua += this.drawMonsters(fullGua.yao);
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', this.config.HIDDEN_COLOR, this.YAO_X_POSITION - (this.TEXT_LENGTH * 3 + this.HIDDEN_SPACE));
+    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', this.config.MUTUAL_COLOR, this.YAO_X_POSITION - this.TEXT_LENGTH * 2);
+    gua += this.drawMonsters(fullGua.yao, this.config.MONSTER_COLOR);
     gua += this.drawMutual(fullGua.yao, fullGua.mutual);
     gua += this.drawVoid(fullGua);
     gua += this.drawSideInfo(fullGua, date);
@@ -194,13 +195,12 @@ export class GuaGenerator {
    * step 3: 繪製六獸
    * @param 六獸
    */
-  private drawMonsters(yaos: Yao[]): string {
+  private drawMonsters(yaos: Yao[], color: string): string {
     if (!yaos[0].monster) {
       return '';
     }
 
     const x = this.YAO_X_POSITION + 105;
-    const color = '#22a6b3';
 
     let text = this.genTitleTextComponent({
       id: 'monster',
@@ -374,7 +374,6 @@ export class GuaGenerator {
    * @param color 顏色
    * @param titleX title X 軸
    * @param yaoX 爻X軸
-   * @param isGua 是否本卦，預設false (因本卦的六親、六獸會卡在六爻棒棒之間)
    * @return 繪製出來的svg
    */
   private drawRelativesAndEarthlyBranches(yaos: Yao[], id: string, titleText: string, color: string, x: number) {
