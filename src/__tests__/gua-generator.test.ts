@@ -46,6 +46,9 @@ test('時間取卦，傳入帶:的時間', () => {
 test('時間取卦(時分秒)', () => {
   const time = '134521';
   const res = GUA_GENERATOR.buildGuaByTime(time);
+  const expectedDate = new Date(new Date().setHours(13, 45, 21)).toLocaleString('zh-TW');
+
+  expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe(expectedDate);
   expect(res.fullGua.name).toBe('坤為地之豫');
 });
 
@@ -53,6 +56,7 @@ test('時間取卦(年月日時分秒)', () => {
   const time = '20220226134521';
   const res = GUA_GENERATOR.buildGuaByTime(time);
 
+  expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe('2022/2/26 下午1:45:21');
   expect(res.fullGua.getChineseLunarDate()).toBe('壬寅 年 壬寅 月 庚戌 日 未 時')
   expect(res.fullGua.name).toBe('坤為地之豫');
 });
@@ -60,7 +64,15 @@ test('時間取卦(年月日時分秒)', () => {
 test('時間取卦(年月日時分秒)，當時分秒有0時，轉換數字會變成單一的0', () => {
   const time = '19900625120000';
   const res = GUA_GENERATOR.buildGuaByTime(time);
-
+  expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe('1990/6/25 下午12:00:00');
   expect(res.fullGua.getChineseLunarDate()).toBe('庚午 年 壬午 月 辛酉 日 午 時')
   expect(res.fullGua.name).toBe('地火明夷之復');
+});
+
+test('時間取卦(年月日時分秒)，當整除0時，會傳入動0爻', () => {
+  const time = '20220124170301';
+  const res = GUA_GENERATOR.buildGuaByTime(time);
+  expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe('2022/1/24 下午5:03:01');
+  expect(res.fullGua.getChineseLunarDate()).toBe('辛丑 年 辛丑 月 丁丑 日 酉 時')
+  expect(res.fullGua.name).toBe('雷地豫之晉');
 });

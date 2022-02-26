@@ -143,7 +143,7 @@ export class GuaGenerator {
     return {
       up: this.fullGuaFactory.transDigitToGua(upCounts % 8),
       down: this.fullGuaFactory.transDigitToGua(downCounts % 8),
-      mutual: [(downCounts + upCounts) % 6]
+      mutual: [(downCounts + upCounts) % 6 || 6] // 當整除為0時，實為動六爻，用JS語法糖直接轉成6 (0轉型false，故變6)
     };
   }
 
