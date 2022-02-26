@@ -120,7 +120,7 @@ export class GuaGenerator {
             .set('year', year).set('month', month - 1).set('date', day)
             .set('hour', HH).set('minute', mm).set('second', ss);
 
-        const basic = this.genGuaBasisByTime(`${HH}${mm}${ss}`);
+        const basic = this.genGuaBasisByTime(time.substring(8));
         return this.buildGua(basic.up, basic.down, basic.mutual, buildTime.toDate());
       default:
         throw new Error('傳入時間錯誤！僅支援6碼時分秒(HHmmss)或年月日時分秒(YYYYMMDDHHmmss)');

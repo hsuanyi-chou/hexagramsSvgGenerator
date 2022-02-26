@@ -56,3 +56,11 @@ test('時間取卦(年月日時分秒)', () => {
   expect(res.fullGua.getChineseLunarDate()).toBe('壬寅 年 壬寅 月 庚戌 日 未 時')
   expect(res.fullGua.name).toBe('坤為地之豫');
 });
+
+test('時間取卦(年月日時分秒)，當時分秒有0時，轉換數字會變成單一的0', () => {
+  const time = '19900625120000';
+  const res = GUA_GENERATOR.buildGuaByTime(time);
+
+  expect(res.fullGua.getChineseLunarDate()).toBe('庚午 年 壬午 月 辛酉 日 午 時')
+  expect(res.fullGua.name).toBe('地火明夷之復');
+});
