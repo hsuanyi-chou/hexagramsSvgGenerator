@@ -1,30 +1,19 @@
 import GuaGenerator from '../index';
 
-test('GuaGenerator.buildGua()', () => {
-  const guaGenerator = new GuaGenerator();
+let GUA_GENERATOR: GuaGenerator;
+beforeAll(() => GUA_GENERATOR = new GuaGenerator());
 
-  expect(guaGenerator.buildGua('火', '天')).toBe(`<!-- Created By Hexagrams-SVG-Generator -->
-            <svg width="290" height="250" xmlns="http://www.w3.org/2000/svg">
-            <g>
-                <title>background</title>
-                <rect fill="#ffffff" id="GUA" height="252" width="292" y="-1" x="-1"/>
-            </g><g>
-            <title>Layer 1</title>
-<line stroke="#000" id="down_1" x1="130" y1="227" x2="230" y2="227" stroke-width="15" fill="none"/>
-<line stroke="#000" id="down_2" x1="130" y1="187" x2="230" y2="187" stroke-width="15" fill="none"/>
-<line stroke="#000" id="down_3" x1="130" y1="147" x2="230" y2="147" stroke-width="15" fill="none"/>
-<line stroke="#000" id="up_0" x1="130" y1="106" x2="230" y2="106" stroke-width="15" fill="none"/>
-<line stroke="#000" id="up_1-1" x1="130" y1="66" x2="170" y2="66" stroke-width="15" fill="none"/>
-                <line stroke="#000" id="up_1-2" x1="190" y1="66" x2="230" y2="66" stroke-width="15" fill="none"/>
-<line stroke="#000" id="up_2" x1="130" y1="26" x2="230" y2="26" stroke-width="15" fill="none"/>
+test('產生命卦', () => {
+  const date = new Date('2021-05-27T11:20:00.000');
 
-</g>
-</svg>`);
+  const res = GUA_GENERATOR.buildFateGua(date);
+  expect(res.fullGua.void).toEqual(['申', '酉']);
+  expect(res.fullGua.name).toBe('地雷復之坤');
 });
 
-// test('GuaGenerator.drawEarthlyBranches()', () => {
-//   const guaGenerator = new GuaGenerator();
-//   // tslint:disable-next-line: no-string-literal
-//   const res = guaGenerator['drawEarthlyBranches']();
-//   expect(res).toBe('');
-// });
+test('產生卦象', () => {
+  const date = new Date('1990-06-25T11:20:00.000');
+  const res = GUA_GENERATOR.buildGua('火', '風', [1], date);
+  expect(res.fullGua.void).toEqual(['子', '丑']);
+  expect(res.fullGua.name).toBe('火風鼎之大有');
+});
