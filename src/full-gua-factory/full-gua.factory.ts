@@ -1,6 +1,6 @@
 import {
     Gua, EarthlyBranch, Elements, Relative, SolarLunarData,
-    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao, 
+    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao,
 } from '../gua.interface';
 import { FullGua } from './full-gua';
 import dayjs from 'dayjs';
@@ -368,6 +368,8 @@ export class FullGuaFactory {
         if (mutual && mutual.length !== 0) {
             this.genMutual(up, down, mutual, fullGua);
         }
+
+        fullGua.addGenGuaBase({ up, down, date, mutual: mutual || [] });
         if (date) {
             this.genDate(fullGua, date);
             this.genMonster(fullGua);
@@ -444,7 +446,6 @@ export class FullGuaFactory {
      * @param date 國曆日期
      */
     private genDate(fullGua: FullGua, date: Date): void {
-        fullGua.inputDate = date;
         const fullDate = FullGuaFactory.transLunarDate(FullGuaFactory.transDateAfter2300(date));
         fullGua.solarDate = fullDate.solarDate;
         fullGua.lunarDate = fullDate.lunarDate;

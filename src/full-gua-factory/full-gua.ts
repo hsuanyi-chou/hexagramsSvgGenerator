@@ -1,5 +1,6 @@
-import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture } from '../gua.interface';
+import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture, GenGuaBase } from '../gua.interface';
 export class FullGua implements IFullGua {
+    genGuaBase!: GenGuaBase;
     originalName!: string; // 原本卦名(用來取得經文內容用)
     name!: string; // 卦名
     description!: string; // 四字偈-描述
@@ -7,7 +8,6 @@ export class FullGua implements IFullGua {
     hidden: Yao[] = []; // 伏藏
     HeavenlyStems!: HeavenlyStems; // 天干
     gung!: Gung; // 宮
-    inputDate?: Date; // 傳入時間 (產卦時傳入的時間，以利之後確認時間是否有問題)
 
     mutual: Yao[] = []; // 動爻
 
@@ -24,7 +24,6 @@ export class FullGua implements IFullGua {
 
     constructor(name: string, description: string, yao: Yao[], heavenlyStems: HeavenlyStems, gung: Gung,
         hidden?: Yao[], hints?: string[]) {
-
         this.name = name;
         this.originalName = name;
         this.description = description;
@@ -51,6 +50,14 @@ export class FullGua implements IFullGua {
 
     addScripture(scripture: Scripture): void {
         this.scriptures.push(scripture);
+    }
+
+    /**
+     * 增加產卦基本資料
+     * @param base
+     */
+    addGenGuaBase(base: GenGuaBase) {
+        this.genGuaBase = base;
     }
 
     /**

@@ -31,6 +31,15 @@ export interface Gung {
     name: GungName;
     element: Elements;
 }
+
+// 產出此卦的基本傳入資料，供之後確認時間是否有問題
+export interface GenGuaBase {
+    up: Gua,
+    down: Gua,
+    date: Date | undefined,
+    mutual: number[]
+}
+
 export interface IFullGua {
     originalName: string // 原本卦名(用來取得經文內容用)
     name: string; // 卦名
@@ -41,7 +50,7 @@ export interface IFullGua {
     gung: Gung; // 宮
     hints?: string[]; // 提示
     scriptures?: Scripture[]; // 經書內容
-    inputDate?: Date; // 傳入時間 (產卦時傳入的時間，以利之後確認時間是否有問題)
+    genGuaBase: GenGuaBase; // 產出此卦的基本傳入資料，供之後確認時間是否有問題
 }
 
 export interface Scripture {
