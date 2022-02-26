@@ -1,39 +1,14 @@
 import { Gua, GuaConfiguration, Yao, GuaResult } from './gua.interface';
 import { FullGuaFactory, FullGua, guaWords } from './full-gua-factory';
+import dayjs from 'dayjs';
 
-/**
- * 把數字轉成卦，目前未用到。先留著
- * @param digit 數字1~8
- */
-function transToWord(digit: number): Gua {
-  let word = '';
-  switch (digit) {
-    case 1:
-      word = '天';
-      break;
-    case 2:
-      word = '澤';
-      break;
-    case 3:
-      word = '火';
-      break;
-    case 4:
-      word = '雷';
-      break;
-    case 5:
-      word = '風';
-      break;
-    case 6:
-      word = '水';
-      break;
-    case 7:
-      word = '山';
-      break;
-    case 8:
-      word = '地';
-      break;
-  }
-  return word as Gua;
+enum REGEXP_TIME_PATTERN {
+  YEAR = 1,
+  MONTH = 2,
+  DAY = 3,
+  HOUR = 4,
+  MINUTE = 5,
+  SECOND = 6,
 }
 
 export class GuaGenerator {
@@ -105,6 +80,74 @@ export class GuaGenerator {
   }
 
   /**
+   * 時間取卦( 6碼時分秒(HH:mm:ss)或年月日時分秒(YYYYMMDDHHmmss) )
+   * 1. 傳入時間以24H制
+   * 2. 若僅傳入6碼，則作為(HH:mm:ss)，自動補上當天日期
+   * 3.
+   * 2. 前3碼為下卦；後3碼為上卦；全部加起來為動爻
+   * @param time
+   */
+  buildGuaByTime(time: string): GuaResult {
+    if (!time.match(/^\d+$/)) {
+      throw new Error('僅能傳入純數字時間');
+    }
+
+    switch (time.length) {
+      case 6:
+        const basis = this.genGuaBasisByTime(time);
+
+        const today = dayjs()
+            .set('hour', parseInt(time.substring(0, 2), 10))
+            .set('minute', parseInt(time.substring(2, 4), 10))
+            .set('seconds', parseInt(time.substring(4, 6), 10));
+        return this.buildGua(basis.up, basis.down, basis.mutual, today.toDate());
+      case 14:
+        const pattern = new RegExp(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/);
+        const matched = pattern.exec(time)
+        if (!matched) {
+          throw new Error('14碼日期錯誤!')
+        }
+
+        const year = parseInt(matched[REGEXP_TIME_PATTERN.YEAR], 10);
+        const month = parseInt(matched[REGEXP_TIME_PATTERN.MONTH], 10);
+        const day = parseInt(matched[REGEXP_TIME_PATTERN.DAY], 10);
+        const HH = parseInt(matched[REGEXP_TIME_PATTERN.HOUR], 10);
+        const mm = parseInt(matched[REGEXP_TIME_PATTERN.MINUTE], 10);
+        const ss = parseInt(matched[REGEXP_TIME_PATTERN.SECOND], 10);
+
+        // console.log(`${year} ${month} ${day} ${HH} ${mm} ${ss}`);
+        const buildTime = dayjs().locale('zh-TW')
+            .set('year', year).set('month', month - 1).set('date', day)
+            .set('hour', HH).set('minute', mm).set('second', ss);
+
+        const basic = this.genGuaBasisByTime(`${HH}${mm}${ss}`);
+        return this.buildGua(basic.up, basic.down, basic.mutual, buildTime.toDate());
+      default:
+        throw new Error('傳入時間錯誤！僅支援6碼時分秒(HHmmss)或年月日時分秒(YYYYMMDDHHmmss)');
+    }
+
+  }
+
+  /**
+   * 傳入6碼時間，回傳上卦、下卦、動爻
+   * @param time
+   */
+  private genGuaBasisByTime(time: string): {up: Gua, down: Gua, mutual: number[]} {
+    if (!time.match(/^\d{6}$/)) {
+      throw new Error('僅能傳入6碼數字時間');
+    }
+    const timeArray: number[] = time.split('').map(t => parseInt(t, 10));
+    const downCounts = timeArray[0] + timeArray[1] + timeArray[2];
+    const upCounts = timeArray[3] + timeArray[4] + timeArray[5];
+
+    return {
+      up: this.fullGuaFactory.transDigitToGua(upCounts % 8),
+      down: this.fullGuaFactory.transDigitToGua(downCounts % 8),
+      mutual: [(downCounts + upCounts) % 6]
+    };
+  }
+
+  /**
    * 產生SVG外層骨架
    * @param fullGua 全卦
    * @param date 日期
@@ -122,8 +165,8 @@ export class GuaGenerator {
 
   /**
    * step 1: 繪製全卦
-   * @param down 下卦
-   * @param up 上卦
+   * @param fullGua 全卦
+   * @param date 日期
    */
   private drawFullGua(fullGua: FullGua, date?: Date): string {
     let gua = `<g>\n<title>Layer 1</title>\n`;
@@ -142,8 +185,7 @@ export class GuaGenerator {
 
   /**
    * step 2: 繪製天干、世應
-   * @param down 下卦
-   * @param up 上卦
+   * @param fullGua 全卦
    */
   private drawShihYingAndHeavenlyStem(fullGua: FullGua): string {
     let text = '';
@@ -193,7 +235,8 @@ export class GuaGenerator {
 
   /**
    * step 3: 繪製六獸
-   * @param 六獸
+   * @param yaos 爻
+   * @param color 顏色
    */
   private drawMonsters(yaos: Yao[], color: string): string {
     if (!yaos[0].monster) {
@@ -236,9 +279,9 @@ export class GuaGenerator {
     return mutual.map(m => {
       const circleY = this.config.DOWN_FIRST_YAO - (m.position - 1) * this.config.YAO_GAP;
       if (yaos[m.position - 1].isYangYao) {
-        return this.genCircleComponent(`mutual_${m.position}`, circleX, circleY, 11, 'red');
+        return GuaGenerator.genCircleComponent(`mutual_${m.position}`, circleX, circleY, 11, 'red');
       } else {
-        return this.genCrossComponent(crossX, circleY - 10, 'red');
+        return GuaGenerator.genCrossComponent(crossX, circleY - 10, 'red');
       }
     }).join('');
   }
@@ -253,13 +296,13 @@ export class GuaGenerator {
     const color = '#858585';
     let voidCircle = '';
     voidCircle += fullGua.yao.map(y => y.void ? 
-      this.genCircleComponent(`yao_void_${y.position}`, x, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
+      GuaGenerator.genCircleComponent(`yao_void_${y.position}`, x, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
     ).join('');
     voidCircle += fullGua.mutual.map(y => y.void ?
-      this.genCircleComponent(`mutual_void_${y.position}`, x - this.TEXT_LENGTH, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
+      GuaGenerator.genCircleComponent(`mutual_void_${y.position}`, x - this.TEXT_LENGTH, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
       ).join('');
     voidCircle += fullGua.hidden.map(y => y.void ?
-      this.genCircleComponent(`hidden_void_${y.position}`, x - (this.TEXT_LENGTH * 2 + this.HIDDEN_SPACE),
+      GuaGenerator.genCircleComponent(`hidden_void_${y.position}`, x - (this.TEXT_LENGTH * 2 + this.HIDDEN_SPACE),
         this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color): '').join('');
     return voidCircle;
   }
@@ -372,8 +415,7 @@ export class GuaGenerator {
    * @param id id
    * @param titleText 標題文字
    * @param color 顏色
-   * @param titleX title X 軸
-   * @param yaoX 爻X軸
+   * @param x X 軸
    * @return 繪製出來的svg
    */
   private drawRelativesAndEarthlyBranches(yaos: Yao[], id: string, titleText: string, color: string, x: number) {
@@ -424,21 +466,23 @@ export class GuaGenerator {
 
   /**
    * 產生O (陽爻動爻)
-   * @param x 
-   * @param y 
-   * @param color 
+   * @param id id
+   * @param x x軸
+   * @param y y軸
+   * @param r 半徑
+   * @param color 顏色
    */
-  private genCircleComponent(id: string, x: number, y: number, r: number, color: string): string {
+  private static genCircleComponent(id: string, x: number, y: number, r: number, color: string): string {
     return `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="${color}" stroke-width="2" fill-opacity="0" />\n`;
   }
 
   /**
    * 產生X (陰爻動爻)
-   * @param x 
-   * @param y 
-   * @param color 
+   * @param x x軸
+   * @param y y軸
+   * @param color 顏色
    */
-  private genCrossComponent(x: number, y: number, color: string): string {
+  private static genCrossComponent(x: number, y: number, color: string): string {
     return `<line x1="${x}" y1="${y}" x2="${x + 25}" y2="${y + 20}" stroke="${color}" stroke-width="2" /> ` + 
            `<line x1="${x + 25}" y1="${y}" x2="${x}" y2="${y + 20}" stroke="${color}" stroke-width="2" />\n`;
   }

@@ -7,6 +7,7 @@ export class FullGua implements IFullGua {
     hidden: Yao[] = []; // 伏藏
     HeavenlyStems!: HeavenlyStems; // 天干
     gung!: Gung; // 宮
+    inputDate?: Date; // 傳入時間 (產卦時傳入的時間，以利之後確認時間是否有問題)
 
     mutual: Yao[] = []; // 動爻
 

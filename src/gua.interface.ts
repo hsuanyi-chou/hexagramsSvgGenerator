@@ -1,4 +1,4 @@
-import { FullGua } from "./full-gua-factory";
+import { FullGua } from './full-gua-factory';
 
 export type Gua = '天' | '澤' | '火' | '雷' | '風' | '水' | '山' | '地';
 
@@ -41,6 +41,7 @@ export interface IFullGua {
     gung: Gung; // 宮
     hints?: string[]; // 提示
     scriptures?: Scripture[]; // 經書內容
+    inputDate?: Date; // 傳入時間 (產卦時傳入的時間，以利之後確認時間是否有問題)
 }
 
 export interface Scripture {
@@ -94,7 +95,7 @@ export interface SolarLunarData {
     ncWeek: string,     // 星期(國字)
     isTerm: boolean,    // 是否有24節氣
     term: string,       // 24節氣
-};
+}
 
 export interface GuaResult {
     fullGua: FullGua;
