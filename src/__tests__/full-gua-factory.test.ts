@@ -51,13 +51,14 @@ describe('產生命卦', () => {
 describe('產生卦象', ()=> {
    [
        {
-       up: '天' as Gua,
-       down: '天' as Gua,
-       mutual: [1],
-       date: new Date(),
-       expectedResult: {
-           guaName: '乾為天之姤'
-            }
+           up: '天' as Gua,
+           down: '天' as Gua,
+           mutual: [1],
+           date: new Date(),
+           expectedResult: {
+               guaName: '乾為天之姤',
+               gung: '乾',
+           }
        },
        {
            up: '雷' as Gua,
@@ -65,7 +66,8 @@ describe('產生卦象', ()=> {
            mutual: [2],
            date: new Date(),
            expectedResult: {
-               guaName: '雷天大壯之豐'
+               guaName: '雷天大壯之豐',
+               gung: '坤',
            }
        },
    ].forEach(situation => {
@@ -73,6 +75,9 @@ describe('產生卦象', ()=> {
        const res = FULL_GUA_FACTORY.create(up, down, mutual, date);
        test(`輸入:${up}, ${down}, ${mutual}，產生卦象: ${expectedResult.guaName}`, () => {
            expect(res.name).toBe(expectedResult.guaName);
-       })
-   })
+       });
+       test(`卦象: ${expectedResult.guaName}，宮應為${expectedResult.gung}`, () => {
+           expect(res.gung.name).toBe(expectedResult.gung);
+       });
+   });
 });
