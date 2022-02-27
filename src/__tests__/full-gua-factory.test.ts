@@ -1,4 +1,5 @@
 import { FullGuaFactory } from '../full-gua-factory';
+import { Gua } from '../gua.interface';
 
 const FULL_GUA_FACTORY = new FullGuaFactory();
 
@@ -47,3 +48,31 @@ describe('產生命卦', () => {
     })
 });
 
+describe('產生卦象', ()=> {
+   [
+       {
+       up: '天' as Gua,
+       down: '天' as Gua,
+       mutual: [1],
+       date: new Date(),
+       expectedResult: {
+           guaName: '乾為天之姤'
+            }
+       },
+       {
+           up: '雷' as Gua,
+           down: '天' as Gua,
+           mutual: [2],
+           date: new Date(),
+           expectedResult: {
+               guaName: '雷天大壯之豐'
+           }
+       },
+   ].forEach(situation => {
+       const { up, down, mutual, date, expectedResult } = situation;
+       const res = FULL_GUA_FACTORY.create(up, down, mutual, date);
+       test(`輸入:${up}, ${down}, ${mutual}，產生卦象: ${expectedResult.guaName}`, () => {
+           expect(res.name).toBe(expectedResult.guaName);
+       })
+   })
+});
