@@ -384,7 +384,7 @@ export class FullGuaFactory {
      */
     createFateGua(date: Date): FullGua {
         const fullDate = FullGuaFactory.transLunarDate(FullGuaFactory.transDateAfter2300(date));
-        return this.create(this.transDigitToGua(fullDate.solar2lunarData.lDay % 8), this.transDigitToGua(fullDate.solar2lunarData.lMonth % 8), 
+        return this.create(this.transDigitToGua(fullDate.solar2lunarData.lDay), this.transDigitToGua(fullDate.solar2lunarData.lMonth),
                             this.timeToMutual(date), date);
     }
     /**
@@ -1066,6 +1066,7 @@ export class FullGuaFactory {
      */
     public transDigitToGua(digit: number): Gua {
         let gua: Gua = '天';
+        digit %= 8;
         switch (digit) {
             case 0:
                 gua = '地';
