@@ -30,8 +30,8 @@ function buildMdHeader(fullGua: FullGua, date: string) {
     text += `${TAB_SPACE}- 64卦\n`;
     text += `tags:\n`;
     text += `${TAB_SPACE}- ${fullGua.gung.name}\n`;
-    if (fullGua.hint.length !== 0) {
-        fullGua.hint.forEach(h => text += `${TAB_SPACE}- ${fullGua.hint}\n`);
+    if (fullGua.hints.length !== 0) {
+        fullGua.hints.forEach(h => text += `${TAB_SPACE}- ${fullGua.hints}\n`);
     }
     text += `---\n\n`;
     return text;

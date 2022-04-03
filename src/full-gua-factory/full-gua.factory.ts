@@ -6,6 +6,8 @@ import { FullGua } from './full-gua';
 import dayjs from 'dayjs';
 // @ts-ignore
 import solarlunar from 'solarlunar';
+import { EarthlyBranchMetadata } from './earthly-branch-metadata';
+import { REG_EXP_DATE } from './full-gua.enum';
 
 enum MONSTER {
     DRAGON = 0,     // 青龍
@@ -23,6 +25,12 @@ export class FullGuaFactory {
     private readonly wanderHint = ['遊魂卦'];
     private readonly returnHint = ['歸魂卦'];
 
+    // 動爻合
+    private readonly helpMatchDescription = '生合：我與你合作愉快，我願付出你願接受 (午未合、辰酉、寅亥)';
+    private readonly restrainMatchDescription = '剋合：我與你合作是有條件、有目的、有好處但不一定雙方面互利。與對方合作有壓力但又不得不合作 (巳申、卯戌、子丑)';
+    private readonly matchHintDescription = '合的兩者一定有關係，有曖昧、絆住、脫不了困、捨不得的心態、下不了決心。不可全以吉論。合須待沖：事情才會呈現出現，才會捨得、下定決心';
+
+
     private readonly MONSTERS_ARRAY = ['青龍', '朱雀', '勾陳', '呈蛇', '白虎', '玄武'];
     private readonly HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
     private readonly EARTHLY_BRANCHES: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
@@ -36,334 +44,7 @@ export class FullGuaFactory {
      * @return 全卦
      */
     create(up: Gua, down: Gua, mutual?: number[], date?: Date): FullGua {
-        if (up !== '天' && up !== '澤' && up !== '火' && up !== '雷' &&
-            up !== '風' && up !== '水' && up !== '山' && up !== '地') {
-            throw new Error('上爻(up)僅能傳入：天、澤、火、雷、風、水、山、地');
-        }
-        
-        if (down !== '天' && down !== '澤' && down !== '火' && down !== '雷' &&
-            down !== '風' && down !== '水' && down !== '山' && down !== '地') {
-            throw new Error('下爻(down)僅能傳入：天、澤、火、雷、風、水、山、地');
-        }
-        let fullGua: FullGua = new FullGua('乾為天', '旱象逢河', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        undefined, this.collisionHint);
-        switch (up) {
-            case '天':
-                if (down === '天') {
-                    fullGua = new FullGua('乾為天', '旱象逢河', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        undefined, this.collisionHint);
-                } else if (down === '澤') {
-                    fullGua = new FullGua('天澤履', '行走薄冰', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        [{ earthlyBranch: '子', relative: '妻財', position: 5 }], );
-                } else if (down === '火') {
-                    fullGua = new FullGua('天火同人', '仙人指路', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        undefined, this.returnHint);
-                } else if (down === '雷') {
-                    fullGua = new FullGua('天雷無妄', '宜守本分', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        undefined, this.collisionHint);
-                } else if (down === '風') {
-                    fullGua = new FullGua('天風姤', '他鄉遇友', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        [{ earthlyBranch: '寅', relative: '妻財', position: 2 }], );
-                } else if (down === '水') {
-                    fullGua = new FullGua('天水訟', '二人爭路', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        [{ earthlyBranch: '亥', relative: '官鬼', position: 3 }], );
-                } else if (down === '山') {
-                    fullGua = new FullGua('天山遯', '濃雲蔽日', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }, { earthlyBranch: '寅', relative: '妻財', position: 2 }],
-                        );
-                } else if (down === '地') {
-                    fullGua = new FullGua('天地否', '虎落陷坑', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }],
-                     this.suitHint);
-                }
-                break;
-            case '澤':
-                if (down === '天') {
-                    fullGua = new FullGua('澤天夬', '遊蜂脫網', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
-                        );
-                } else if (down === '澤') {
-                    fullGua = new FullGua('兌為澤', '趁水和泥', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        undefined, this.collisionHint);
-                } else if (down === '火') {
-                    fullGua = new FullGua('澤火革', '憂去喜來', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
-                        );
-                } else if (down === '雷') {
-                    fullGua = new FullGua('澤雷隨', '推車靠崖', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        [{ earthlyBranch: '午', relative: '子孫', position: 4 }], this.returnHint);
-                } else if (down === '風') {
-                    fullGua = new FullGua('澤風大過', '夜夢金銀', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        [{ earthlyBranch: '寅', relative: '兄弟', position: 2 }, { earthlyBranch: '午', relative: '子孫', position: 4 }],
-                     this.wanderHint);
-                } else if (down === '水') {
-                    fullGua = new FullGua('澤水困', '守己待時', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        undefined, this.suitHint);
-                } else if (down === '山') {
-                    fullGua = new FullGua('澤山咸', '山澤通氣', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }],
-                        );
-                } else if (down === '地') {
-                    fullGua = new FullGua('澤地萃', '大有斬獲', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        undefined, );
-                }
-                break;
-            case '火':
-                if (down === '天') {
-                    fullGua = new FullGua('火天大有', '金玉滿堂', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        undefined, this.returnHint);
-                } else if (down === '澤') {
-                    fullGua = new FullGua('火澤睽', '兩情相違', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        [{ earthlyBranch: '子', relative: '妻財', position: 5 }], );
-                } else if (down === '火') {
-                    fullGua = new FullGua('離為火', '天官賜福', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        undefined, this.collisionHint);
-                } else if (down === '雷') {
-                    fullGua = new FullGua('火雷噬嗑', '餓虎遇食', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        undefined, );
-                } else if (down === '風') {
-                    fullGua = new FullGua('火風鼎', '餓人饑食', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        [{ earthlyBranch: '卯', relative: '父母', position: 2 }], );
-                } else if (down === '水') {
-                    fullGua = new FullGua('火水未濟', '憂中望喜', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        [{ earthlyBranch: '亥', relative: '官鬼', position: 3 }], );
-                } else if (down === '山') {
-                    fullGua = new FullGua('火山旅', '先甘後苦', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        [{ earthlyBranch: '卯', relative: '父母', position: 1 }, { earthlyBranch: '亥', relative: '官鬼', position: 3 }],
-                     this.suitHint);
-                } else if (down === '地') {
-                    fullGua = new FullGua('火地晉', '鋤地得金', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }], this.wanderHint);
-                }
-                break;
-            case '雷':
-                if (down === '天') {
-                    fullGua = new FullGua('雷天大壯', '先曲後順', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        undefined, this.collisionHint);
-                } else if (down === '澤') {
-                    fullGua = new FullGua('雷澤歸妹', '浮雲蔽日', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        [{ earthlyBranch: '亥', relative: '子孫', position: 4 }],
-                     this.returnHint);
-                } else if (down === '火') {
-                    fullGua = new FullGua('雷火豐', '古鏡重明', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        undefined, );
-                } else if (down === '雷') {
-                    fullGua = new FullGua('震為雷', '金鐘夜響', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        undefined, this.collisionHint);
-                } else if (down === '風') {
-                    fullGua = new FullGua('雷風恆', '日月常明', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        [{ earthlyBranch: '寅', relative: '兄弟', position: 2 }], );
-                } else if (down === '水') {
-                    fullGua = new FullGua('雷水解', '困人出獄', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        [{ earthlyBranch: '子', relative: '父母', position: 1 }], );
-                } else if (down === '山') {
-                    fullGua = new FullGua('雷山小過', '過獨木橋', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }, { earthlyBranch: '亥', relative: '子孫', position: 4 }],
-                     this.wanderHint);
-                } else if (down === '地') {
-                    fullGua = new FullGua('雷地豫', '青龍得位', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        [{ earthlyBranch: '子', relative: '父母', position: 1 }],
-                     this.suitHint);
-                }
-                break;
-            case '風':
-                if (down === '天') {
-                    fullGua = new FullGua('風天小畜', '密雲不雨', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }],
-                        );
-                } else if (down === '澤') {
-                    fullGua = new FullGua('風澤中孚', '謹慎保守', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        [{ earthlyBranch: '申', relative: '子孫', position: 3 }, { earthlyBranch: '子', relative: '妻財', position: 5 }],
-                     this.wanderHint);
-                } else if (down === '火') {
-                    fullGua = new FullGua('風火家人', '鏡中觀花', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }],
-                        );
-                } else if (down === '雷') {
-                    fullGua = new FullGua('風雷益', '枯木開花', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }],
-                        );
-                } else if (down === '風') {
-                    fullGua = new FullGua('巽為風', '動極思靜', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        undefined, this.collisionHint);
-                } else if (down === '水') {
-                    fullGua = new FullGua('風水渙', '隔河望金', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        [{ earthlyBranch: '亥', relative: '官鬼', position: 3 }, { earthlyBranch: '酉', relative: '妻財', position: 4 }],
-                        );
-                } else if (down === '山') {
-                    fullGua = new FullGua('風山漸', '飄浮不定', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        [{ earthlyBranch: '子', relative: '妻財', position: 5 }],
-                     this.returnHint);
-                } else if (down === '地') {
-                    fullGua = new FullGua('風地觀', '接受觀摩', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }, { earthlyBranch: '申', relative: '兄弟', position: 5 }],
-                        );
-                }
-                break;
-            case '水':
-                if (down === '天') {
-                    fullGua = new FullGua('水天需', '明珠出土', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
-                        );
-                } else if (down === '澤') {
-                    fullGua = new FullGua('水澤節', '封神斬將', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        undefined, this.suitHint);
-                } else if (down === '火') {
-                    fullGua = new FullGua('水火既濟', '金榜題名', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
-                        );
-                } else if (down === '雷') {
-                    fullGua = new FullGua('水雷屯', '亂絲無頭', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
-                        );
-                } else if (down === '風') {
-                    fullGua = new FullGua('水風井', '枯井生泉', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        [{ earthlyBranch: '午', relative: '子孫', position: 4 }, { earthlyBranch: '寅', relative: '兄弟', position: 2 }],
-                        );
-                } else if (down === '水') {
-                    fullGua = new FullGua('坎為水', '水中撈月', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        undefined, this.collisionHint);
-                } else if (down === '山') {
-                    fullGua = new FullGua('水山蹇', '跛腳走路', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }],
-                        );
-                } else if (down === '地') {
-                    fullGua = new FullGua('水地比', '船得順風', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        undefined, this.returnHint);
-                }
-                break;
-            case '山':
-                if (down === '天') {
-                    fullGua = new FullGua('山天大畜', '陣勢得開', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        [{ earthlyBranch: '午', relative: '父母', position: 2 }, { earthlyBranch: '申', relative: '子孫', position: 3 }],
-                        );
-                } else if (down === '澤') {
-                    fullGua = new FullGua('山澤損', '勞心苦戰', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        [{ earthlyBranch: '申', relative: '子孫', position: 3 }],
-                        );
-                } else if (down === '火') {
-                    fullGua = new FullGua('山火賁', '萌芽出土', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        [{ earthlyBranch: '申', relative: '子孫', position: 3 }, { earthlyBranch: '午', relative: '父母', position: 2 }],
-                     this.suitHint);
-                } else if (down === '雷') {
-                    fullGua = new FullGua('山雷頤', '渭水訪賢', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }, { earthlyBranch: '巳', relative: '子孫', position: 5 }],
-                     this.wanderHint);
-                } else if (down === '風') {
-                    fullGua = new FullGua('山風蠱', '百事不順', this.genSixYao(down, up, FullGuaFactory.getGungElement('巽')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('巽'),
-                        [{ earthlyBranch: '巳', relative: '子孫', position: 5 }],
-                     this.returnHint);
-                } else if (down === '水') {
-                    fullGua = new FullGua('山水蒙', '小鬼偷錢', this.genSixYao(down, up, FullGuaFactory.getGungElement('離')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('離'),
-                        [{ earthlyBranch: '酉', relative: '妻財', position: 4 }],
-                        );
-                } else if (down === '山') {
-                    fullGua = new FullGua('艮為山', '安靜無虧', this.genSixYao(down, up, FullGuaFactory.getGungElement('艮')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('艮'),
-                        undefined, this.collisionHint);
-                } else if (down === '地') {
-                    fullGua = new FullGua('山地剝', '瑣碎事多', this.genSixYao(down, up, FullGuaFactory.getGungElement('乾')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('乾'),
-                        [{ earthlyBranch: '申', relative: '兄弟', position: 5 }],
-                        );
-                }
-                break;
-            case '地':
-                if (down === '天') {
-                    fullGua = new FullGua('地天泰', '喜抱三元', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
-                     this.suitHint);
-                } else if (down === '澤') {
-                    fullGua = new FullGua('地澤臨', '發政施仁', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        undefined, );
-                } else if (down === '火') {
-                    fullGua = new FullGua('地火明夷', '謹慎保守', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
-                     this.wanderHint);
-                } else if (down === '雷') {
-                    fullGua = new FullGua('地雷復', '夫妻反目', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
-                     this.suitHint);
-                } else if (down === '風') {
-                    fullGua = new FullGua('地風升', '指日高升', this.genSixYao(down, up, FullGuaFactory.getGungElement('震')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('震'),
-                        [{ earthlyBranch: '午', relative: '子孫', position: 4 }, { earthlyBranch: '寅', relative: '兄弟', position: 2 }],
-                        );
-                } else if (down === '水') {
-                    fullGua = new FullGua('地水師', '馬到成功', this.genSixYao(down, up, FullGuaFactory.getGungElement('坎')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坎'),
-                        undefined, this.returnHint);
-                } else if (down === '山') {
-                    fullGua = new FullGua('地山謙', '二人分金', this.genSixYao(down, up, FullGuaFactory.getGungElement('兌')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('兌'),
-                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }],
-                        );
-                } else if (down === '地') {
-                    fullGua = new FullGua('坤為地', '包容萬象', this.genSixYao(down, up, FullGuaFactory.getGungElement('坤')),
-                        FullGuaFactory.genHeavenlyStems(down, up), FullGuaFactory.genGung('坤'),
-                        undefined, this.collisionHint);
-                }
-                break;
-        }
+        const fullGua = this.createFullGua(up, down);
 
         if (mutual && mutual.length !== 0) {
             this.genMutual(up, down, mutual, fullGua);
@@ -374,6 +55,8 @@ export class FullGuaFactory {
             this.genDate(fullGua, date);
             this.genMonster(fullGua);
         }
+
+        this.checkMutualMatchRelation(fullGua);
         return fullGua;
     }
 
@@ -383,7 +66,7 @@ export class FullGuaFactory {
      * @return 命卦
      */
     createFateGua(date: Date): FullGua {
-        const fullDate = FullGuaFactory.transLunarDate(FullGuaFactory.transDateAfter2300(date));
+        const fullDate = this.transLunarDate(this.transDateAfter2300(date));
         return this.create(this.transDigitToGua(fullDate.solar2lunarData.lDay), this.transDigitToGua(fullDate.solar2lunarData.lMonth),
                             this.timeToMutual(date), date);
     }
@@ -395,9 +78,9 @@ export class FullGuaFactory {
      * @return 六爻(地支 + 六親)
      */
     private genSixYao(down: Gua, up: Gua, gungElement: Elements): Yao[] {
-        const earthlyBranches = [...FullGuaFactory.getEarthlyBranch(down, 'DOWN'), ...FullGuaFactory.getEarthlyBranch(up, 'UP')];
-        const isYangYao = [...FullGuaFactory.genIsYangYao(down), ...FullGuaFactory.genIsYangYao(up)];
-        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: FullGuaFactory.getRelative(gungElement, e), position: i + 1, isYangYao: isYangYao[i], void: false}))
+        const earthlyBranches = [...this.getEarthlyBranch(down, 'DOWN'), ...this.getEarthlyBranch(up, 'UP')];
+        const isYangYao = [...this.genIsYangYao(down), ...this.genIsYangYao(up)];
+        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i + 1, isYangYao: isYangYao[i], void: false}))
     }
 
     /**
@@ -406,18 +89,18 @@ export class FullGuaFactory {
      * @param up 上卦
      * @return 天干與世應位置
      */
-    private static genHeavenlyStems(down: Gua, up: Gua): HeavenlyStems {
-        const shihYingPosition = FullGuaFactory.calculateShinYing(down, up);
+    private genHeavenlyStems(down: Gua, up: Gua): HeavenlyStems {
+        const shihYingPosition = this.calculateShinYing(down, up);
         let shih!: HeavenlyStem;
         let ying!: HeavenlyStem;
         if (shihYingPosition.shih >= 4) {
             // 世爻在上
-            shih = FullGuaFactory.getHeavenlyStem(up, 'UP');
-            ying = FullGuaFactory.getHeavenlyStem(down, 'DOWN');
+            shih = this.getHeavenlyStem(up, 'UP');
+            ying = this.getHeavenlyStem(down, 'DOWN');
         } else {
             // 世爻在下
-            shih = FullGuaFactory.getHeavenlyStem(down, 'DOWN');
-            ying = FullGuaFactory.getHeavenlyStem(up, 'UP');
+            shih = this.getHeavenlyStem(down, 'DOWN');
+            ying = this.getHeavenlyStem(up, 'UP');
         }
 
         return {
@@ -433,10 +116,10 @@ export class FullGuaFactory {
      * @param gungName 宮
      * @return 宮
      */
-    private static genGung(gungName: GungName): Gung {
+    private genGung(gungName: GungName): Gung {
         return {
             name: gungName,
-            element: FullGuaFactory.getGungElement(gungName)
+            element: this.getGungElement(gungName)
         }
     }
 
@@ -446,7 +129,7 @@ export class FullGuaFactory {
      * @param date 國曆日期
      */
     private genDate(fullGua: FullGua, date: Date): void {
-        const fullDate = FullGuaFactory.transLunarDate(FullGuaFactory.transDateAfter2300(date));
+        const fullDate = this.transLunarDate(this.transDateAfter2300(date));
         fullGua.solarDate = fullDate.solarDate;
         fullGua.lunarDate = fullDate.lunarDate;
         fullGua.lunarYear = fullDate.solar2lunarData.gzYear;
@@ -468,7 +151,7 @@ export class FullGuaFactory {
     /**
      * @param d 日期
      */
-    private static transLunarDate(d: Date): {solar2lunarData: SolarLunarData, lunarDate:string, solarDate: string} {
+    private transLunarDate(d: Date): {solar2lunarData: SolarLunarData, lunarDate:string, solarDate: string} {
         const date = dayjs(d);
         const year = date.year();
         const month = date.month() + 1;
@@ -512,12 +195,19 @@ export class FullGuaFactory {
         }
     }
 
+    /**
+     * 產生動爻
+     * @param up 上卦
+     * @param down 下卦
+     * @param mutual 動爻
+     * @param fullGua 用以填入內容的全卦
+     */
     private genMutual(up: Gua, down: Gua, mutual: number[], fullGua: FullGua) {
         const mutualFullGua = this.getMutualFullGua(up, down, mutual);
         fullGua.mutual = mutual.map( n => ({
             earthlyBranch: mutualFullGua.yao[n - 1].earthlyBranch,
             position: mutualFullGua.yao[n - 1].position,
-            relative: FullGuaFactory.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch),
+            relative: this.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch),
             void: false
             })
         );
@@ -528,6 +218,96 @@ export class FullGuaFactory {
             fullGua.name += `之${mutualFullGua.name.substring(2)}`;
         }
         fullGua.description += `，${mutualFullGua.description}`;
+    }
+
+    /**
+     * 檢查所有動爻與其變爻、年、月、日是否相合
+     * @param fullGua 全卦
+     */
+    private checkMutualMatchRelation(fullGua: FullGua) {
+        let isRestrainMatch = false; // 是否有剋合
+        let isHelpMatch = false; // 是否有生合
+        const hints: string[] = [];
+        fullGua.mutual.forEach(mutualYao => {
+            const position = mutualYao.position; // 動幾爻
+            const activeYao = fullGua.yao[position - 1]; // 動爻
+            const metadata = EarthlyBranchMetadata.find(e => e.earthlyBranch === activeYao.earthlyBranch);
+            if (!metadata) {
+                throw new Error(`「${activeYao.earthlyBranch}」 不存在於 EarthlyBranchMetadata`);
+            }
+
+            if (fullGua.genGuaBase.date) {
+                (['年', '月', '日'] as Array<'年' | '月' | '日'>).forEach((dateType) => {
+                    const dateEarthlyBranch =  this.getDateEarthlyBranch(dateType, fullGua.getChineseLunarDate());
+                    if (metadata.match.value === dateEarthlyBranch) {
+                        hints.push(`第${position}爻動爻(${activeYao.earthlyBranch})與${dateType}(${dateEarthlyBranch})相合！合的類型：${metadata.match.type}`);
+                        switch (metadata.match.type) {
+                            case '剋合':
+                                isRestrainMatch = true;
+                                break;
+                            case '生合':
+                                isHelpMatch = true;
+                                break;
+                            default:
+                                throw new Error(`應為「剋合」、「生合」，收到的是：${metadata.match.type}`)
+                        }
+                    }
+                });
+            }
+
+            if (metadata.match.value === mutualYao.earthlyBranch) {
+                hints.push(`第${position}爻動爻(${activeYao.earthlyBranch})與變爻(${mutualYao.earthlyBranch})相合！合的類型：${metadata.match.type}`);
+                switch (metadata.match.type) {
+                    case '剋合':
+                        isRestrainMatch = true;
+                        break;
+                    case '生合':
+                        isHelpMatch = true;
+                        break;
+                    default:
+                        throw new Error(`應為「剋合」、「生合」，收到的是：${metadata.match.type}`)
+                }
+            }
+        });
+
+        if (hints.length !== 0) {
+            if (isHelpMatch) {
+                hints.unshift(this.helpMatchDescription);
+            }
+            if (isRestrainMatch) {
+                hints.unshift(this.restrainMatchDescription);
+            }
+
+            hints.unshift(this.matchHintDescription);
+            fullGua.addHints(hints);
+        }
+    }
+
+    /**
+     * 依據傳入日期，回傳指定dateType的地支
+     * @param dateType 日期類型：年、月、日、時
+     * @param date 地支日期字串
+     * @return 指定時段(年、月、日、時)之地支
+     */
+    private getDateEarthlyBranch(dateType: '年' | '月' | '日' | '時', date: string): string {
+        const regExp = /(.{2}) 年 (.{2}) 月 (.{2}) 日 (.) 時/;
+        const matched = regExp.exec(date);
+        if (!matched) {
+            throw new Error(`傳入錯誤的日期！須符合「干支 年 干支 月 干支 日 支 時」，傳入：${date}`);
+        }
+
+        switch (dateType) {
+            case '年':
+                return matched[REG_EXP_DATE.YEAR].charAt(1);
+            case '月':
+                return matched[REG_EXP_DATE.MONTH].charAt(1);
+            case '日':
+                return matched[REG_EXP_DATE.DAY].charAt(1);
+            case '時':
+                return matched[REG_EXP_DATE.HOUR];
+            default:
+                throw new Error(`dateType 錯誤！僅能接受：年、月、日、時。但收到的是：${dateType}`);
+        }
     }
 
     /**
@@ -564,7 +344,7 @@ export class FullGuaFactory {
      * @param position UP或DOWN，傳入上卦或下卦
      * @return 填寫地支
      */
-    private static getEarthlyBranch(gua: Gua, position: 'UP' | 'DOWN'): EarthlyBranch[] {
+    private getEarthlyBranch(gua: Gua, position: 'UP' | 'DOWN'): EarthlyBranch[] {
 
         let earthlyBranches!: EarthlyBranch[];
         switch (gua) {
@@ -627,7 +407,7 @@ export class FullGuaFactory {
      * @param gua 卦
      * @return 是否陽爻陣列
      */
-    private static genIsYangYao(gua: Gua): boolean[] {
+    private genIsYangYao(gua: Gua): boolean[] {
         let isYangYao: boolean[];
         switch (gua) {
             case '天':
@@ -664,8 +444,8 @@ export class FullGuaFactory {
      * @param earthlyBranch 地支
      * @return 該爻六親
      */
-    private static getRelative(gung: Elements, earthlyBranch: string): Relative {
-        const element = FullGuaFactory.getElement(earthlyBranch);
+    private getRelative(gung: Elements, earthlyBranch: string): Relative {
+        const element = this.getElement(earthlyBranch);
         if (gung === element) {
             return '兄弟';
         }
@@ -760,7 +540,7 @@ export class FullGuaFactory {
      * @param type 天干/地支
      * @return 五行
      */
-    private static getElement(type: string): Elements {
+    private getElement(type: string): Elements {
         let text: Elements = '' as Elements;
         switch (type) {
             case '子':
@@ -795,7 +575,7 @@ export class FullGuaFactory {
      * @param up 上卦
      * @return 幾世卦
      */
-    private static calculateShinYing(down: Gua, up: Gua): ShihYingPosition {
+    private calculateShinYing(down: Gua, up: Gua): ShihYingPosition {
 
         if (down === up) {
             return { shih: 6, ying: 3 };
@@ -895,7 +675,7 @@ export class FullGuaFactory {
      * @param gua 卦
      * @param type 上或下卦 (僅坤使用)
      */
-    private static getHeavenlyStem(gua: Gua, type: 'UP' | 'DOWN'): HeavenlyStem {
+    private getHeavenlyStem(gua: Gua, type: 'UP' | 'DOWN'): HeavenlyStem {
         let text = '' as HeavenlyStem;
         switch (gua) {
             case '天':
@@ -938,7 +718,7 @@ export class FullGuaFactory {
      * @param gungName 宮
      * @return 宮的五行
      */
-    private static getGungElement(gungName: GungName): Elements {
+    private getGungElement(gungName: GungName): Elements {
         let text!: Elements;
         switch (gungName) {
             case '乾':
@@ -971,21 +751,21 @@ export class FullGuaFactory {
      * @return 變卦全卦
      */
     private getMutualFullGua(up: Gua, down: Gua, mutual: number[]): FullGua {
-        let mutualGuaYingYang = FullGuaFactory.transGuaToYingYangYao(down) + FullGuaFactory.transGuaToYingYangYao(up);
+        let mutualGuaYingYang = this.transGuaToYingYangYao(down) + this.transGuaToYingYangYao(up);
         
         for (const n of mutual) {
             switch (mutualGuaYingYang.charAt(n - 1)) {
                 case '0':
-                    mutualGuaYingYang = FullGuaFactory.replaceAt(mutualGuaYingYang, n - 1, '1');
+                    mutualGuaYingYang = this.replaceAt(mutualGuaYingYang, n - 1, '1');
                     break;
                 case '1':
-                    mutualGuaYingYang = FullGuaFactory.replaceAt(mutualGuaYingYang, n - 1, '0');
+                    mutualGuaYingYang = this.replaceAt(mutualGuaYingYang, n - 1, '0');
                     break;
             }
         }
 
-        const mutualDown = FullGuaFactory.transYingYangYaoToGua(mutualGuaYingYang.substring(0, 3) as YingYangYao);
-        const mutualUp = FullGuaFactory.transYingYangYaoToGua(mutualGuaYingYang.substring(3, 6) as YingYangYao);
+        const mutualDown = this.transYingYangYaoToGua(mutualGuaYingYang.substring(0, 3) as YingYangYao);
+        const mutualUp = this.transYingYangYaoToGua(mutualGuaYingYang.substring(3, 6) as YingYangYao);
         return this.create(mutualUp, mutualDown);
     }
 
@@ -993,7 +773,7 @@ export class FullGuaFactory {
      * 將半卦轉成數字，用於做動爻轉換
      * @param gua 卦
      */
-    private static transGuaToYingYangYao(gua: Gua): YingYangYao {
+    private transGuaToYingYangYao(gua: Gua): YingYangYao {
         let yao: YingYangYao = '111';
         switch (gua) {
             case '天':
@@ -1028,7 +808,7 @@ export class FullGuaFactory {
      * 將數字半卦轉換回爻，方可使用create產卦
      * @param yingYangYao 陰陽爻
      */
-    private static transYingYangYaoToGua(yingYangYao: YingYangYao): Gua {
+    private transYingYangYaoToGua(yingYangYao: YingYangYao): Gua {
         let gua: Gua = '天';
         switch (yingYangYao) {
             case '111':
@@ -1102,7 +882,7 @@ export class FullGuaFactory {
      * @param date
      * @return Date
      */
-    private static transDateAfter2300(date: Date): Date {
+    private transDateAfter2300(date: Date): Date {
         const currentDate = dayjs(date);
         const cutTime = currentDate.hour(23).minute(0).second(0);
         return currentDate.isSame(cutTime) || currentDate.isAfter(cutTime) ? 
@@ -1158,7 +938,7 @@ export class FullGuaFactory {
     private getTimePeriod(date: Date): EarthlyBranch {
         const time = dayjs(date).format('HH:mm');
         for (const earthlyBranch of this.EARTHLY_BRANCHES) {
-            if (time.match(FullGuaFactory.genTimeRegExp(earthlyBranch))) {
+            if (time.match(this.genTimeRegExp(earthlyBranch))) {
                 return earthlyBranch;
             }
         }
@@ -1170,7 +950,7 @@ export class FullGuaFactory {
      * 依據想要的時辰，產生相應時辰的RegExp
      * @param earthlyBranch 地支
      */
-    private static genTimeRegExp(earthlyBranch: EarthlyBranch): RegExp {
+    private genTimeRegExp(earthlyBranch: EarthlyBranch): RegExp {
         let regExp: RegExp;
         switch(earthlyBranch) {
             case '子':
@@ -1213,13 +993,344 @@ export class FullGuaFactory {
         return regExp!;
     }
 
+    private createFullGua(up: Gua, down: Gua) {
+        if (up !== '天' && up !== '澤' && up !== '火' && up !== '雷' &&
+            up !== '風' && up !== '水' && up !== '山' && up !== '地') {
+            throw new Error('上爻(up)僅能傳入：天、澤、火、雷、風、水、山、地');
+        }
+
+        if (down !== '天' && down !== '澤' && down !== '火' && down !== '雷' &&
+            down !== '風' && down !== '水' && down !== '山' && down !== '地') {
+            throw new Error('下爻(down)僅能傳入：天、澤、火、雷、風、水、山、地');
+        }
+        let fullGua: FullGua;
+        switch (up) {
+            case '天':
+                if (down === '天') {
+                    fullGua = new FullGua('乾為天', '旱象逢河', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        undefined, this.collisionHint);
+                } else if (down === '澤') {
+                    fullGua = new FullGua('天澤履', '行走薄冰', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        [{ earthlyBranch: '子', relative: '妻財', position: 5 }], );
+                } else if (down === '火') {
+                    fullGua = new FullGua('天火同人', '仙人指路', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        undefined, this.returnHint);
+                } else if (down === '雷') {
+                    fullGua = new FullGua('天雷無妄', '宜守本分', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        undefined, this.collisionHint);
+                } else if (down === '風') {
+                    fullGua = new FullGua('天風姤', '他鄉遇友', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        [{ earthlyBranch: '寅', relative: '妻財', position: 2 }], );
+                } else if (down === '水') {
+                    fullGua = new FullGua('天水訟', '二人爭路', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        [{ earthlyBranch: '亥', relative: '官鬼', position: 3 }], );
+                } else if (down === '山') {
+                    fullGua = new FullGua('天山遯', '濃雲蔽日', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }, { earthlyBranch: '寅', relative: '妻財', position: 2 }],
+                    );
+                } else if (down === '地') {
+                    fullGua = new FullGua('天地否', '虎落陷坑', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }],
+                        this.suitHint);
+                }
+                break;
+            case '澤':
+                if (down === '天') {
+                    fullGua = new FullGua('澤天夬', '遊蜂脫網', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
+                    );
+                } else if (down === '澤') {
+                    fullGua = new FullGua('兌為澤', '趁水和泥', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        undefined, this.collisionHint);
+                } else if (down === '火') {
+                    fullGua = new FullGua('澤火革', '憂去喜來', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
+                    );
+                } else if (down === '雷') {
+                    fullGua = new FullGua('澤雷隨', '推車靠崖', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '午', relative: '子孫', position: 4 }], this.returnHint);
+                } else if (down === '風') {
+                    fullGua = new FullGua('澤風大過', '夜夢金銀', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '寅', relative: '兄弟', position: 2 }, { earthlyBranch: '午', relative: '子孫', position: 4 }],
+                        this.wanderHint);
+                } else if (down === '水') {
+                    fullGua = new FullGua('澤水困', '守己待時', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        undefined, this.suitHint);
+                } else if (down === '山') {
+                    fullGua = new FullGua('澤山咸', '山澤通氣', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }],
+                    );
+                } else if (down === '地') {
+                    fullGua = new FullGua('澤地萃', '大有斬獲', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        undefined, );
+                }
+                break;
+            case '火':
+                if (down === '天') {
+                    fullGua = new FullGua('火天大有', '金玉滿堂', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        undefined, this.returnHint);
+                } else if (down === '澤') {
+                    fullGua = new FullGua('火澤睽', '兩情相違', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        [{ earthlyBranch: '子', relative: '妻財', position: 5 }], );
+                } else if (down === '火') {
+                    fullGua = new FullGua('離為火', '天官賜福', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        undefined, this.collisionHint);
+                } else if (down === '雷') {
+                    fullGua = new FullGua('火雷噬嗑', '餓虎遇食', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        undefined, );
+                } else if (down === '風') {
+                    fullGua = new FullGua('火風鼎', '餓人饑食', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        [{ earthlyBranch: '卯', relative: '父母', position: 2 }], );
+                } else if (down === '水') {
+                    fullGua = new FullGua('火水未濟', '憂中望喜', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        [{ earthlyBranch: '亥', relative: '官鬼', position: 3 }], );
+                } else if (down === '山') {
+                    fullGua = new FullGua('火山旅', '先甘後苦', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        [{ earthlyBranch: '卯', relative: '父母', position: 1 }, { earthlyBranch: '亥', relative: '官鬼', position: 3 }],
+                        this.suitHint);
+                } else if (down === '地') {
+                    fullGua = new FullGua('火地晉', '鋤地得金', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }], this.wanderHint);
+                }
+                break;
+            case '雷':
+                if (down === '天') {
+                    fullGua = new FullGua('雷天大壯', '先曲後順', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        undefined, this.collisionHint);
+                } else if (down === '澤') {
+                    fullGua = new FullGua('雷澤歸妹', '浮雲蔽日', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        [{ earthlyBranch: '亥', relative: '子孫', position: 4 }],
+                        this.returnHint);
+                } else if (down === '火') {
+                    fullGua = new FullGua('雷火豐', '古鏡重明', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        undefined, );
+                } else if (down === '雷') {
+                    fullGua = new FullGua('震為雷', '金鐘夜響', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        undefined, this.collisionHint);
+                } else if (down === '風') {
+                    fullGua = new FullGua('雷風恆', '日月常明', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '寅', relative: '兄弟', position: 2 }], );
+                } else if (down === '水') {
+                    fullGua = new FullGua('雷水解', '困人出獄', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '子', relative: '父母', position: 1 }], );
+                } else if (down === '山') {
+                    fullGua = new FullGua('雷山小過', '過獨木橋', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }, { earthlyBranch: '亥', relative: '子孫', position: 4 }],
+                        this.wanderHint);
+                } else if (down === '地') {
+                    fullGua = new FullGua('雷地豫', '青龍得位', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '子', relative: '父母', position: 1 }],
+                        this.suitHint);
+                }
+                break;
+            case '風':
+                if (down === '天') {
+                    fullGua = new FullGua('風天小畜', '密雲不雨', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }],
+                    );
+                } else if (down === '澤') {
+                    fullGua = new FullGua('風澤中孚', '謹慎保守', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        [{ earthlyBranch: '申', relative: '子孫', position: 3 }, { earthlyBranch: '子', relative: '妻財', position: 5 }],
+                        this.wanderHint);
+                } else if (down === '火') {
+                    fullGua = new FullGua('風火家人', '鏡中觀花', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }],
+                    );
+                } else if (down === '雷') {
+                    fullGua = new FullGua('風雷益', '枯木開花', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }],
+                    );
+                } else if (down === '風') {
+                    fullGua = new FullGua('巽為風', '動極思靜', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        undefined, this.collisionHint);
+                } else if (down === '水') {
+                    fullGua = new FullGua('風水渙', '隔河望金', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        [{ earthlyBranch: '亥', relative: '官鬼', position: 3 }, { earthlyBranch: '酉', relative: '妻財', position: 4 }],
+                    );
+                } else if (down === '山') {
+                    fullGua = new FullGua('風山漸', '飄浮不定', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        [{ earthlyBranch: '子', relative: '妻財', position: 5 }],
+                        this.returnHint);
+                } else if (down === '地') {
+                    fullGua = new FullGua('風地觀', '接受觀摩', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        [{ earthlyBranch: '子', relative: '子孫', position: 1 }, { earthlyBranch: '申', relative: '兄弟', position: 5 }],
+                    );
+                }
+                break;
+            case '水':
+                if (down === '天') {
+                    fullGua = new FullGua('水天需', '明珠出土', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
+                    );
+                } else if (down === '澤') {
+                    fullGua = new FullGua('水澤節', '封神斬將', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        undefined, this.suitHint);
+                } else if (down === '火') {
+                    fullGua = new FullGua('水火既濟', '金榜題名', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
+                    );
+                } else if (down === '雷') {
+                    fullGua = new FullGua('水雷屯', '亂絲無頭', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
+                    );
+                } else if (down === '風') {
+                    fullGua = new FullGua('水風井', '枯井生泉', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '午', relative: '子孫', position: 4 }, { earthlyBranch: '寅', relative: '兄弟', position: 2 }],
+                    );
+                } else if (down === '水') {
+                    fullGua = new FullGua('坎為水', '水中撈月', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        undefined, this.collisionHint);
+                } else if (down === '山') {
+                    fullGua = new FullGua('水山蹇', '跛腳走路', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }],
+                    );
+                } else if (down === '地') {
+                    fullGua = new FullGua('水地比', '船得順風', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        undefined, this.returnHint);
+                }
+                break;
+            case '山':
+                if (down === '天') {
+                    fullGua = new FullGua('山天大畜', '陣勢得開', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        [{ earthlyBranch: '午', relative: '父母', position: 2 }, { earthlyBranch: '申', relative: '子孫', position: 3 }],
+                    );
+                } else if (down === '澤') {
+                    fullGua = new FullGua('山澤損', '勞心苦戰', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        [{ earthlyBranch: '申', relative: '子孫', position: 3 }],
+                    );
+                } else if (down === '火') {
+                    fullGua = new FullGua('山火賁', '萌芽出土', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        [{ earthlyBranch: '申', relative: '子孫', position: 3 }, { earthlyBranch: '午', relative: '父母', position: 2 }],
+                        this.suitHint);
+                } else if (down === '雷') {
+                    fullGua = new FullGua('山雷頤', '渭水訪賢', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        [{ earthlyBranch: '酉', relative: '官鬼', position: 3 }, { earthlyBranch: '巳', relative: '子孫', position: 5 }],
+                        this.wanderHint);
+                } else if (down === '風') {
+                    fullGua = new FullGua('山風蠱', '百事不順', this.genSixYao(down, up, this.getGungElement('巽')),
+                        this.genHeavenlyStems(down, up), this.genGung('巽'),
+                        [{ earthlyBranch: '巳', relative: '子孫', position: 5 }],
+                        this.returnHint);
+                } else if (down === '水') {
+                    fullGua = new FullGua('山水蒙', '小鬼偷錢', this.genSixYao(down, up, this.getGungElement('離')),
+                        this.genHeavenlyStems(down, up), this.genGung('離'),
+                        [{ earthlyBranch: '酉', relative: '妻財', position: 4 }],
+                    );
+                } else if (down === '山') {
+                    fullGua = new FullGua('艮為山', '安靜無虧', this.genSixYao(down, up, this.getGungElement('艮')),
+                        this.genHeavenlyStems(down, up), this.genGung('艮'),
+                        undefined, this.collisionHint);
+                } else if (down === '地') {
+                    fullGua = new FullGua('山地剝', '瑣碎事多', this.genSixYao(down, up, this.getGungElement('乾')),
+                        this.genHeavenlyStems(down, up), this.genGung('乾'),
+                        [{ earthlyBranch: '申', relative: '兄弟', position: 5 }],
+                    );
+                }
+                break;
+            case '地':
+                if (down === '天') {
+                    fullGua = new FullGua('地天泰', '喜抱三元', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
+                        this.suitHint);
+                } else if (down === '澤') {
+                    fullGua = new FullGua('地澤臨', '發政施仁', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        undefined, );
+                } else if (down === '火') {
+                    fullGua = new FullGua('地火明夷', '謹慎保守', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        [{ earthlyBranch: '午', relative: '妻財', position: 3 }],
+                        this.wanderHint);
+                } else if (down === '雷') {
+                    fullGua = new FullGua('地雷復', '夫妻反目', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        [{ earthlyBranch: '巳', relative: '父母', position: 2 }],
+                        this.suitHint);
+                } else if (down === '風') {
+                    fullGua = new FullGua('地風升', '指日高升', this.genSixYao(down, up, this.getGungElement('震')),
+                        this.genHeavenlyStems(down, up), this.genGung('震'),
+                        [{ earthlyBranch: '午', relative: '子孫', position: 4 }, { earthlyBranch: '寅', relative: '兄弟', position: 2 }],
+                    );
+                } else if (down === '水') {
+                    fullGua = new FullGua('地水師', '馬到成功', this.genSixYao(down, up, this.getGungElement('坎')),
+                        this.genHeavenlyStems(down, up), this.genGung('坎'),
+                        undefined, this.returnHint);
+                } else if (down === '山') {
+                    fullGua = new FullGua('地山謙', '二人分金', this.genSixYao(down, up, this.getGungElement('兌')),
+                        this.genHeavenlyStems(down, up), this.genGung('兌'),
+                        [{ earthlyBranch: '卯', relative: '妻財', position: 2 }],
+                    );
+                } else if (down === '地') {
+                    fullGua = new FullGua('坤為地', '包容萬象', this.genSixYao(down, up, this.getGungElement('坤')),
+                        this.genHeavenlyStems(down, up), this.genGung('坤'),
+                        undefined, this.collisionHint);
+                }
+                break;
+        }
+
+        return fullGua!;
+    }
+
     /**
      * 
      * @param str 原始字串
      * @param index 位置
      * @param replacement 取代的內容
      */
-    private static replaceAt(str: string, index: number, replacement: string): string {
+    private replaceAt(str: string, index: number, replacement: string): string {
         return str.substr(0, index) + replacement + str.substr(index + replacement.length);
     }
 }

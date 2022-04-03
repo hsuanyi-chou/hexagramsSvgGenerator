@@ -48,6 +48,14 @@ export class FullGua implements IFullGua {
         this.hints.push(hint);
     }
 
+    /**
+     * 增加卦的註解 (多筆)
+     * @param hints
+     */
+    addHints(hints: string[]): void {
+        hints.forEach(hint => this.hints.push(hint));
+    }
+
     addScripture(scripture: Scripture): void {
         this.scriptures.push(scripture);
     }

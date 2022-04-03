@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "jest --config jestconfig.json",
+    "test": "jest",
     "build": "rollup -c",
     "dev": "ts-node src/dev/dev.ts",
     "gen64guaSvg": "ts-node src/dev/64gua-svg-generator.ts",
