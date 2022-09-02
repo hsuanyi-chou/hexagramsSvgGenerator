@@ -1,10 +1,6 @@
 import GuaGenerator from '../index';
 
-let GUA_GENERATOR: GuaGenerator;
-
-beforeAll(() => {
-  GUA_GENERATOR = new GuaGenerator();
-});
+const GUA_GENERATOR = new GuaGenerator();
 
 test('產生命卦', () => {
   const date = new Date('2021-05-27T11:20:00.000');
@@ -14,6 +10,14 @@ test('產生命卦', () => {
   expect(res.fullGua.getChineseLunarDate()).toBe('辛丑 年 癸巳 月 乙亥 日 午 時')
   expect(res.fullGua.void).toEqual(['申', '酉']);
   expect(res.fullGua.name).toBe('地雷復之坤');
+});
+
+test('批量產生命卦', () => {
+  const beginDate = new Date('2022-08-02T11:20:00.000');
+  const endDate = new Date('2022-08-05T11:20:00.000');
+  const res = GUA_GENERATOR.buildBatchFateGua(beginDate, endDate);
+  expect(res.length).toEqual(4);
+
 });
 
 test('產生卦象', () => {
@@ -29,7 +33,7 @@ test('時間取卦，傳入非6碼或非14碼數字', () => {
   const time = '12345';
   try {
     GUA_GENERATOR.buildGuaByTime(time);
-  } catch(e) {
+  } catch(e: any) {
     expect(e.message).toEqual('傳入時間錯誤！僅支援6碼時分秒(HHmmss)或年月日時分秒(YYYYMMDDHHmmss)');
   }
 });
@@ -38,7 +42,7 @@ test('時間取卦，傳入帶:的時間', () => {
   const time = '12:34:56';
   try {
     GUA_GENERATOR.buildGuaByTime(time);
-  } catch(e) {
+  } catch(e: any) {
     expect(e.message).toEqual('僅能傳入純數字時間');
   }
 });

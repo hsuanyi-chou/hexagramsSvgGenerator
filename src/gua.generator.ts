@@ -80,6 +80,16 @@ export class GuaGenerator {
   }
 
   /**
+   * 批量產生命卦，無動爻
+   * @param beginDate
+   * @param endDate
+   */
+  buildBatchFateGua(beginDate: Date, endDate: Date): GuaResult[] {
+    return this.fullGuaFactory.createBatchFateGua(beginDate, endDate)
+        .map(fullGua => ({ fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) }));
+  }
+
+  /**
    * 時間取卦( 6碼時分秒(HH:mm:ss)或年月日時分秒(YYYYMMDDHHmmss) )
    * 1. 傳入時間以24H制
    * 2. 若僅傳入6碼，則作為(HH:mm:ss)，自動補上當天日期

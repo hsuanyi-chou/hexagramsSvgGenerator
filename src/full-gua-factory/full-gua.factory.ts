@@ -383,10 +383,46 @@ export class FullGuaFactory {
      * @return 命卦
      */
     createFateGua(date: Date): FullGua {
+        return this.genFateGua(date);
+    }
+
+    /**
+     * 產生命卦公共函式
+     * @param date 日期
+     * @param withMutual 是否需要動爻 (批量產生命卦時無動爻)
+     * @private
+     */
+    private genFateGua(date: Date, withMutual = true): FullGua {
         const fullDate = FullGuaFactory.transLunarDate(FullGuaFactory.transDateAfter2300(date));
         return this.create(this.transDigitToGua(fullDate.solar2lunarData.lDay), this.transDigitToGua(fullDate.solar2lunarData.lMonth),
-                            this.timeToMutual(date), date);
+            withMutual ? this.timeToMutual(date): [], date);
     }
+
+    /**
+     * 批量產生命卦，不含動爻
+     * @param startDate 起始日期
+     * @param endDate 結束日期
+     */
+    createBatchFateGua(beginDate: Date, endDate: Date): FullGua[] {
+        return this.getDatesBetween(beginDate, endDate).map(date => this.genFateGua(date, false));
+    }
+
+    /**
+     * 產生日期區間每一個日期
+     * @param startDate 起始日期
+     * @param endDate 結束日期
+     * @private
+     */
+    private getDatesBetween(startDate: Date, endDate: Date) {
+        const dates = [];
+        const currentDate = startDate;
+        while (currentDate <= endDate) {
+            dates.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        return dates;
+    };
+
     /**
      * 產生六爻(地支 + 六親)
      * @param down 下卦
