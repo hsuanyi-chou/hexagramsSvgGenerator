@@ -20,6 +20,7 @@ describe('產生命卦', () => {
     [
         {
         date: new Date('1990-06-25T11:20:00.000'),
+        cutAt2300: false,
         expectedResult: {
             guaName: '火風鼎之大有',
             LunarDate: '庚午 年 壬午 月 辛酉 日 午 時'
@@ -27,20 +28,30 @@ describe('產生命卦', () => {
         },
         {
             date: new Date('2022-02-27T10:20:00.000'),
+            cutAt2300: false,
             expectedResult: {
                 guaName: '火天大有之大壯',
                 LunarDate: '壬寅 年 壬寅 月 辛亥 日 巳 時'
             }
         },
         {
-            date: new Date('2022-02-27T23:20:00.000'), // 23:00 後換日的case
+            date: new Date('2022-02-27T23:20:00.000'), // 23:00 後換日的 case 。應爸爸以節氣來看，應仍以 00:00 換日
+            cutAt2300: false,
+            expectedResult: {
+                guaName: '火天大有之鼎',
+                LunarDate: '壬寅 年 壬寅 月 辛亥 日 子 時'
+            }
+        },
+        {
+            date: new Date('2022-02-27T23:20:00.000'), // 23:00 後換日的 case
+            cutAt2300: true,
             expectedResult: {
                 guaName: '雷天大壯之恆',
                 LunarDate: '壬寅 年 壬寅 月 壬子 日 子 時'
             }
         },
     ].forEach(situation => {
-        const fateGua = FULL_GUA_FACTORY.createFateGua(situation.date);
+        const fateGua = FULL_GUA_FACTORY.createFateGua(situation.date, situation.cutAt2300);
         test(`生日: ${situation.date.toLocaleString()} 產命卦: ${situation.expectedResult.guaName}`, () => {
             expect(fateGua.name).toBe(situation.expectedResult.guaName);
             expect(fateGua.getChineseLunarDate()).toBe(situation.expectedResult.LunarDate);

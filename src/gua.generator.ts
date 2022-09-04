@@ -64,7 +64,7 @@ export class GuaGenerator {
    * @return svg 純文字內容
    */
   buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date): GuaResult {
-    const fullGua = this.fullGuaFactory.create(up, down, mutual, date);
+    const fullGua = this.fullGuaFactory.create(up, down, mutual || [], date);
     this.addScriptures(fullGua, mutual!);
     return { fullGua, svg: this.createSvg(fullGua, date) };
   }

@@ -35,7 +35,7 @@ export class FullGuaFactory {
      * @param date 時間
      * @return 全卦
      */
-    create(up: Gua, down: Gua, mutual?: number[], date?: Date): FullGua {
+    create(up: Gua, down: Gua, mutual: number[], date?: Date, cutAt2300?: boolean): FullGua {
         if (up !== '天' && up !== '澤' && up !== '火' && up !== '雷' &&
             up !== '風' && up !== '水' && up !== '山' && up !== '地') {
             throw new Error('上爻(up)僅能傳入：天、澤、火、雷、風、水、山、地');
@@ -365,13 +365,13 @@ export class FullGuaFactory {
                 break;
         }
 
-        if (mutual && mutual.length !== 0) {
+        if (mutual.length !== 0) {
             this.genMutual(up, down, mutual, fullGua);
         }
 
-        fullGua.addGenGuaBase({ up, down, date, mutual: mutual || [] });
+        fullGua.addGenGuaBase({ up, down, date, mutual });
         if (date) {
-            this.genDate(fullGua, date);
+            this.genDate(fullGua, date, !!cutAt2300);
             this.genMonster(fullGua);
         }
         return fullGua;
@@ -380,31 +380,34 @@ export class FullGuaFactory {
     /**
      * 產生命卦
      * @param date 日期
+     * @param cutAt2300 23:00 換日
      * @return 命卦
      */
-    createFateGua(date: Date): FullGua {
-        return this.genFateGua(date);
+    createFateGua(date: Date, cutAt2300 = false): FullGua {
+        return this.genFateGua(date, true, cutAt2300);
     }
 
     /**
      * 產生命卦公共函式
      * @param date 日期
      * @param withMutual 是否需要動爻 (批量產生命卦時無動爻)
+     * @param cutAt2300 23:00 換日
      * @private
      */
-    private genFateGua(date: Date, withMutual = true): FullGua {
-        const fullDate = FullGuaFactory.transLunarDate(FullGuaFactory.transDateAfter2300(date));
+    private genFateGua(date: Date, withMutual: boolean, cutAt2300: boolean): FullGua {
+        const fullDate = FullGuaFactory.transLunarDate(cutAt2300 ? FullGuaFactory.transDateAfter2300(date) : date);
         return this.create(this.transDigitToGua(fullDate.solar2lunarData.lDay), this.transDigitToGua(fullDate.solar2lunarData.lMonth),
-            withMutual ? this.timeToMutual(date): [], date);
+            withMutual ? this.timeToMutual(date): [], date, cutAt2300);
     }
 
     /**
      * 批量產生命卦，不含動爻
-     * @param startDate 起始日期
+     * @param beginDate 起始日期
      * @param endDate 結束日期
+     * @param cutAt2300 23:00 換日
      */
-    createBatchFateGua(beginDate: Date, endDate: Date): FullGua[] {
-        return this.getDatesBetween(beginDate, endDate).map(date => this.genFateGua(date, false));
+    createBatchFateGua(beginDate: Date, endDate: Date, cutAt2300 = false): FullGua[] {
+        return this.getDatesBetween(beginDate, endDate).map(date => this.genFateGua(date, false, cutAt2300));
     }
 
     /**
@@ -480,9 +483,10 @@ export class FullGuaFactory {
      * 增加日期
      * @param fullGua 全卦
      * @param date 國曆日期
+     * @param cutAt2300 23:00 換日
      */
-    private genDate(fullGua: FullGua, date: Date): void {
-        const fullDate = FullGuaFactory.transLunarDate(FullGuaFactory.transDateAfter2300(date));
+    private genDate(fullGua: FullGua, date: Date, cutAt2300: boolean): void {
+        const fullDate = FullGuaFactory.transLunarDate(cutAt2300 ? FullGuaFactory.transDateAfter2300(date) : date);
         fullGua.solarDate = fullDate.solarDate;
         fullGua.lunarDate = fullDate.lunarDate;
         fullGua.lunarYear = fullDate.solar2lunarData.gzYear;
@@ -1022,7 +1026,7 @@ export class FullGuaFactory {
 
         const mutualDown = FullGuaFactory.transYingYangYaoToGua(mutualGuaYingYang.substring(0, 3) as YingYangYao);
         const mutualUp = FullGuaFactory.transYingYangYaoToGua(mutualGuaYingYang.substring(3, 6) as YingYangYao);
-        return this.create(mutualUp, mutualDown);
+        return this.create(mutualUp, mutualDown, []);
     }
 
     /**

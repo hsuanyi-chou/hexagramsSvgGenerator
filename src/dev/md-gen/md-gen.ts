@@ -78,7 +78,7 @@ function genFullGuaArray() {
     const fullGuaList = [];
     for (const up of guaArray) {
         for (const down of guaArray) {
-            const fullGua = fullGuaFactory.create(up.gua, down.gua);
+            const fullGua = fullGuaFactory.create(up.gua, down.gua, []);
             fullGuaList.push({ fileName: `${up.id}${down.id}`, fullGua });
         }
     }
