@@ -33,6 +33,7 @@ export class FullGuaFactory {
      * @param down 下卦
      * @param mutual 動爻(數字陣列)
      * @param date 時間
+     * @param cutAt2300 是否 23:00 換日
      * @return 全卦
      */
     create(up: Gua, down: Gua, mutual: number[], date?: Date, cutAt2300?: boolean): FullGua {
@@ -552,6 +553,14 @@ export class FullGuaFactory {
         }
     }
 
+    /**
+     * 產生動爻
+     * @param up 上卦
+     * @param down 下卦
+     * @param mutual 動爻
+     * @param fullGua 全卦資訊
+     * @private
+     */
     private genMutual(up: Gua, down: Gua, mutual: number[], fullGua: FullGua) {
         const mutualFullGua = this.getMutualFullGua(up, down, mutual);
         fullGua.mutual = mutual.map( n => ({
