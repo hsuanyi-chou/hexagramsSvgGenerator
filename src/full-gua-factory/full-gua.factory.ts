@@ -6,6 +6,8 @@ import { FullGua } from './full-gua';
 import dayjs from 'dayjs';
 // @ts-ignore
 import solarlunar from 'solarlunar';
+import { BatchFateGuaSolver } from '../solvers/solver.batch-fate-gua';
+import { getElement } from '../util/util';
 
 enum MONSTER {
     DRAGON = 0,     // 青龍
@@ -408,7 +410,16 @@ export class FullGuaFactory {
      * @param cutAt2300 23:00 換日
      */
     createBatchFateGua(beginDate: Date, endDate: Date, cutAt2300 = false): FullGua[] {
-        return this.getDatesBetween(beginDate, endDate).map(date => this.genFateGua(date, false, cutAt2300));
+        const solver = new BatchFateGuaSolver();
+        return this.getDatesBetween(beginDate, endDate)
+            .map(date => this.genFateGua(date, false, cutAt2300))
+            .map((fullGua: FullGua) => {
+                fullGua.solver.push({
+                    description: '世爻旺相',
+                    result: solver.shihWang(fullGua)
+                });
+                return fullGua;
+            });
     }
 
     /**
@@ -437,7 +448,7 @@ export class FullGuaFactory {
     private genSixYao(down: Gua, up: Gua, gungElement: Elements): Yao[] {
         const earthlyBranches = [...FullGuaFactory.getEarthlyBranch(down, 'DOWN'), ...FullGuaFactory.getEarthlyBranch(up, 'UP')];
         const isYangYao = [...FullGuaFactory.genIsYangYao(down), ...FullGuaFactory.genIsYangYao(up)];
-        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: FullGuaFactory.getRelative(gungElement, e), position: i + 1, isYangYao: isYangYao[i], void: false}))
+        return earthlyBranches.map((e, i) => ({earthlyBranch: e, relative: this.getRelative(gungElement, e), position: i + 1, isYangYao: isYangYao[i], void: false}))
     }
 
     /**
@@ -566,7 +577,7 @@ export class FullGuaFactory {
         fullGua.mutual = mutual.map( n => ({
             earthlyBranch: mutualFullGua.yao[n - 1].earthlyBranch,
             position: mutualFullGua.yao[n - 1].position,
-            relative: FullGuaFactory.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch),
+            relative: this.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch),
             void: false
             })
         );
@@ -713,8 +724,8 @@ export class FullGuaFactory {
      * @param earthlyBranch 地支
      * @return 該爻六親
      */
-    private static getRelative(gung: Elements, earthlyBranch: string): Relative {
-        const element = FullGuaFactory.getElement(earthlyBranch);
+    private getRelative(gung: Elements, earthlyBranch: EarthlyBranch): Relative {
+        const element = getElement(earthlyBranch as EarthlyBranch);
         if (gung === element) {
             return '兄弟';
         }
@@ -799,40 +810,6 @@ export class FullGuaFactory {
                         text = '父母';
                         break;
                 }
-                break;
-        }
-        return text;
-    }
-
-    /**
-     * 傳入天干、地支，回傳五行 (天干還沒做，用到機會少)
-     * @param type 天干/地支
-     * @return 五行
-     */
-    private static getElement(type: string): Elements {
-        let text: Elements = '' as Elements;
-        switch (type) {
-            case '子':
-            case '亥':
-                text = '水';
-                break;
-            case '寅':
-            case '卯':
-                text = '木';
-                break;
-            case '巳':
-            case '午':
-                text = '火';
-                break;
-            case '申':
-            case '酉':
-                text = '金';
-                break;
-            case '辰':
-            case '未':
-            case '戌':
-            case '丑':
-                text = '土';
                 break;
         }
         return text;

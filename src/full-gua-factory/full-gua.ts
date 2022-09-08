@@ -22,6 +22,8 @@ export class FullGua implements IFullGua {
     lunarDay = ''; // 日干支
     void: EarthlyBranch[] = []; // 空亡
 
+    solver: any[] = [];
+
     constructor(name: string, description: string, yao: Yao[], heavenlyStems: HeavenlyStems, gung: Gung,
         hidden?: Yao[], hints?: string[]) {
         this.name = name;
