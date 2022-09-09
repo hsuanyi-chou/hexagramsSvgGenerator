@@ -30,17 +30,13 @@ export class BatchFateGuaSolver {
         const monthElement = getElement(month)
         switch (shihElement) {
             case '土':
-                return yearElement === '土' || yearElement === '火' ||
-                    (elementRelative(shihElement, monthElement) && year === '申' || month === '子');
-            case '木':
-                return yearElement === '木' || yearElement === '水';
-            case '水':
-                return yearElement === '水' || yearElement === '土';
-            case '火':
-                return yearElement === '火' || yearElement === '木';
+                return elementRelative(shihElement, yearElement) ||
+                    (elementRelative(shihElement, monthElement) && (year === '申' || year === '子'));
             case '金':
-                return yearElement === '金' || yearElement === '土' ||
+                return elementRelative(shihElement, yearElement) ||
                 (elementRelative(shihElement, monthElement) && year === '巳');
+            default:
+                return elementRelative(shihElement, yearElement);
         }
     }
 

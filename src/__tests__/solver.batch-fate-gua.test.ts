@@ -10,6 +10,18 @@ describe('BatchFateGuaSolver - 批量產生命卦 - 解卦', () => {
     describe(`世爻是否旺相(僅依年、空亡判)`, () => {
         [
             {
+                date: new Date('2020-06-01T11:20:00.000'),
+                guaName: '澤雷隨',
+                description: '世爻: 辰、年: 子、月: 巳',
+                expectResult: true,
+            },
+            {
+                date: new Date('2021-06-28T11:20:00.000'),
+                guaName: '火風鼎',
+                description: '世爻: 亥、年: 丑、月: 午',
+                expectResult: false,
+            },
+            {
                 date: new Date('2025-10-02T11:20:00.000'),
                 guaName: '火地晉',
                 description: '世爻: 酉、年: 巳、月: 酉',
