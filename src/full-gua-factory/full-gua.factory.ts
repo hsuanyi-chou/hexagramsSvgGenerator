@@ -411,7 +411,7 @@ export class FullGuaFactory {
      */
     createBatchFateGua(beginDate: Date, endDate: Date, cutAt2300 = false): FullGua[] {
         const solver = new BatchFateGuaSolver();
-        return this.getDatesBetween(beginDate, endDate)
+        return this.getDatesBetween(new Date(beginDate), new Date(endDate))
             .map(date => this.genFateGua(date, false, cutAt2300))
             .map((fullGua: FullGua) => {
                 fullGua.solver.push({
