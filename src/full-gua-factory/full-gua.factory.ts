@@ -512,9 +512,45 @@ export class FullGuaFactory {
                 fullGua.addHint(`${solarTermHint}若是，則月令須調整為下一月份。如: 2021/5/5(三)，立夏，節氣轉換時間=14:48。14:48以前用辰月；以後用巳月`);
             }
         }
+
+        this.benefactor(fullGua);
         fullGua.timePeriod = this.getTimePeriod(date);
         fullGua.void = this.calculateVoid(fullDate.solar2lunarData.gzDay.charAt(0) as HeavenlyStem, fullDate.solar2lunarData.gzDay.charAt(1) as EarthlyBranch);
         this.filledVoid(fullGua);
+    }
+
+    /**
+     * 天乙貴人
+     * @param fullGua
+     * @private
+     */
+    private benefactor(fullGua: FullGua): void {
+        const d = fullGua.lunarDay.charAt(0) as unknown as HeavenlyStem;
+        let earthlyBranches: EarthlyBranch[] = [];
+        switch (d) {
+            case '甲':
+            case '戊':
+            case '庚':
+                earthlyBranches = ['丑', '未'];
+                break;
+            case '乙':
+            case '己':
+                earthlyBranches = ['子', '申'];
+                break;
+            case '丙':
+            case '丁':
+                earthlyBranches = ['亥', '酉'];
+                break;
+            case '壬':
+            case '癸':
+                earthlyBranches = ['卯', '巳'];
+                break;
+            case '辛':
+                earthlyBranches = ['午', '寅'];
+                break;
+        }
+
+        fullGua.addHint(`天乙貴人：${earthlyBranches.join('、')}`);
     }
 
     /**

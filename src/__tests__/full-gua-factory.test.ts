@@ -66,7 +66,7 @@ test('批量產生命卦', () => {
     expect(fateGuas.length).toEqual(4);
 });
 
-describe('產生卦象', ()=> {
+describe('產生卦象', () => {
    [
        {
            up: '天' as Gua,
@@ -98,4 +98,52 @@ describe('產生卦象', ()=> {
            expect(res.gung.name).toBe(expectedResult.gung);
        });
    });
+});
+
+describe('天乙貴人', () => {
+    [
+        {
+            dates: [
+                new Date('2022-11-07T13:00:00.000'),
+                new Date('2022-11-11T13:00:00.000'),
+                new Date('2022-11-13T13:00:00.000'),
+            ],
+            expectedResult: `天乙貴人：丑、未`,
+        },
+        {
+            dates: [
+                new Date('2022-11-08T13:00:00.000'),
+                new Date('2022-11-12T13:00:00.000'),
+            ],
+            expectedResult: `天乙貴人：子、申`,
+        },
+        {
+            dates: [
+                new Date('2022-11-09T13:00:00.000'),
+                new Date('2022-11-10T13:00:00.000'),
+            ],
+            expectedResult: `天乙貴人：亥、酉`,
+        },
+        {
+            dates: [
+                new Date('2022-11-15T13:00:00.000'),
+                new Date('2022-11-16T13:00:00.000'),
+            ],
+            expectedResult: `天乙貴人：卯、巳`,
+        },
+        {
+            dates: [
+                new Date('2022-11-14T13:00:00.000'),
+            ],
+            expectedResult: `天乙貴人：午、寅`,
+        },
+    ].forEach(situation => {
+        const { dates, expectedResult } = situation;
+        for (const date of dates) {
+            const res = FULL_GUA_FACTORY.createFateGua(date);
+            test(`日干支: ${res.lunarDay}`, () => {
+                expect(res.hints.includes(expectedResult)).toBeTruthy();
+            });
+        }
+    });
 });
