@@ -16,24 +16,25 @@ for (const fullGua of fullGuaArray) {
         text += buildContent(fileGua, fullGua.fileName);
     }
     // console.log(text);
-    fs.writeFileSync(`${process.cwd()}/genMdFile/${fullGua.fileName}.md`, text);
+    fs.writeFileSync(`${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}.mdx`, text);
     console.log(`${fullGua.fileName}.md產生完成！`);
 }
 
 
 function buildMdHeader(fullGua: FullGua, date: string) {
-    const TAB_SPACE = ' ';
-    let text = `---\n`;
-    text += `title: ${fullGua.name}\n`
-    text += `date: ${date}\n`;
-    text += `categories:\n`;
-    text += `${TAB_SPACE}- 64卦\n`;
-    text += `tags:\n`;
-    text += `${TAB_SPACE}- ${fullGua.gung.name}\n`;
-    if (fullGua.hints.length !== 0) {
-        fullGua.hints.forEach(h => text += `${TAB_SPACE}- ${fullGua.hints}\n`);
-    }
-    text += `---\n\n`;
+    // const TAB_SPACE = ' ';
+    // let text = `---\n`;
+    // text += `title: ${fullGua.name}\n`
+    // text += `date: ${date}\n`;
+    // text += `categories:\n`;
+    // text += `${TAB_SPACE}- 64卦\n`;
+    // text += `tags:\n`;
+    // text += `${TAB_SPACE}- ${fullGua.gung.name}\n`;
+    // if (fullGua.hints.length !== 0) {
+    //     fullGua.hints.forEach(h => text += `${TAB_SPACE}- ${fullGua.hints}\n`);
+    // }
+    // text += `---\n\n`;
+    let text = `# ${fullGua.name}\n\n`;
     return text;
 }
 
@@ -50,9 +51,9 @@ function buildContent(fileGua: IChingResult, fileName: string) {
     text += `## 五路財神經\n\n${fileGua.fiveMoney}\n\n`;
     text += `## 稽首七十二天師加持世界和平共轉法輪寶誥\n\n`;
     if (fileGua.seventyTwoGod.length === 2) {
-        text += `${fileGua.seventyTwoGod.join('\n')}\n\n`;
+        text += `${fileGua.seventyTwoGod.join('\n\n')}\n\n`;
     } else {
-        text += `${fileGua.seventyTwoGod[0]}\n${fileGua.seventyTwoGod[1]}\n\n`;
+        text += `${fileGua.seventyTwoGod[0]}\n\n${fileGua.seventyTwoGod[1]}\n\n`;
         text += `${fileGua.seventyTwoGod[2]}\n\n${fileGua.seventyTwoGod[3]}\n\n`;
     }
     text += `## 序卦傳\n\n${fileGua.serialGua}\n\n`;
@@ -60,6 +61,10 @@ function buildContent(fileGua: IChingResult, fileName: string) {
     if (fileGua.description) {
         text += `${fileGua.description}\n\n`;
     }
+
+    // 增加 mdx 底下的 export
+    text += `import MdxLayout from '@app/mdx-layout';\n`;
+    text += `export default ({ children }) => <MdxLayout>{children}</MdxLayout>`;
     return text;
 }
 
