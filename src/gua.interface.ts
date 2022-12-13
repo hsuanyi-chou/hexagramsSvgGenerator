@@ -51,6 +51,7 @@ export interface IFullGua {
     hints?: string[]; // 提示
     scriptures?: Scripture[]; // 經書內容
     genGuaBase: GenGuaBase; // 產出此卦的基本傳入資料，供之後確認時間是否有問題
+    solver: { description: string; result: boolean }[]; // 目前只有世爻旺相使用(格式為世爻旺相)。在卦象產生器裡是寫any[]
 }
 
 export interface Scripture {
