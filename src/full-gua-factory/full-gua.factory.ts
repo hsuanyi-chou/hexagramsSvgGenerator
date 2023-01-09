@@ -1046,8 +1046,8 @@ export class FullGuaFactory {
             }
         }
 
-        const mutualDown = FullGuaFactory.transYingYangYaoToGua(mutualGuaYingYang.substring(0, 3) as YingYangYao);
-        const mutualUp = FullGuaFactory.transYingYangYaoToGua(mutualGuaYingYang.substring(3, 6) as YingYangYao);
+        const mutualDown = this.transYingYangYaoToGua(mutualGuaYingYang.substring(0, 3) as YingYangYao);
+        const mutualUp = this.transYingYangYaoToGua(mutualGuaYingYang.substring(3, 6) as YingYangYao);
         return this.create(mutualUp, mutualDown, []);
     }
 
@@ -1090,8 +1090,8 @@ export class FullGuaFactory {
      * 將數字半卦轉換回爻，方可使用create產卦
      * @param yingYangYao 陰陽爻
      */
-    private static transYingYangYaoToGua(yingYangYao: YingYangYao): Gua {
-        let gua: Gua = '天';
+    public transYingYangYaoToGua(yingYangYao: YingYangYao): Gua {
+        let gua: Gua | '' = '';
         switch (yingYangYao) {
             case '111':
                 gua = '天'
@@ -1117,6 +1117,8 @@ export class FullGuaFactory {
             case '000':
                 gua = '地';
                 break;
+            default:
+                throw new Error(`傳入陰陽爻格式錯誤！yingYangYao = ${yingYangYao}`);
         }
         return gua;
     }
@@ -1154,6 +1156,8 @@ export class FullGuaFactory {
             case 7:
                 gua = '山';
                 break;
+            default:
+                throw new Error(`傳入數字格式錯誤！digit = ${digit}`);
         }
         return gua;
     }
