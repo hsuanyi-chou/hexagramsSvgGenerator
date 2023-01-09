@@ -1,5 +1,5 @@
 import { Gua, GuaConfiguration, Yao, GuaResult } from './gua.interface';
-import { FullGuaFactory, FullGua, guaWords } from './full-gua-factory';
+import { FullGuaFactory, FullGua } from './full-gua-factory';
 import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
 
@@ -77,10 +77,10 @@ export class GuaGenerator {
    */
   instantBuildMoneyGua(): GuaResult {
     const fullGua = this.moneyGuaFactory.instantBuild();
-    this.addScriptures(fullGua, fullGua.mutual.map(m => m.position));
+
     return {
       fullGua,
-      svg: this.createSvg(fullGua, new Date())
+      svg: this.createSvg(fullGua, fullGua.genGuaBase.date)
     };
   }
 
@@ -94,7 +94,6 @@ export class GuaGenerator {
    */
   buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date): GuaResult {
     const fullGua = this.fullGuaFactory.create(up, down, mutual || [], date);
-    this.addScriptures(fullGua, mutual!);
     return { fullGua, svg: this.createSvg(fullGua, date) };
   }
 
@@ -104,7 +103,6 @@ export class GuaGenerator {
    */
   buildFateGua(date: Date): GuaResult {
     const fullGua = this.fullGuaFactory.createFateGua(date);
-    this.addScriptures(fullGua, fullGua.mutual.map(m => m.position));
     return { fullGua, svg: this.createSvg(fullGua, date) };
   }
 
@@ -371,47 +369,6 @@ export class GuaGenerator {
             x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
     count++;
     return text;
-  }
-
-  /**
-   * step 7: 增加經書的文字解釋
-   * @param fullGua 卦
-   * @param mutual 動爻
-   */
-  private addScriptures(fullGua: FullGua, mutual: number[]) {
-    const guaWord = guaWords.find(g => g.guaIndex === fullGua.originalName);
-
-    if (guaWord) {
-      fullGua.addScripture({title: '釋', content: guaWord.mean});
-      if (mutual && mutual.length !== 0) {
-        mutual.forEach(m => {
-          switch(m) {
-            case 1:
-              fullGua.addScripture({title: '初爻', content: guaWord.one});
-              break;
-            case 2:
-              fullGua.addScripture({title: '二爻', content: guaWord.two});
-              break;
-            case 3:
-              fullGua.addScripture({title: '三爻', content: guaWord.three});
-              break;
-            case 4:
-              fullGua.addScripture({title: '四爻', content: guaWord.four});
-              break;
-            case 5:
-              fullGua.addScripture({title: '五爻', content: guaWord.five});
-              break;
-            case 6:
-              fullGua.addScripture({title: '上爻', content: guaWord.six});
-              break;
-          }
-        });
-      }
-      fullGua.addScripture({title: '五路財神經', content: guaWord.fiveMoney});
-      fullGua.addScripture({title: '稽首七十二天師加持世界和平共轉法輪寶誥', content: guaWord.seventyTwoGod.join('')});
-      fullGua.addScripture({title: '序卦傳', content: guaWord.serialGua});
-      fullGua.addScripture({title: '唯心用易歌訣', content: guaWord.heartSong});
-    }
   }
 
   /**

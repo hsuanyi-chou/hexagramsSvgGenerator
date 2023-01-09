@@ -80,3 +80,11 @@ test('時間取卦(年月日時分秒)，當整除0時，會傳入動0爻', () =
   expect(res.fullGua.getChineseLunarDate()).toBe('辛丑 年 辛丑 月 丁丑 日 酉 時')
   expect(res.fullGua.name).toBe('雷地豫之晉');
 });
+
+describe('金錢卦(含圖)', () => {
+  test('一秒產卦', () => {
+    const res = GUA_GENERATOR.instantBuildMoneyGua();
+    expect(res).toBeTruthy();
+  });
+
+});
