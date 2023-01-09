@@ -73,6 +73,14 @@ export class GuaGenerator {
   }
 
   /**
+   * 手動搖卦以產生金錢卦
+   */
+  buildMoneyGua(): GuaResult {
+    const fullGua = this.moneyGuaFactory.build();
+    return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
+  }
+
+  /**
    * 一秒產金錢卦
    */
   instantBuildMoneyGua(): GuaResult {

@@ -1,7 +1,7 @@
 {
-  "name": "Hexagrams-SVG-Generator",
-  "version": "4.1.0",
-  "description": "易經64卦SVG產生器",
+  "name": "HexagramsSvgGenerator",
+  "version": "4.2.0",
+  "description": "易經 64 卦 SVG 產生器",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {

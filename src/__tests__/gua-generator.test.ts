@@ -87,4 +87,13 @@ describe('金錢卦(含圖)', () => {
     expect(res).toBeTruthy();
   });
 
+  test('手動搖卦以產金錢卦', () => {
+    GUA_GENERATOR.resetMoneyGua();
+    for (let i = 0; i < 6; i++) {
+      GUA_GENERATOR.shakeMoneyGua();
+    }
+    const res = GUA_GENERATOR.buildMoneyGua();
+    expect(res).toBeTruthy();
+  });
+
 });
