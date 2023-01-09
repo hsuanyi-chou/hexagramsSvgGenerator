@@ -371,8 +371,9 @@ export class FullGuaFactory {
 
         if (mutual.length !== 0) {
             this.genMutual(up, down, mutual, fullGua);
-            this.addScriptures(fullGua, mutual);
+            this.addMutualScripture(fullGua, mutual);
         }
+        this.addScriptures(fullGua);
 
         fullGua.addGenGuaBase({ up, down, date, mutual });
         if (date) {
@@ -629,44 +630,56 @@ export class FullGuaFactory {
     }
 
     /**
-     * 增加經書的文字解釋
+     * 增加動爻經書
      * @param fullGua 卦
      * @param mutual 動爻
      */
-    private addScriptures(fullGua: FullGua, mutual: number[]) {
+    private addMutualScripture(fullGua: FullGua, mutual: number[]): void {
         const guaWord = guaWords.find(g => g.guaIndex === fullGua.originalName);
-
-        if (guaWord) {
-            fullGua.addScripture({title: '釋', content: guaWord.mean});
-            if (mutual && mutual.length !== 0) {
-                mutual.forEach(m => {
-                    switch(m) {
-                        case 1:
-                            fullGua.addScripture({title: '初爻', content: guaWord.one});
-                            break;
-                        case 2:
-                            fullGua.addScripture({title: '二爻', content: guaWord.two});
-                            break;
-                        case 3:
-                            fullGua.addScripture({title: '三爻', content: guaWord.three});
-                            break;
-                        case 4:
-                            fullGua.addScripture({title: '四爻', content: guaWord.four});
-                            break;
-                        case 5:
-                            fullGua.addScripture({title: '五爻', content: guaWord.five});
-                            break;
-                        case 6:
-                            fullGua.addScripture({title: '上爻', content: guaWord.six});
-                            break;
-                    }
-                });
-            }
-            fullGua.addScripture({title: '五路財神經', content: guaWord.fiveMoney});
-            fullGua.addScripture({title: '稽首七十二天師加持世界和平共轉法輪寶誥', content: guaWord.seventyTwoGod.join('')});
-            fullGua.addScripture({title: '序卦傳', content: guaWord.serialGua});
-            fullGua.addScripture({title: '唯心用易歌訣', content: guaWord.heartSong});
+        if (!guaWord) {
+            throw new Error(`找不到經書(addScriptures)，卦名：${fullGua.originalName}`);
         }
+
+        if (mutual && mutual.length !== 0) {
+            mutual.forEach(m => {
+                switch(m) {
+                    case 1:
+                        fullGua.addScripture({title: '初爻', content: guaWord.one});
+                        break;
+                    case 2:
+                        fullGua.addScripture({title: '二爻', content: guaWord.two});
+                        break;
+                    case 3:
+                        fullGua.addScripture({title: '三爻', content: guaWord.three});
+                        break;
+                    case 4:
+                        fullGua.addScripture({title: '四爻', content: guaWord.four});
+                        break;
+                    case 5:
+                        fullGua.addScripture({title: '五爻', content: guaWord.five});
+                        break;
+                    case 6:
+                        fullGua.addScripture({title: '上爻', content: guaWord.six});
+                        break;
+                }
+            });
+        }
+    }
+
+    /**
+     * 增加經書的文字解釋
+     * @param fullGua 卦
+     */
+    private addScriptures(fullGua: FullGua): void {
+        const guaWord = guaWords.find(g => g.guaIndex === fullGua.originalName);
+        if (!guaWord) {
+            throw new Error(`找不到經書(addScriptures)，卦名：${fullGua.originalName}`);
+        }
+        fullGua.addScripture({title: '釋', content: guaWord.mean});
+        fullGua.addScripture({title: '五路財神經', content: guaWord.fiveMoney});
+        fullGua.addScripture({title: '稽首七十二天師加持世界和平共轉法輪寶誥', content: guaWord.seventyTwoGod.join('')});
+        fullGua.addScripture({title: '序卦傳', content: guaWord.serialGua});
+        fullGua.addScripture({title: '唯心用易歌訣', content: guaWord.heartSong});
     }
 
     /**

@@ -76,6 +76,7 @@ describe('產生卦象', () => {
            expectedResult: {
                guaName: '乾為天之姤',
                gung: '乾',
+               scripturesLength: 6,
            }
        },
        {
@@ -86,17 +87,34 @@ describe('產生卦象', () => {
            expectedResult: {
                guaName: '雷天大壯之豐',
                gung: '坤',
+               scripturesLength: 6,
+           }
+       },
+       {
+           up: '火' as Gua,
+           down: '地' as Gua,
+           mutual: [],
+           date: new Date(),
+           expectedResult: {
+               guaName: '火地晉',
+               gung: '乾',
+               scripturesLength: 5,
            }
        },
    ].forEach(situation => {
        const { up, down, mutual, date, expectedResult } = situation;
        const res = FULL_GUA_FACTORY.create(up, down, mutual, date);
+       console.log(res);
        test(`輸入:${up}, ${down}, ${mutual}，產生卦象: ${expectedResult.guaName}`, () => {
            expect(res.name).toBe(expectedResult.guaName);
        });
        test(`卦象: ${expectedResult.guaName}，宮應為${expectedResult.gung}`, () => {
            expect(res.gung.name).toBe(expectedResult.gung);
        });
+       test(`卦象: ${expectedResult.guaName}，經書長度應為${expectedResult.scripturesLength}`, () => {
+           expect(res.scriptures.length).toEqual(expectedResult.scripturesLength);
+       })
+
    });
 });
 
