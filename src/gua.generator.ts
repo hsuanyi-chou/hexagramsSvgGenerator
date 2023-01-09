@@ -1,6 +1,7 @@
 import { Gua, GuaConfiguration, Yao, GuaResult } from './gua.interface';
 import { FullGuaFactory, FullGua, guaWords } from './full-gua-factory';
 import dayjs from 'dayjs';
+import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
 
 enum REGEXP_TIME_PATTERN {
   YEAR = 1,
@@ -13,6 +14,8 @@ enum REGEXP_TIME_PATTERN {
 
 export class GuaGenerator {
   private readonly fullGuaFactory = new FullGuaFactory();
+
+  private readonly moneyGuaFactory = new MoneyGuaFactory(this.fullGuaFactory);
   private config: GuaConfiguration = {
     WIDTH: 600, // 圖片寬度
     HEIGHT: 625, // 圖片長度
@@ -46,13 +49,39 @@ export class GuaGenerator {
   private readonly YAO_X_POSITION = 285; // 爻的X軸位置常數。用來控制整個卦的位置(本卦、變爻、伏藏、六獸、天干世應，都依此來計算相對位置)
 
   private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
-  private SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
+  private readonly SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
 
   constructor(config?: GuaConfiguration) {
     if (config) {
       this.config = config;
       this.SHIH_FIRST_YAO = config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
     }
+  }
+
+  /**
+   * 金錢卦搖卦
+   */
+  shakeMoneyGua(): void {
+    this.moneyGuaFactory.shake();
+  }
+
+  /**
+   * 重置金錢卦
+   */
+  resetMoneyGua(): void {
+    this.moneyGuaFactory.reset();
+  }
+
+  /**
+   * 一秒產金錢卦
+   */
+  instantBuildMoneyGua(): GuaResult {
+    const fullGua = this.moneyGuaFactory.instantBuild();
+    this.addScriptures(fullGua, fullGua.mutual.map(m => m.position));
+    return {
+      fullGua,
+      svg: this.createSvg(fullGua, new Date())
+    };
   }
 
   /**
