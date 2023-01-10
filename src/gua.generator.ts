@@ -66,6 +66,13 @@ export class GuaGenerator {
   }
 
   /**
+   * 搖卦記錄
+   */
+  shakeRecords(): string[] {
+    return this.moneyGuaFactory.getShakeRecords();
+  }
+
+  /**
    * 重置金錢卦
    */
   resetMoneyGua(): void {

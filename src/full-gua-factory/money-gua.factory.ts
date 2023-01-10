@@ -13,9 +13,10 @@ export class MoneyGuaFactory {
     /** 目前動爻，依搖到的位置記錄 */
     private mutual: number[] = [];
 
+    /** 搖卦記錄，供 UI 呈現過程 */
+    private shakeRecords: RandomNum[] = [];
     private MAX_COUNT = 6;
-    constructor(private fullGuaFactory: FullGuaFactory) {
-    }
+    constructor(private fullGuaFactory: FullGuaFactory) { }
 
     /**
      * 一秒產卦
@@ -63,12 +64,14 @@ export class MoneyGuaFactory {
         this.shakeCounts = 1;
         this.yingYangArray = [];
         this.mutual = [];
+        this.shakeRecords = [];
     }
 
     private transformYao(digits: RandomNum): '0' | '1' {
         if (!digits) {
             throw new Error(`隨機數字轉換成爻失敗！(transformYao)，收到參數=${digits}`);
         }
+        this.shakeRecords.push(digits);
         // 將 randomNumber 轉成爻
         switch (digits) {
             case '000': // 陰爻動
@@ -98,7 +101,15 @@ export class MoneyGuaFactory {
             yingYangArray: this.yingYangArray,
             mutual: this.mutual,
             shakeCounts: this.shakeCounts,
+            shakeRecords: this.shakeRecords,
         };
+    }
+
+    /**
+     * 取得搖卦記錄
+     */
+    getShakeRecords(): string[] {
+        return [...this.shakeRecords];
     }
 
     /**

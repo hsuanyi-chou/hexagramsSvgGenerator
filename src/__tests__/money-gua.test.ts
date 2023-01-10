@@ -41,5 +41,17 @@ describe('金錢卦', () => {
         expect(data.yingYangArray.length).toBe(0);
         expect(data.mutual.length).toBe(0);
         expect(data.shakeCounts).toBe(1);
+        expect(data.shakeRecords.length).toBe(0);
+    });
+
+    it('搖 3 次', () => {
+        moneyGua.reset();
+        moneyGua.shake();
+        moneyGua.shake();
+        moneyGua.shake();
+        const data = moneyGua.getInnerData();
+        expect(data.yingYangArray.length).toBe(3);
+        expect(data.shakeCounts).toBe(4);
+        expect(data.shakeRecords.length).toBe(3);
     });
 });
