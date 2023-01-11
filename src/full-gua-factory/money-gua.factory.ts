@@ -1,5 +1,5 @@
 import { FullGuaFactory } from './full-gua.factory';
-import { RandomNum } from '../money-gua.interface';
+import { RandomNum, ShakeRecord } from '../money-gua.interface';
 import { YingYangYao } from '../gua.interface';
 import { FullGua } from './full-gua';
 
@@ -13,8 +13,8 @@ export class MoneyGuaFactory {
     /** 目前動爻，依搖到的位置記錄 */
     private mutual: number[] = [];
 
-    /** 搖卦記錄，供 UI 呈現過程 */
-    private shakeRecords: RandomNum[] = [];
+    /** 搖卦記錄，供 UI 呈現過程。反向順序存入資料，由六爻~初爻儲存。利於 UI 直接使用 */
+    private shakeRecords: ShakeRecord[] = [];
     private MAX_COUNT = 6;
     constructor(private fullGuaFactory: FullGuaFactory) { }
 
@@ -71,7 +71,10 @@ export class MoneyGuaFactory {
         if (!digits) {
             throw new Error(`隨機數字轉換成爻失敗！(transformYao)，收到參數=${digits}`);
         }
-        this.shakeRecords.push(digits);
+        this.shakeRecords.unshift({
+            record: digits,
+            position: this.transCountToPosition(this.shakeCounts)
+        });
         // 將 randomNumber 轉成爻
         switch (digits) {
             case '000': // 陰爻動
@@ -93,6 +96,29 @@ export class MoneyGuaFactory {
     }
 
     /**
+     * 將搖卦爻位轉成文字
+     * @param count
+     */
+    private transCountToPosition(count: number): string {
+        switch (count) {
+            case 1:
+                return '初爻';
+            case 2:
+                return '二爻';
+            case 3:
+                return '三爻';
+            case 4:
+                return '四爻';
+            case 5:
+                return '五爻';
+            case 6:
+                return '六爻';
+            default:
+                throw new Error(`傳入錯誤爻位，僅可傳入數字1~6。收到的是${count}`);
+        }
+    }
+
+    /**
      * 取得目前內部資料
      * 供單元測試檢核使用
      */
@@ -108,7 +134,7 @@ export class MoneyGuaFactory {
     /**
      * 取得搖卦記錄
      */
-    getShakeRecords(): string[] {
+    getShakeRecords(): ShakeRecord[] {
         return [...this.shakeRecords];
     }
 

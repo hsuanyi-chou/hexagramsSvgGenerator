@@ -2,6 +2,7 @@ import { Gua, GuaConfiguration, Yao, GuaResult } from './gua.interface';
 import { FullGuaFactory, FullGua } from './full-gua-factory';
 import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
+import { ShakeRecord } from './money-gua.interface';
 
 enum REGEXP_TIME_PATTERN {
   YEAR = 1,
@@ -68,7 +69,7 @@ export class GuaGenerator {
   /**
    * 搖卦記錄
    */
-  shakeRecords(): string[] {
+  shakeRecords(): ShakeRecord[] {
     return this.moneyGuaFactory.getShakeRecords();
   }
 
