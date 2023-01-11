@@ -51,7 +51,7 @@ export class MoneyGuaFactory {
             console.log('已滿 6 次，請 call build() 產卦');
             return;
         }
-        let randomNum: RandomNum = '';
+        let randomNum: RandomNum | string = '';
         for (let i = 0; i < 3; i++) {
             randomNum += this.randomNumber();
         }
@@ -112,7 +112,7 @@ export class MoneyGuaFactory {
             case 5:
                 return '五爻';
             case 6:
-                return '六爻';
+                return '上爻';
             default:
                 throw new Error(`傳入錯誤爻位，僅可傳入數字1~6。收到的是${count}`);
         }
