@@ -17,7 +17,7 @@ export class GuaGenerator {
   private readonly fullGuaFactory = new FullGuaFactory();
 
   private readonly moneyGuaFactory = new MoneyGuaFactory(this.fullGuaFactory);
-  private TOP_GAP = 15; // 上方留白間距 (Y軸)
+  private TOP_GAP = 25; // 上方留白間距 (Y軸)
   private LEFT_GAP = 10; // 左邊留白間距 (X軸)
 
   private config: GuaConfiguration = {
@@ -46,6 +46,14 @@ export class GuaGenerator {
     SIDE_INFO_COLOR: '#484a6d', // 側邊資訊顏色
   };
 
+  /**
+   * 上方資訊
+   */
+  private readonly TOP_INFO_CONFIG = {
+    GAP: 15, // 每行間距
+    FONT_SIZE: 19, // 文字大小
+    FONT_COLOR: '#3b3a3a', // 文字顏色
+  }
 
   private readonly TITLE_TOP_Y = this.TOP_GAP + 50; // 標題上方的高度
   private readonly TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
@@ -251,14 +259,27 @@ export class GuaGenerator {
    */
   private drawTopInfo(fullGua: FullGua): string {
     let text = '';
+    const base = {
+      fontSize: this.TOP_INFO_CONFIG.FONT_SIZE,
+      color: this.TOP_INFO_CONFIG.FONT_COLOR,
+      x: this.LEFT_GAP,
+    };
+
     text += this.genSvgTextComponent({
       id: 'genTime',
       text: `時間：${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss')}`,
-      color: '#2f2f2f',
-      fontSize: 18,
-      x: this.LEFT_GAP,
       y: this.TOP_GAP,
+        ...base
     });
+
+    if (fullGua.genGuaBase.thing) {
+      text += this.genSvgTextComponent({
+        id: 'thing',
+        text: `事由：${fullGua.genGuaBase.thing}`,
+        y: this.TOP_GAP + (this.TOP_INFO_CONFIG.GAP * 2),
+        ...base
+      });
+    }
 
     return text;
   }
