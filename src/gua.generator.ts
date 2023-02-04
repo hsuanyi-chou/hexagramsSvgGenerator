@@ -154,7 +154,7 @@ export class GuaGenerator {
    * @param time 格式: YYYYMMDDHHmmss
    * @param thing 事由
    */
-  buildGuaByTime({ time, thing }: BuildGuaByTimeParams): GuaResult {
+  buildGuaByTime({ time, thing = '' }: BuildGuaByTimeParams): GuaResult {
     if (!time.match(/^\d{14}$/)) {
       throw new Error('傳入時間錯誤！僅支援年月日時分秒(YYYYMMDDHHmmss) 14碼數字！');
     }
