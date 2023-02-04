@@ -1,6 +1,6 @@
 {
   "name": "HexagramsSvgGenerator",
-  "version": "4.4.0",
+  "version": "5.0.0",
   "description": "易經 64 卦 SVG 產生器",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

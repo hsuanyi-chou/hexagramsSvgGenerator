@@ -12,6 +12,7 @@ export type EarthlyBranch = '子' | '丑' | '寅' | '卯' | '辰' | '巳' | '午
 export type GungName = '乾' | '兌' | '離' | '震' | '巽' | '坎' | '艮' | '坤';
 
 export type YingYangYao = '000' | '001' | '010' | '011' | '100' | '101' | '110' | '111';
+
 export interface Yao {
     earthlyBranch: EarthlyBranch; // 地支
     relative: Relative; // 六親
@@ -34,10 +35,32 @@ export interface Gung {
 
 // 產出此卦的基本傳入資料，供之後確認時間是否有問題
 export interface GenGuaBase {
-    up: Gua,
-    down: Gua,
-    date: Date | undefined,
-    mutual: number[]
+    up: Gua;
+    down: Gua;
+    date?: Date;
+    mutual: number[];
+    thing?: string; // 占卜事由
+}
+
+/**
+ * 基礎 create 參數
+ */
+export interface FullGuaParams {
+    up: Gua; // 上卦
+    down: Gua; // 下卦
+    mutual: number[]; // 動爻(數字陣列)
+    date?: Date; // 日期
+    cutAt2300?: boolean; // 是否 23:00 換日
+    thing?: string; // 事由
+}
+
+/**
+ * 命卦 base 參數
+ */
+export interface GenFateGuaParams {
+    date: Date; // 日期
+    withMutual: boolean; // 是否要動爻
+    cutAt2300: boolean; // 是否 23:00 換日
 }
 
 export interface IFullGua {

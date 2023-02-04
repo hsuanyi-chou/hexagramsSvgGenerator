@@ -103,8 +103,8 @@ describe('產生卦象', () => {
        },
    ].forEach(situation => {
        const { up, down, mutual, date, expectedResult } = situation;
-       const res = FULL_GUA_FACTORY.create(up, down, mutual, date);
-       console.log(res);
+       const res = FULL_GUA_FACTORY.create({up, down, mutual, date});
+
        test(`輸入:${up}, ${down}, ${mutual}，產生卦象: ${expectedResult.guaName}`, () => {
            expect(res.name).toBe(expectedResult.guaName);
        });

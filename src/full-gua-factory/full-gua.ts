@@ -58,21 +58,21 @@ export class FullGua implements IFullGua {
      * 增加產卦基本資料
      * @param base
      */
-    addGenGuaBase(base: GenGuaBase) {
+    addGenGuaBase(base: GenGuaBase): void {
         this.genGuaBase = base;
     }
 
     /**
      * 取得農曆完整日期
      */
-    getFullLunarDate() {
+    getFullLunarDate(): string {
         return `${this.lunarDate}(${this.lunarYear}-${this.lunarMonth}-${this.lunarDay})`;
     }
 
     /**
      * 取得干支年月日
      */
-    getChineseLunarDate() {
+    getChineseLunarDate(): string {
         return `${this.lunarYear} 年 ${this.lunarMonth} 月 ${this.lunarDay} 日 ${this.timePeriod} 時`;
     }
 }

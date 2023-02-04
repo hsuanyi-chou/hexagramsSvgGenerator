@@ -40,7 +40,7 @@ export class MoneyGuaFactory {
         const down = this.fullGuaFactory.transYingYangYaoToGua(downDigit);
         const up = this.fullGuaFactory.transYingYangYaoToGua(upDigit);
 
-        return this.fullGuaFactory.create(up, down, this.mutual, new Date());
+        return this.fullGuaFactory.create({up, down, mutual: this.mutual, date: new Date()});
     }
 
     /**
