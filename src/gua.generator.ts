@@ -99,17 +99,19 @@ export class GuaGenerator {
 
   /**
    * 手動搖卦以產生金錢卦
+   * @param thing 事由
    */
-  buildMoneyGua(): GuaResult {
-    const fullGua = this.moneyGuaFactory.build();
+  buildMoneyGua(thing = ''): GuaResult {
+    const fullGua = this.moneyGuaFactory.build(thing);
     return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
   }
 
   /**
    * 一秒產金錢卦
+   * @param thing 事由
    */
-  instantBuildMoneyGua(): GuaResult {
-    const fullGua = this.moneyGuaFactory.instantBuild();
+  instantBuildMoneyGua(thing = ''): GuaResult {
+    const fullGua = this.moneyGuaFactory.instantBuild(thing);
 
     return {
       fullGua,

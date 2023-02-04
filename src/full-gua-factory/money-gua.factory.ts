@@ -20,16 +20,21 @@ export class MoneyGuaFactory {
 
     /**
      * 一秒產卦
+     * @param thing 事由
      */
-    instantBuild(): FullGua {
+    instantBuild(thing = ''): FullGua {
         this.reset();
         for (let i = 0; i < 6; i++) {
             this.shake();
         }
-        return this.build();
+        return this.build(thing);
     }
 
-    build(): FullGua {
+    /**
+     * 產生金錢卦
+     * @param thing 事由
+     */
+    build(thing = ''): FullGua {
         if (this.yingYangArray.length < this.MAX_COUNT) {
             throw new Error(`產卦失敗！(build)，陰陽爻數量不足`);
         }
@@ -40,7 +45,7 @@ export class MoneyGuaFactory {
         const down = this.fullGuaFactory.transYingYangYaoToGua(downDigit);
         const up = this.fullGuaFactory.transYingYangYaoToGua(upDigit);
 
-        return this.fullGuaFactory.create({up, down, mutual: this.mutual, date: new Date()});
+        return this.fullGuaFactory.create({ up, down, mutual: this.mutual, date: new Date(), thing });
     }
 
     /**
@@ -67,6 +72,10 @@ export class MoneyGuaFactory {
         this.shakeRecords = [];
     }
 
+    /**
+     * 陰陽的 3 碼 0、1 數字轉換成爻
+     * @param digits 陰陽爻的 3 碼 0、1 數字
+     */
     private transformYao(digits: RandomNum): '0' | '1' {
         if (!digits) {
             throw new Error(`隨機數字轉換成爻失敗！(transformYao)，收到參數=${digits}`);
