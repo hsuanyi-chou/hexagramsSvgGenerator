@@ -40,9 +40,8 @@ describe('產生命卦', () => {
 test('批量產生命卦', () => {
   const beginDate = new Date('2022-08-02T11:20:00.000');
   const endDate = new Date('2022-08-05T11:20:00.000');
-  const res = GUA_GENERATOR.buildBatchFateGua(beginDate, endDate);
+  const res = GUA_GENERATOR.buildBatchFateGua({ beginDate, endDate });
   expect(res.length).toEqual(4);
-
 });
 
 test('產生卦象', () => {

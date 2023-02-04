@@ -35,3 +35,11 @@ export interface GenFateGuaParams extends BaseParams {
 export interface BuildFateGuaParams extends BaseParams {
     date: Date; // 日期
 }
+
+/**
+ * 批量命卦 參數
+ */
+export interface BatchFateGuaParams {
+    beginDate: Date;
+    endDate: Date;
+}

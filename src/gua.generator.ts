@@ -3,7 +3,7 @@ import { FullGuaFactory, FullGua } from './full-gua-factory';
 import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
 import { ShakeRecord } from './money-gua.interface';
-import { BuildFateGuaParams } from './params.interface';
+import { BatchFateGuaParams, BuildFateGuaParams } from './params.interface';
 
 enum REGEXP_TIME_PATTERN {
   YEAR = 1,
@@ -141,11 +141,10 @@ export class GuaGenerator {
 
   /**
    * 批量產生命卦，無動爻
-   * @param beginDate
-   * @param endDate
+   * @param param 日期區間
    */
-  buildBatchFateGua(beginDate: Date, endDate: Date): GuaResult[] {
-    return this.fullGuaFactory.createBatchFateGua(beginDate, endDate)
+  buildBatchFateGua(param: BatchFateGuaParams): GuaResult[] {
+    return this.fullGuaFactory.createBatchFateGua(param)
         .map(fullGua => ({ fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) }));
   }
 

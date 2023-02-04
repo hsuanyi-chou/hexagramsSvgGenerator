@@ -2,7 +2,7 @@ import {
     Gua, EarthlyBranch, Elements, Relative, SolarLunarData,
     HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao,
 } from '../gua.interface';
-import { CreateFateGuaParams, CreateParams, GenFateGuaParams } from '../params.interface';
+import { BatchFateGuaParams, CreateFateGuaParams, CreateParams, GenFateGuaParams } from '../params.interface';
 import { FullGua } from './full-gua';
 import dayjs from 'dayjs';
 // @ts-ignore
@@ -419,12 +419,11 @@ export class FullGuaFactory {
      * 批量產生命卦，不含動爻
      * @param beginDate 起始日期
      * @param endDate 結束日期
-     * @param cutAt2300 23:00 換日
      */
-    createBatchFateGua(beginDate: Date, endDate: Date, cutAt2300 = false): FullGua[] {
+    createBatchFateGua({ beginDate, endDate }: BatchFateGuaParams): FullGua[] {
         const solver = new BatchFateGuaSolver();
         return this.getDatesBetween(new Date(beginDate), new Date(endDate))
-            .map(date => this.genFateGua({date, withMutual: false, cutAt2300}))
+            .map(date => this.genFateGua({ date, withMutual: false, cutAt2300: false }))
             .map((fullGua: FullGua) => {
                 fullGua.solver.push({
                     description: '世爻旺相',

@@ -6,7 +6,7 @@ const date = new Date('2021-05-27T11:20:00.000');
 console.log(date);
 console.log('zh-tw dateString', date.toLocaleString('zh-tw'));
 const guaGen = new GuaGenerator();
-const res = guaGen.buildFateGua(date);
+const res = guaGen.buildFateGua({ date });
 // const res = guaGen.buildGua('澤', '雷', [3], date);
 // console.log(res.fullGua);
 console.log(res.svg);
