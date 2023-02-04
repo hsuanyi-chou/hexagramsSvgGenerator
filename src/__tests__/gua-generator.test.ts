@@ -46,7 +46,7 @@ test('批量產生命卦', () => {
 
 test('產生卦象', () => {
   const date = new Date('1990-06-25T11:20:00.000');
-  const res = GUA_GENERATOR.buildGua('火', '風', [1], date);
+  const res = GUA_GENERATOR.buildGua({ up: '火', down: '風', mutual: [1], date });
   expect(res.fullGua.genGuaBase.date).toBe(date);
   expect(res.fullGua.getChineseLunarDate()).toBe('庚午 年 壬午 月 辛酉 日 午 時')
   expect(res.fullGua.void).toEqual(['子', '丑']);

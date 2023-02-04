@@ -6,6 +6,7 @@ interface BaseParams {
 
 /**
  * 基礎 create 參數
+ * 卦象產生器 參數
  */
 export interface CreateParams extends BaseParams {
     up: Gua; // 上卦

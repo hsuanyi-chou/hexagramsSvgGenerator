@@ -3,7 +3,7 @@ import { FullGuaFactory, FullGua } from './full-gua-factory';
 import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
 import { ShakeRecord } from './money-gua.interface';
-import { BatchFateGuaParams, BuildFateGuaParams, BuildGuaByTimeParams } from './params.interface';
+import { BatchFateGuaParams, BuildFateGuaParams, BuildGuaByTimeParams, CreateParams } from './params.interface';
 
 enum REGEXP_TIME_PATTERN {
   YEAR = 1,
@@ -119,15 +119,11 @@ export class GuaGenerator {
 
   /**
    * 產生卦象
-   * @param up 上卦
-   * @param down 下卦
-   * @param mutual 動爻
-   * @param date 日期 (六獸、空亡…等)
-   * @return svg 純文字內容
+   * @param param 卦象參數
    */
-  buildGua(up: Gua, down: Gua, mutual?: number[], date?: Date): GuaResult {
-    const fullGua = this.fullGuaFactory.create({up, down, mutual: mutual || [], date});
-    return { fullGua, svg: this.createSvg(fullGua, date) };
+  buildGua(param: CreateParams): GuaResult {
+    const fullGua = this.fullGuaFactory.create(param);
+    return { fullGua, svg: this.createSvg(fullGua, param.date) };
   }
 
   /**
@@ -180,7 +176,11 @@ export class GuaGenerator {
       .set('hour', HH).set('minute', mm).set('second', ss);
 
     const basic = this.genGuaBasisByTime(time.substring(8));
-    return this.buildGua(basic.up, basic.down, basic.mutual, buildTime.toDate());
+    return this.buildGua({
+      date: buildTime.toDate(),
+      thing,
+      ...basic
+    });
   }
 
   /**
