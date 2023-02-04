@@ -12,8 +12,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "typeRoots": [
-      "node_modules/@types", "src/@types",
+      "node_modules/@types", "src/@types"
     ],
+    "rootDir": "src"
   },
   "lib": [
     "es2018",

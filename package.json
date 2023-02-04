@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest --config jestconfig.json",
-    "build": "rollup -c",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
     "dev": "ts-node src/dev/dev.ts",
     "gen64guaSvg": "ts-node src/dev/64gua-svg-generator.ts",
     "md-gen": "ts-node src/dev/md-gen/md-gen.ts",
