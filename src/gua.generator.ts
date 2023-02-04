@@ -17,9 +17,12 @@ export class GuaGenerator {
   private readonly fullGuaFactory = new FullGuaFactory();
 
   private readonly moneyGuaFactory = new MoneyGuaFactory(this.fullGuaFactory);
+  private TOP_GAP = 15; // 上方留白間距 (Y軸)
+  private LEFT_GAP = 10; // 左邊留白間距 (X軸)
+
   private config: GuaConfiguration = {
     WIDTH: 600, // 圖片寬度
-    HEIGHT: 625, // 圖片長度
+    HEIGHT: 800, // 圖片長度
     YAO_COLOR: '#000', // 爻顏色
     YAO_BOLD: 15, // 爻的粗度
     YAO_GAP: 40, // 每一爻的間距
@@ -27,7 +30,11 @@ export class GuaGenerator {
     YIN_LENGTH: 40, // 陰爻長度
     YIN_GAP: 20, // 陰爻中間的空白 (20約18點字體的空間)
 
-    DOWN_FIRST_YAO: 290, // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
+    // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
+    // 200 為六爻到初爻的距離；145 為 title 高度
+    DOWN_FIRST_YAO: this.TOP_GAP + 145 + 200,
+
+    RIGHT_INFO_POSITION: 290, // 右邊資訊的初始位置 (x軸)
 
     FONT_FAMILY: `Roboto, Helvetica, Arial, sans-serif`, // 文字字型
     EARTHLY_BRANCH_COLOR: '#7f5618', // 本卦顏色(地支)
@@ -39,7 +46,8 @@ export class GuaGenerator {
     SIDE_INFO_COLOR: '#484a6d', // 側邊資訊顏色
   };
 
-  private readonly TITLE_TOP_Y = 10; // 標題上方的高度
+
+  private readonly TITLE_TOP_Y = this.TOP_GAP + 50; // 標題上方的高度
   private readonly TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
   private readonly HIDDEN_SPACE = 20; // 變爻跟伏藏之間的距離
   
@@ -223,6 +231,7 @@ export class GuaGenerator {
    */
   private drawFullGua(fullGua: FullGua, date?: Date): string {
     let gua = `<g>\n<title>Layer 1</title>\n`;
+    gua += this.drawTopInfo(fullGua);
     gua += this.drawSixYao(fullGua.yao, this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
     gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - this.TEXT_LENGTH);
@@ -234,6 +243,25 @@ export class GuaGenerator {
     gua += this.drawSideInfo(fullGua, date);
     gua += `\n</g>\n`;
     return gua;
+  }
+
+  /**
+   * 上方基礎資訊
+   * @param fullGua
+   * @private
+   */
+  private drawTopInfo(fullGua: FullGua): string {
+    let text = '';
+    text += this.genSvgTextComponent({
+      id: 'genTime',
+      text: `時間: ${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss')}`,
+      color: '#2f2f2f',
+      fontSize: 18,
+      x: this.LEFT_GAP,
+      y: this.TOP_GAP,
+    });
+
+    return text;
   }
 
   /**
@@ -368,10 +396,14 @@ export class GuaGenerator {
   private drawSideInfo(fullGua: FullGua, date?: Date): string {
     let text = '';
     const TITLE_GAP = 40;
-    let leftSideX = this.config.DOWN_FIRST_YAO + 150; // 無六獸的位置
+    let leftSideX = this.config.RIGHT_INFO_POSITION + 150; // 無六獸的位置
     let count = 0;
     let voidText = '';
-    const COMMON_CONFIG = {color: this.config.SIDE_INFO_COLOR, fontSize: this.YAO_FONT_SIZE, y: this.TITLE_TOP_Y};
+    const COMMON_CONFIG = {
+      color: this.config.SIDE_INFO_COLOR,
+      fontSize: this.YAO_FONT_SIZE,
+      y: this.TITLE_TOP_Y
+    };
     if (date) {
       leftSideX += 50;
       text += this.genTitleTextComponent({id: 'side_date', text:`占期：${fullGua.getChineseLunarDate()}`, x: leftSideX,  ...COMMON_CONFIG});

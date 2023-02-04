@@ -74,6 +74,7 @@ export interface GuaConfiguration {
     YIN_LENGTH: number; // 陰爻長度
     YIN_GAP: number; // 陰爻中間的空白 (20約18點字體的空間)
     DOWN_FIRST_YAO: number; // 下卦第一爻初始位置 (y軸)。傳入的最大值 = HEIGHT - 26 (要預留世爻位置)
+    RIGHT_INFO_POSITION: number; // 右邊資訊的初始位置 (x軸)
 
     FONT_FAMILY: string; // 文字字型
     EARTHLY_BRANCH_COLOR: string; // 地支顏色
