@@ -3,7 +3,7 @@ import { FullGuaFactory, FullGua } from './full-gua-factory';
 import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
 import { ShakeRecord } from './money-gua.interface';
-import { BatchFateGuaParams, BuildFateGuaParams } from './params.interface';
+import { BatchFateGuaParams, BuildFateGuaParams, BuildGuaByTimeParams } from './params.interface';
 
 enum REGEXP_TIME_PATTERN {
   YEAR = 1,
@@ -149,52 +149,38 @@ export class GuaGenerator {
   }
 
   /**
-   * 時間取卦( 6碼時分秒(HH:mm:ss)或年月日時分秒(YYYYMMDDHHmmss) )
+   * 時間取卦。格式: YYYYMMDDHHmmss
    * 1. 傳入時間以24H制
    * 2. 若僅傳入6碼，則作為(HH:mm:ss)，自動補上當天日期
-   * 3.
-   * 2. 前3碼為下卦；後3碼為上卦；全部加起來為動爻
-   * @param time
+   * 3. 前3碼為下卦；後3碼為上卦；全部加起來為動爻
+   * @param time 格式: YYYYMMDDHHmmss
+   * @param thing 事由
    */
-  buildGuaByTime(time: string): GuaResult {
-    if (!time.match(/^\d+$/)) {
-      throw new Error('僅能傳入純數字時間');
+  buildGuaByTime({ time, thing }: BuildGuaByTimeParams): GuaResult {
+    if (!time.match(/^\d{14}$/)) {
+      throw new Error('傳入時間錯誤！僅支援年月日時分秒(YYYYMMDDHHmmss) 14碼數字！');
     }
 
-    switch (time.length) {
-      case 6:
-        const basis = this.genGuaBasisByTime(time);
-
-        const today = dayjs()
-            .set('hour', parseInt(time.substring(0, 2), 10))
-            .set('minute', parseInt(time.substring(2, 4), 10))
-            .set('seconds', parseInt(time.substring(4, 6), 10));
-        return this.buildGua(basis.up, basis.down, basis.mutual, today.toDate());
-      case 14:
-        const pattern = new RegExp(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/);
-        const matched = pattern.exec(time)
-        if (!matched) {
-          throw new Error('14碼日期錯誤!')
-        }
-
-        const year = parseInt(matched[REGEXP_TIME_PATTERN.YEAR], 10);
-        const month = parseInt(matched[REGEXP_TIME_PATTERN.MONTH], 10);
-        const day = parseInt(matched[REGEXP_TIME_PATTERN.DAY], 10);
-        const HH = parseInt(matched[REGEXP_TIME_PATTERN.HOUR], 10);
-        const mm = parseInt(matched[REGEXP_TIME_PATTERN.MINUTE], 10);
-        const ss = parseInt(matched[REGEXP_TIME_PATTERN.SECOND], 10);
-
-        // console.log(`${year} ${month} ${day} ${HH} ${mm} ${ss}`);
-        const buildTime = dayjs().locale('zh-TW')
-            .set('year', year).set('month', month - 1).set('date', day)
-            .set('hour', HH).set('minute', mm).set('second', ss);
-
-        const basic = this.genGuaBasisByTime(time.substring(8));
-        return this.buildGua(basic.up, basic.down, basic.mutual, buildTime.toDate());
-      default:
-        throw new Error('傳入時間錯誤！僅支援6碼時分秒(HHmmss)或年月日時分秒(YYYYMMDDHHmmss)');
+    const pattern = new RegExp(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/);
+    const matched = pattern.exec(time)
+    if (!matched) {
+      throw new Error('14碼日期錯誤!')
     }
 
+    const year = parseInt(matched[REGEXP_TIME_PATTERN.YEAR], 10);
+    const month = parseInt(matched[REGEXP_TIME_PATTERN.MONTH], 10);
+    const day = parseInt(matched[REGEXP_TIME_PATTERN.DAY], 10);
+    const HH = parseInt(matched[REGEXP_TIME_PATTERN.HOUR], 10);
+    const mm = parseInt(matched[REGEXP_TIME_PATTERN.MINUTE], 10);
+    const ss = parseInt(matched[REGEXP_TIME_PATTERN.SECOND], 10);
+
+    // console.log(`${year} ${month} ${day} ${HH} ${mm} ${ss}`);
+    const buildTime = dayjs().locale('zh-TW')
+      .set('year', year).set('month', month - 1).set('date', day)
+      .set('hour', HH).set('minute', mm).set('second', ss);
+
+    const basic = this.genGuaBasisByTime(time.substring(8));
+    return this.buildGua(basic.up, basic.down, basic.mutual, buildTime.toDate());
   }
 
   /**

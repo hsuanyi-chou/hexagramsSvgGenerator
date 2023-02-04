@@ -43,3 +43,10 @@ export interface BatchFateGuaParams {
     beginDate: Date;
     endDate: Date;
 }
+
+/**
+ * 時間取卦 參數
+ */
+export interface BuildGuaByTimeParams extends BaseParams {
+    time: string;
+}
