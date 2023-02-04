@@ -51,7 +51,7 @@ describe('產生命卦', () => {
             }
         },
     ].forEach(situation => {
-        const fateGua = FULL_GUA_FACTORY.createFateGua(situation.date, situation.cutAt2300);
+        const fateGua = FULL_GUA_FACTORY.createFateGua({ date: situation.date, cutAt2300: situation.cutAt2300 });
         test(`生日: ${situation.date.toLocaleString()} 產命卦: ${situation.expectedResult.guaName}`, () => {
             expect(fateGua.name).toBe(situation.expectedResult.guaName);
             expect(fateGua.getChineseLunarDate()).toBe(situation.expectedResult.LunarDate);
@@ -158,7 +158,7 @@ describe('天乙貴人', () => {
     ].forEach(situation => {
         const { dates, expectedResult } = situation;
         for (const date of dates) {
-            const res = FULL_GUA_FACTORY.createFateGua(date);
+            const res = FULL_GUA_FACTORY.createFateGua({ date });
             test(`日干支: ${res.lunarDay}`, () => {
                 expect(res.hints.includes(expectedResult)).toBeTruthy();
             });

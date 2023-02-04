@@ -1,15 +1,40 @@
 import GuaGenerator from '../index';
 
 const GUA_GENERATOR = new GuaGenerator();
-
-test('產生命卦', () => {
-  const date = new Date('2021-05-27T11:20:00.000');
-
-  const res = GUA_GENERATOR.buildFateGua(date);
-  expect(res.fullGua.genGuaBase.date).toBe(date);
-  expect(res.fullGua.getChineseLunarDate()).toBe('辛丑 年 癸巳 月 乙亥 日 午 時')
-  expect(res.fullGua.void).toEqual(['申', '酉']);
-  expect(res.fullGua.name).toBe('地雷復之坤');
+describe('產生命卦', () => {
+  [
+    {
+      birth: new Date('2021-05-27T11:20:00.000'),
+      thing: undefined,
+      expectedResult: {
+        date: new Date('2021-05-27T11:20:00.000'),
+        lunarDate: '辛丑 年 癸巳 月 乙亥 日 午 時',
+        void: ['申', '酉'],
+        name: '地雷復之坤',
+        thing: undefined,
+      },
+    },
+    {
+      birth: new Date('2021-05-27T11:20:00.000'),
+      thing: '王小明 男命',
+      expectedResult: {
+        date: new Date('2021-05-27T11:20:00.000'),
+        lunarDate: '辛丑 年 癸巳 月 乙亥 日 午 時',
+        void: ['申', '酉'],
+        name: '地雷復之坤',
+        thing: '王小明 男命',
+      }
+    }
+  ].forEach(situation => {
+    test(`輸入:${situation.birth}, ${situation.thing}，產生命卦: ${situation.expectedResult.name}`, () => {
+      const res = GUA_GENERATOR.buildFateGua({ date: situation.birth, thing: situation.thing });
+      expect(res.fullGua.genGuaBase.date).toEqual(situation.expectedResult.date);
+      expect(res.fullGua.getChineseLunarDate()).toEqual(situation.expectedResult.lunarDate);
+      expect(res.fullGua.void).toEqual(situation.expectedResult.void);
+      expect(res.fullGua.name).toEqual(situation.expectedResult.name);
+      expect(res.fullGua.genGuaBase.thing).toEqual(situation.expectedResult.thing);
+    });
+  });
 });
 
 test('批量產生命卦', () => {
@@ -23,7 +48,6 @@ test('批量產生命卦', () => {
 test('產生卦象', () => {
   const date = new Date('1990-06-25T11:20:00.000');
   const res = GUA_GENERATOR.buildGua('火', '風', [1], date);
-
   expect(res.fullGua.genGuaBase.date).toBe(date);
   expect(res.fullGua.getChineseLunarDate()).toBe('庚午 年 壬午 月 辛酉 日 午 時')
   expect(res.fullGua.void).toEqual(['子', '丑']);

@@ -1,7 +1,8 @@
 import {
     Gua, EarthlyBranch, Elements, Relative, SolarLunarData,
-    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao, FullGuaParams, GenFateGuaParams,
+    HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao,
 } from '../gua.interface';
+import { CreateFateGuaParams, CreateParams, GenFateGuaParams } from '../params.interface';
 import { FullGua } from './full-gua';
 import dayjs from 'dayjs';
 // @ts-ignore
@@ -40,7 +41,7 @@ export class FullGuaFactory {
      * @param thing 事由
      * @return 全卦
      */
-    create({ up, down, mutual, date, cutAt2300, thing }: FullGuaParams): FullGua {
+    create({ up, down, mutual, date, cutAt2300, thing }: CreateParams): FullGua {
         if (up !== '天' && up !== '澤' && up !== '火' && up !== '雷' &&
             up !== '風' && up !== '水' && up !== '山' && up !== '地') {
             throw new Error('上爻(up)僅能傳入：天、澤、火、雷、風、水、山、地');
@@ -387,11 +388,11 @@ export class FullGuaFactory {
     /**
      * 產生命卦
      * @param date 日期
-     * @param cutAt2300 23:00 換日
+     * @param cutAt2300 23:00 換日。預設為 false
      * @return 命卦
      */
-    createFateGua(date: Date, cutAt2300 = false): FullGua {
-        return this.genFateGua({ date, withMutual: true, cutAt2300 });
+    createFateGua({ cutAt2300 = false, ...params }: CreateFateGuaParams): FullGua {
+        return this.genFateGua({ ...params, withMutual: true, cutAt2300 });
     }
 
     /**
@@ -402,7 +403,7 @@ export class FullGuaFactory {
      * @param thing 事由
      * @private
      */
-    private genFateGua({ date, withMutual, cutAt2300 }: GenFateGuaParams): FullGua {
+    private genFateGua({ date, withMutual, cutAt2300, thing }: GenFateGuaParams): FullGua {
         const fullDate = FullGuaFactory.transLunarDate(cutAt2300 ? FullGuaFactory.transDateAfter2300(date) : date);
         return this.create({
             up: this.transDigitToGua(fullDate.solar2lunarData.lDay),
@@ -410,6 +411,7 @@ export class FullGuaFactory {
             mutual: withMutual ? this.timeToMutual(date): [],
             date,
             cutAt2300,
+            thing,
         });
     }
 

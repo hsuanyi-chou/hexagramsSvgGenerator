@@ -3,6 +3,7 @@ import { FullGuaFactory, FullGua } from './full-gua-factory';
 import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
 import { ShakeRecord } from './money-gua.interface';
+import { BuildFateGuaParams } from './params.interface';
 
 enum REGEXP_TIME_PATTERN {
   YEAR = 1,
@@ -131,11 +132,11 @@ export class GuaGenerator {
 
   /**
    * 產生命卦
-   * @param date 日期
+   * @param params 命卦參數
    */
-  buildFateGua(date: Date): GuaResult {
-    const fullGua = this.fullGuaFactory.createFateGua(date);
-    return { fullGua, svg: this.createSvg(fullGua, date) };
+  buildFateGua(params: BuildFateGuaParams): GuaResult {
+    const fullGua = this.fullGuaFactory.createFateGua({ ...params });
+    return { fullGua, svg: this.createSvg(fullGua, params.date) };
   }
 
   /**

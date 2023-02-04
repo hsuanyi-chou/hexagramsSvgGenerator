@@ -53,13 +53,11 @@ describe('BatchFateGuaSolver - 批量產生命卦 - 解卦', () => {
             }
         ].forEach(situation => {
             test(`${situation.guaName} / ${situation.description}`, () => {
-                const gua = FULL_GUA_FACTORY.createFateGua(situation.date);
+                const gua = FULL_GUA_FACTORY.createFateGua({ date: situation.date });
                 expect(gua.originalName).toEqual(situation.guaName);
                 const res = solver.shihWang(gua);
                 expect(res).toEqual(situation.expectResult);
             });
         });
     });
-
-
 });

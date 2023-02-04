@@ -42,27 +42,6 @@ export interface GenGuaBase {
     thing?: string; // 占卜事由
 }
 
-/**
- * 基礎 create 參數
- */
-export interface FullGuaParams {
-    up: Gua; // 上卦
-    down: Gua; // 下卦
-    mutual: number[]; // 動爻(數字陣列)
-    date?: Date; // 日期
-    cutAt2300?: boolean; // 是否 23:00 換日
-    thing?: string; // 事由
-}
-
-/**
- * 命卦 base 參數
- */
-export interface GenFateGuaParams {
-    date: Date; // 日期
-    withMutual: boolean; // 是否要動爻
-    cutAt2300: boolean; // 是否 23:00 換日
-}
-
 export interface IFullGua {
     originalName: string // 原本卦名(用來取得經文內容用)
     name: string; // 卦名
