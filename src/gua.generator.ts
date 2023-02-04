@@ -246,15 +246,14 @@ export class GuaGenerator {
   }
 
   /**
-   * 上方基礎資訊
+   * step 1.5: 上方基礎資訊
    * @param fullGua
-   * @private
    */
   private drawTopInfo(fullGua: FullGua): string {
     let text = '';
     text += this.genSvgTextComponent({
       id: 'genTime',
-      text: `時間: ${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss')}`,
+      text: `時間：${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss')}`,
       color: '#2f2f2f',
       fontSize: 18,
       x: this.LEFT_GAP,
