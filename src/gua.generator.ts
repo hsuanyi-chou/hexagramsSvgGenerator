@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
 import { ShakeRecord } from './money-gua.interface';
 import { BatchFateGuaParams, BuildFateGuaParams, BuildGuaByTimeParams, CreateParams } from './params.interface';
+import zhTW from 'dayjs/locale/zh-tw';
 
 enum REGEXP_TIME_PATTERN {
   YEAR = 1,
@@ -74,6 +75,10 @@ export class GuaGenerator {
       this.config = config;
       this.SHIH_FIRST_YAO = config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
     }
+    dayjs.locale({
+      ...zhTW,
+      weekStart: 1,
+    });
   }
 
   /**
@@ -255,7 +260,7 @@ export class GuaGenerator {
 
     text += this.genSvgTextComponent({
       id: 'genTime',
-      text: `時間：${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss')}`,
+      text: `時間：${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss (dd)')}`,
       y: this.TOP_GAP,
         ...base
     });
