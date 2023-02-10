@@ -1,4 +1,5 @@
 import GuaGenerator from '../index';
+import { MoneyGuaParams } from '../params.interface';
 
 const GUA_GENERATOR = new GuaGenerator();
 describe('產生命卦', () => {
@@ -85,18 +86,42 @@ describe('時間取卦', () => {
 });
 
 describe('金錢卦(含圖)', () => {
+  beforeEach(() => GUA_GENERATOR.resetMoneyGua());
   test('一秒產卦', () => {
     const res = GUA_GENERATOR.instantBuildMoneyGua();
     expect(res).toBeTruthy();
   });
 
   test('手動搖卦以產金錢卦', () => {
-    GUA_GENERATOR.resetMoneyGua();
     for (let i = 0; i < 6; i++) {
       GUA_GENERATOR.shakeMoneyGua();
     }
     const res = GUA_GENERATOR.buildMoneyGua();
     expect(res).toBeTruthy();
+  });
+
+  test('取得金錢卦參數', () => {
+    const date = new Date();
+    const param: MoneyGuaParams = {
+      date,
+      mutual: [1],
+      yingYangArray: ['1', '1', '1', '1', '0', '1'],
+    }
+    GUA_GENERATOR.buildMoneyGuaBy(param);
+    const res = GUA_GENERATOR.getMoneyGuaBuildData();
+    expect(res.date).toEqual(date);
+    expect(res.mutual).toEqual(param.mutual);
+    expect(res.yingYangArray).toEqual(param.yingYangArray);
+  });
+
+  test('參數產金錢卦，並且產生圖片', () => {
+    for (let i = 0; i < 6; i++) {
+      GUA_GENERATOR.shakeMoneyGua();
+    }
+    const res = GUA_GENERATOR.buildMoneyGua();
+    const params = GUA_GENERATOR.getMoneyGuaBuildData();
+    const expected = GUA_GENERATOR.buildMoneyGuaBy(params);
+    expect(res).toEqual(expected);
   });
 
 });

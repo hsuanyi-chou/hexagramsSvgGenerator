@@ -2,8 +2,14 @@ import { Gua, GuaConfiguration, Yao, GuaResult } from './gua.interface';
 import { FullGuaFactory, FullGua } from './full-gua-factory';
 import dayjs from 'dayjs';
 import { MoneyGuaFactory } from './full-gua-factory/money-gua.factory';
-import { ShakeRecord } from './money-gua.interface';
-import { BatchFateGuaParams, BuildFateGuaParams, BuildGuaByTimeParams, CreateParams } from './params.interface';
+import { BuildGuaData, ShakeRecord } from './money-gua.interface';
+import {
+  BatchFateGuaParams,
+  BuildFateGuaParams,
+  BuildGuaByTimeParams,
+  CreateParams,
+  MoneyGuaParams
+} from './params.interface';
 import zhTW from 'dayjs/locale/zh-tw';
 
 enum REGEXP_TIME_PATTERN {
@@ -108,6 +114,22 @@ export class GuaGenerator {
    */
   buildMoneyGua(thing = ''): GuaResult {
     const fullGua = this.moneyGuaFactory.build(thing);
+    return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
+  }
+
+  /**
+   * 取得金錢卦產卦資料
+   */
+  getMoneyGuaBuildData(): BuildGuaData {
+    return this.moneyGuaFactory.getBuildData();
+  }
+
+  /**
+   * 網址參數產生金錢卦
+   * @param params
+   */
+  buildMoneyGuaBy(params: MoneyGuaParams): GuaResult {
+    const fullGua = this.moneyGuaFactory.buildBy(params);
     return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
   }
 
