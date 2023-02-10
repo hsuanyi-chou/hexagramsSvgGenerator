@@ -1,21 +1,22 @@
 import { FullGuaFactory } from './full-gua.factory';
-import { RandomNum, ShakeRecord } from '../money-gua.interface';
+import { BuildGuaData, RandomNum, ShakeRecord } from '../money-gua.interface';
 import { YingYangYao } from '../gua.interface';
 import { FullGua } from './full-gua';
+import { MoneyGuaParams } from '../params.interface';
 
 export class MoneyGuaFactory {
-    /** 目前每爻之陰陽，陰 = 0；陽 = 1 */
-    private yingYangArray: string[] = [];
 
-    /** 目前第幾爻，供記錄動爻位置。1~6 */
-    private shakeCounts = 1;
+    private buildData: BuildGuaData = {
+        yingYangArray: [],
+        shakeRecords: [],
+        shakeCounts: 1,
+        mutual: [],
+        thing: '',
+        date: new Date(),
+    }
 
-    /** 目前動爻，依搖到的位置記錄 */
-    private mutual: number[] = [];
-
-    /** 搖卦記錄，供 UI 呈現過程。反向順序存入資料，由六爻~初爻儲存。利於 UI 直接使用 */
-    private shakeRecords: ShakeRecord[] = [];
     private MAX_COUNT = 6;
+
     constructor(private fullGuaFactory: FullGuaFactory) { }
 
     /**
@@ -31,28 +32,60 @@ export class MoneyGuaFactory {
     }
 
     /**
-     * 產生金錢卦
-     * @param thing 事由
+     * 底層產金錢卦函式，依據 buildData 產卦
+     * 供 build()、buildBy() 呼叫
      */
-    build(thing = ''): FullGua {
-        if (this.yingYangArray.length < this.MAX_COUNT) {
+    private buildByInnerData(): FullGua {
+        const { yingYangArray, mutual, date, thing } = this.buildData;
+        if (yingYangArray.length < this.MAX_COUNT) {
             throw new Error(`產卦失敗！(build)，陰陽爻數量不足`);
         }
 
-        const downDigit = this.yingYangArray.slice(0, 3).join('') as YingYangYao;
-        const upDigit = this.yingYangArray.slice(3, 6).join('') as YingYangYao;
+        const downDigit = yingYangArray.slice(0, 3).join('') as YingYangYao;
+        const upDigit = yingYangArray.slice(3, 6).join('') as YingYangYao;
 
         const down = this.fullGuaFactory.transYingYangYaoToGua(downDigit);
         const up = this.fullGuaFactory.transYingYangYaoToGua(upDigit);
 
-        return this.fullGuaFactory.create({ up, down, mutual: this.mutual, date: new Date(), thing });
+        return this.fullGuaFactory.create({ up, down, mutual, date, thing });
+    }
+
+    /**
+     * 產生金錢卦
+     * @param thing 事由
+     */
+    build(thing = ''): FullGua {
+        this.buildData.thing = thing;
+        this.buildData.date = new Date();
+        return this.buildByInnerData();
+    }
+
+    /**
+     * 供網址記錄資料後，產生金錢卦
+     * @param yingYangArray 陰陽爻陣列
+     * @param date 日期
+     * @param mutual 動爻陣列
+     * @param thing 事由
+     */
+    buildBy({ yingYangArray, date, mutual, thing = '' }: MoneyGuaParams): FullGua {
+        this.reset();
+        yingYangArray.forEach((yao) => this.transformYao(yao as RandomNum));
+        this.buildData = {
+            ...this.buildData,
+            thing,
+            date,
+            shakeCounts: 6,
+            yingYangArray: [...yingYangArray],
+            mutual: [...mutual],
+        };
+        return this.buildByInnerData();
     }
 
     /**
      * 搖卦
      */
     shake(): void {
-        if (this.shakeCounts > this.MAX_COUNT) {
+        if (this.buildData.shakeCounts > this.MAX_COUNT) {
             console.log('已滿 6 次，請 call build() 產卦');
             return;
         }
@@ -61,15 +94,19 @@ export class MoneyGuaFactory {
             randomNum += this.randomNumber();
         }
         const yao = this.transformYao(randomNum as RandomNum);
-        this.shakeCounts++;
-        this.yingYangArray.push(yao);
+        this.buildData.shakeCounts++;
+        this.buildData.yingYangArray.push(yao);
     }
 
     reset(): void {
-        this.shakeCounts = 1;
-        this.yingYangArray = [];
-        this.mutual = [];
-        this.shakeRecords = [];
+        this.buildData = {
+            thing: '',
+            date: new Date(),
+            yingYangArray: [],
+            shakeRecords: [],
+            mutual: [],
+            shakeCounts: 1
+        };
     }
 
     /**
@@ -80,17 +117,17 @@ export class MoneyGuaFactory {
         if (!digits) {
             throw new Error(`隨機數字轉換成爻失敗！(transformYao)，收到參數=${digits}`);
         }
-        this.shakeRecords.unshift({
+        this.buildData.shakeRecords.unshift({
             record: digits,
-            position: this.transCountToPosition(this.shakeCounts)
+            position: this.transCountToPosition(this.buildData.shakeCounts)
         });
         // 將 randomNumber 轉成爻
         switch (digits) {
             case '000': // 陰爻動
-                this.mutual.push(this.shakeCounts);
+                this.buildData.mutual.push(this.buildData.shakeCounts);
                 return '0';
             case '111': // 陽爻動
-                this.mutual.push(this.shakeCounts);
+                this.buildData.mutual.push(this.buildData.shakeCounts);
                 return '1';
             case '001': // 陽爻
             case '010':
@@ -129,22 +166,16 @@ export class MoneyGuaFactory {
 
     /**
      * 取得目前內部資料
-     * 供單元測試檢核使用
      */
-    getInnerData() {
-        return {
-            yingYangArray: this.yingYangArray,
-            mutual: this.mutual,
-            shakeCounts: this.shakeCounts,
-            shakeRecords: this.shakeRecords,
-        };
+    getBuildData(): BuildGuaData {
+        return { ...this.buildData };
     }
 
     /**
      * 取得搖卦記錄
      */
     getShakeRecords(): ShakeRecord[] {
-        return [...this.shakeRecords];
+        return [...this.buildData.shakeRecords];
     }
 
     /**

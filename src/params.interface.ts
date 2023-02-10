@@ -1,7 +1,8 @@
 import { Gua } from './gua.interface';
 
-interface BaseParams {
-    thing?: string; // 事由
+export interface BaseParams {
+    /** 事由 */
+    thing?: string;
 }
 
 /**
@@ -50,4 +51,13 @@ export interface BatchFateGuaParams {
  */
 export interface BuildGuaByTimeParams extends BaseParams {
     time: string;
+}
+
+/**
+ * 金錢卦(buildBy)參數
+ */
+export interface MoneyGuaParams extends BaseParams {
+    yingYangArray: string[]; // 陰陽爻陣列，陰 = 0；陽 = 1
+    date: Date; // 日期
+    mutual: number[]; // 動爻(數字陣列)
 }

@@ -4,23 +4,21 @@ import { FullGuaFactory } from '../full-gua-factory';
 const moneyGua = new MoneyGuaFactory(new FullGuaFactory());
 describe('金錢卦', () => {
 
+    beforeEach(() => {
+        moneyGua.reset();
+    });
     it('一秒產卦', () => {
         expect(moneyGua.instantBuild()).toBeTruthy();
     })
 
     it('搖卦', () => {
-        moneyGua.reset();
-        moneyGua.shake();
-        moneyGua.shake();
-        moneyGua.shake();
-        moneyGua.shake();
-        moneyGua.shake();
-        moneyGua.shake();
+        for (let i = 0; i < 6; i++) {
+            moneyGua.shake();
+        }
         expect(moneyGua.build()).toBeTruthy();
     });
 
     it('搖卦，未滿 6 次', () => {
-        moneyGua.reset();
         moneyGua.shake();
         moneyGua.shake();
         moneyGua.shake();
@@ -32,12 +30,11 @@ describe('金錢卦', () => {
     });
 
     it('重置', () => {
-        moneyGua.reset();
         moneyGua.shake();
         moneyGua.shake();
         moneyGua.shake();
         moneyGua.reset();
-        const data = moneyGua.getInnerData();
+        const data = moneyGua.getBuildData();
         expect(data.yingYangArray.length).toBe(0);
         expect(data.mutual.length).toBe(0);
         expect(data.shakeCounts).toBe(1);
@@ -45,13 +42,19 @@ describe('金錢卦', () => {
     });
 
     it('搖 3 次', () => {
-        moneyGua.reset();
         moneyGua.shake();
         moneyGua.shake();
         moneyGua.shake();
-        const data = moneyGua.getInnerData();
+        const data = moneyGua.getBuildData();
         expect(data.yingYangArray.length).toBe(3);
         expect(data.shakeCounts).toBe(4);
         expect(data.shakeRecords.length).toBe(3);
+    });
+
+    it('給予參數(如網址列)產金錢卦(buildBy)', () => {
+        const res = moneyGua.instantBuild('測試卦例');
+        const { yingYangArray, thing, date, mutual } = moneyGua.getBuildData();
+        const expectedRes = moneyGua.buildBy({ yingYangArray, thing, date, mutual });
+        expect(res).toEqual(expectedRes);
     });
 });
