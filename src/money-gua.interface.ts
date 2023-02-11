@@ -12,6 +12,9 @@ export interface ShakeRecord {
  * 金錢卦，產卦基礎資料
  */
 export interface BuildGuaData extends BaseParams {
+
+    /** 搖卦數字記錄，供網址回產卦象 */
+    shakeNumRecords: RandomNum[];
     /** 目前每爻之陰陽，陰 = 0；陽 = 1 */
     yingYangArray: string[];
     /** 目前第幾爻，供記錄動爻位置。1~6。初始值為 1 */

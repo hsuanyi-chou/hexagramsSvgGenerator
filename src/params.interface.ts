@@ -1,4 +1,5 @@
 import { Gua } from './gua.interface';
+import { RandomNum } from './money-gua.interface';
 
 export interface BaseParams {
     /** 事由 */
@@ -57,7 +58,8 @@ export interface BuildGuaByTimeParams extends BaseParams {
  * 金錢卦(buildBy)參數
  */
 export interface MoneyGuaParams extends BaseParams {
-    yingYangArray: string[]; // 陰陽爻陣列，陰 = 0；陽 = 1
-    date: Date; // 日期
-    mutual: number[]; // 動爻(數字陣列)
+    /** 搖卦數字記錄，供網址回產卦象 */
+    shakeNumRecords: RandomNum[];
+    /** 搖卦日期 */
+    date: Date;
 }

@@ -7,6 +7,7 @@ import { MoneyGuaParams } from '../params.interface';
 export class MoneyGuaFactory {
 
     private buildData: BuildGuaData = {
+        shakeNumRecords: [],
         yingYangArray: [],
         shakeRecords: [],
         shakeCounts: 1,
@@ -62,22 +63,15 @@ export class MoneyGuaFactory {
 
     /**
      * 供網址記錄資料後，產生金錢卦
-     * @param yingYangArray 陰陽爻陣列
+     * @param shakeNumRecords 陰陽爻陣列
      * @param date 日期
-     * @param mutual 動爻陣列
      * @param thing 事由
      */
-    buildBy({ yingYangArray, date, mutual, thing = '' }: MoneyGuaParams): FullGua {
+    buildBy({ shakeNumRecords, date, thing = '' }: MoneyGuaParams): FullGua {
         this.reset();
-        yingYangArray.forEach((yao) => this.transformYao(yao as RandomNum));
-        this.buildData = {
-            ...this.buildData,
-            thing,
-            date,
-            shakeCounts: 6,
-            yingYangArray: [...yingYangArray],
-            mutual: [...mutual],
-        };
+        shakeNumRecords.forEach((randomNum) => this.shakeBy(randomNum as RandomNum));
+        this.buildData.thing = thing;
+        this.buildData.date = date;
         return this.buildByInnerData();
     }
 
@@ -93,6 +87,16 @@ export class MoneyGuaFactory {
         for (let i = 0; i < 3; i++) {
             randomNum += this.randomNumber();
         }
+
+        this.shakeBy(randomNum as RandomNum);
+    }
+
+    /**
+     * 填充搖卦記錄
+     * @param randomNum
+     */
+    private shakeBy(randomNum: RandomNum): void {
+        this.buildData.shakeNumRecords.push(randomNum as RandomNum);
         const yao = this.transformYao(randomNum as RandomNum);
         this.buildData.shakeCounts++;
         this.buildData.yingYangArray.push(yao);
@@ -102,6 +106,7 @@ export class MoneyGuaFactory {
         this.buildData = {
             thing: '',
             date: new Date(),
+            shakeNumRecords: [],
             yingYangArray: [],
             shakeRecords: [],
             mutual: [],

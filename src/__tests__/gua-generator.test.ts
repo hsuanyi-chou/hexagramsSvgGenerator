@@ -104,14 +104,15 @@ describe('金錢卦(含圖)', () => {
     const date = new Date();
     const param: MoneyGuaParams = {
       date,
-      mutual: [1],
-      yingYangArray: ['1', '1', '1', '1', '0', '1'],
+      thing: '測試產卦',
+      shakeNumRecords: ['010', '010', '010', '010', '010', '111'],
     }
     GUA_GENERATOR.buildMoneyGuaBy(param);
     const res = GUA_GENERATOR.getMoneyGuaBuildData();
     expect(res.date).toEqual(date);
-    expect(res.mutual).toEqual(param.mutual);
-    expect(res.yingYangArray).toEqual(param.yingYangArray);
+    expect(res.mutual).toEqual([6]);
+    expect(res.thing).toEqual(param.thing);
+    expect(res.shakeNumRecords).toEqual(param.shakeNumRecords);
   });
 
   test('參數產金錢卦，並且產生圖片', () => {
