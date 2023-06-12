@@ -11,11 +11,16 @@ export interface BaseParams {
  * 卦象產生器 參數
  */
 export interface CreateParams extends BaseParams {
-    up: Gua; // 上卦
-    down: Gua; // 下卦
-    mutual: number[]; // 動爻(數字陣列)
-    date?: Date; // 日期
-    cutAt2300?: boolean; // 是否 23:00 換日
+    /** 上卦 */
+    up: Gua;
+    /** 下卦 */
+    down: Gua;
+    /** 動爻(數字陣列) */
+    mutual: number[];
+    /** 日期 */
+    date?: Date;
+    /** 是否 23:00 換日 */
+    cutAt2300?: boolean;
 }
 
 /**
@@ -30,13 +35,17 @@ export interface CreateFateGuaParams extends BaseParams {
  * 命卦 base 參數
  */
 export interface GenFateGuaParams extends BaseParams {
-    date: Date; // 日期
-    withMutual: boolean; // 是否要動爻
-    cutAt2300: boolean; // 是否 23:00 換日
+    /** 日期 */
+    date: Date;
+    /** 是否要動爻 */
+    withMutual: boolean;
+    /** 是否 23:00 換日 */
+    cutAt2300: boolean;
 }
 
 export interface BuildFateGuaParams extends BaseParams {
-    date: Date; // 日期
+    /** 日期 */
+    date: Date;
 }
 
 /**
@@ -45,6 +54,7 @@ export interface BuildFateGuaParams extends BaseParams {
 export interface BatchFateGuaParams {
     beginDate: Date;
     endDate: Date;
+    cutAt2300?: boolean;
 }
 
 /**

@@ -420,10 +420,10 @@ export class FullGuaFactory {
      * @param beginDate 起始日期
      * @param endDate 結束日期
      */
-    createBatchFateGua({ beginDate, endDate }: BatchFateGuaParams): FullGua[] {
+    createBatchFateGua({ beginDate, endDate, cutAt2300 = true }: BatchFateGuaParams): FullGua[] {
         const solver = new BatchFateGuaSolver();
         return this.getDatesBetween(new Date(beginDate), new Date(endDate))
-            .map(date => this.genFateGua({ date, withMutual: false, cutAt2300: false }))
+            .map(date => this.genFateGua({ date, withMutual: false, cutAt2300 }))
             .map((fullGua: FullGua) => {
                 fullGua.solver.push({
                     description: '世爻旺相',
