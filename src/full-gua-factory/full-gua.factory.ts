@@ -388,10 +388,10 @@ export class FullGuaFactory {
     /**
      * 產生命卦
      * @param date 日期
-     * @param cutAt2300 23:00 換日。預設為 false
+     * @param cutAt2300 23:00 換日。預設為 true
      * @return 命卦
      */
-    createFateGua({ cutAt2300 = false, ...params }: CreateFateGuaParams): FullGua {
+    createFateGua({ cutAt2300 = true, ...params }: CreateFateGuaParams): FullGua {
         return this.genFateGua({ ...params, withMutual: true, cutAt2300 });
     }
 
