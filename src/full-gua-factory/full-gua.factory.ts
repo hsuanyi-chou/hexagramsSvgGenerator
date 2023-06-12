@@ -524,7 +524,7 @@ export class FullGuaFactory {
             }
         }
 
-        this.benefactor(fullGua);
+        // this.benefactor(fullGua);
         fullGua.timePeriod = this.getTimePeriod(date);
         fullGua.void = this.calculateVoid(fullDate.solar2lunarData.gzDay.charAt(0) as HeavenlyStem, fullDate.solar2lunarData.gzDay.charAt(1) as EarthlyBranch);
         this.filledVoid(fullGua);
@@ -532,6 +532,7 @@ export class FullGuaFactory {
 
     /**
      * 天乙貴人
+     * @deprecated 書上說不看天乙貴人
      * @param fullGua
      * @private
      */
