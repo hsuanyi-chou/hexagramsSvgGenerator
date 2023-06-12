@@ -419,8 +419,9 @@ export class FullGuaFactory {
      * 批量產生命卦，不含動爻
      * @param beginDate 起始日期
      * @param endDate 結束日期
+     * @param cutAt2300 23:00 換日。預設為 false
      */
-    createBatchFateGua({ beginDate, endDate, cutAt2300 = true }: BatchFateGuaParams): FullGua[] {
+    createBatchFateGua({ beginDate, endDate, cutAt2300 = false }: BatchFateGuaParams): FullGua[] {
         const solver = new BatchFateGuaSolver();
         return this.getDatesBetween(new Date(beginDate), new Date(endDate))
             .map(date => this.genFateGua({ date, withMutual: false, cutAt2300 }))
