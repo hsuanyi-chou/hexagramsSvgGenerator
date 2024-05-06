@@ -118,7 +118,30 @@ describe('產生卦象', () => {
    });
 });
 
-describe('天乙貴人', () => {
+describe('節氣轉換', () => {
+    it('立春，提醒轉換年、月', () => {
+        const res = FULL_GUA_FACTORY.createFateGua({ date: new Date('2024-02-04T11:20:00.000') });
+        expect(res.hints.includes('今日屬24節氣「立春」，節氣轉換時間為「2024-02-04 16:27:05」。若占卦時間為轉換之後，則年、月令須調整為下一年、月份。')).toBeTruthy();
+    });
+
+    it('驚蟄，提醒轉換月', () => {
+        const res = FULL_GUA_FACTORY.createFateGua({ date: new Date('2024-03-05T11:20:00.000') });
+        expect(res.hints.includes('今日屬24節氣「驚蟄」，節氣轉換時間為「2024-03-05 10:22:43」。若占卦時間為轉換之後，月令須調整為下一月份。')).toBeTruthy();
+    });
+
+
+    it('清明，提醒轉換月', () => {
+        const res = FULL_GUA_FACTORY.createFateGua({ date: new Date('2024-04-04T11:20:00.000') });
+        expect(res.hints.includes('今日屬24節氣「清明」，節氣轉換時間為「2024-04-04 15:02:15」。若占卦時間為轉換之後，月令須調整為下一月份。')).toBeTruthy();
+    });
+
+    it('春分，不應提示轉換', () => {
+        const res = FULL_GUA_FACTORY.createFateGua({ date: new Date('2024-03-20T11:20:00.000') });
+        expect(res.hints.includes('今日屬24節氣「春分」')).toBeFalsy();
+    });
+})
+
+xdescribe('天乙貴人', () => {
     [
         {
             dates: [

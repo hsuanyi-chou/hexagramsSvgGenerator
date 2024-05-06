@@ -1,15 +1,17 @@
 import {
-    Gua, EarthlyBranch, Elements, Relative, SolarLunarData,
+    Gua, EarthlyBranch, Elements, Relative,
     HeavenlyStems, Gung, GungName, ShihYingPosition, HeavenlyStem, Yao, YingYangYao,
 } from '../gua.interface';
 import { BatchFateGuaParams, CreateFateGuaParams, CreateParams, GenFateGuaParams } from '../params.interface';
 import { FullGua } from './full-gua';
 import dayjs from 'dayjs';
-// @ts-ignore
-import solarlunar from 'solarlunar';
+import { Lunar, I18n } from 'lunar-typescript';
 import { BatchFateGuaSolver } from '../solvers/solver.batch-fate-gua';
 import { getElement } from '../util/util';
 import { guaWords } from './guaWords';
+import { CHT } from '../config/lunar-typescript/lunar.cht';
+import { isChangeJeiQi } from '../config/lunar-typescript/jei-qi.config';
+
 
 enum MONSTER {
     DRAGON = 0,     // 青龍
@@ -31,6 +33,10 @@ export class FullGuaFactory {
     private readonly HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
     private readonly EARTHLY_BRANCHES: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 
+    constructor() {
+        I18n.setMessages('cht', CHT);
+        I18n.setLanguage('cht');
+    }
     /**
      * 產生全卦
      * @param up 上卦
@@ -405,9 +411,12 @@ export class FullGuaFactory {
      */
     private genFateGua({ date, withMutual, cutAt2300, thing }: GenFateGuaParams): FullGua {
         const fullDate = FullGuaFactory.transLunarDate(cutAt2300 ? FullGuaFactory.transDateAfter2300(date) : date);
+
+
+        // 潤月會是負值= =. 所以要用絕對值來包
         return this.create({
-            up: this.transDigitToGua(fullDate.solar2lunarData.lDay),
-            down: this.transDigitToGua(fullDate.solar2lunarData.lMonth),
+            up: this.transDigitToGua(Math.abs(fullDate.lunar.getDay())),
+            down: this.transDigitToGua(Math.abs(fullDate.lunar.getMonth())),
             mutual: withMutual ? this.timeToMutual(date): [],
             date,
             cutAt2300,
@@ -513,21 +522,25 @@ export class FullGuaFactory {
         const fullDate = FullGuaFactory.transLunarDate(cutAt2300 ? FullGuaFactory.transDateAfter2300(date) : date);
         fullGua.solarDate = fullDate.solarDate;
         fullGua.lunarDate = fullDate.lunarDate;
-        fullGua.lunarYear = fullDate.solar2lunarData.gzYear;
-        fullGua.lunarMonth = fullDate.solar2lunarData.gzMonth;
-        fullGua.lunarDay = fullDate.solar2lunarData.gzDay;
-        if (fullDate.solar2lunarData.isTerm) {
-            const solarTermHint = `今日屬24節氣「${fullDate.solar2lunarData.term}」，請注意占卦時間是否於節氣轉換之後。`;
-            if (fullDate.solar2lunarData.term === '立春') {
-                fullGua.addHint(`${solarTermHint}若是，則年、月令須調整為下一年、月份。如: 2021/2/3(三)，立春，節氣轉換時間=23:00。23:00以前：生肖屬鼠(子)、時間用子年丑月；以後生肖屬牛(丑)、時間用丑年寅月`);
+        fullGua.lunarYear = fullDate.lunar.getYearInGanZhi();
+        fullGua.lunarMonth = fullDate.lunar.getMonthInGanZhi();
+        fullGua.lunarDay = fullDate.lunar.getDayInGanZhi();
+        const table = fullDate.lunar.getJieQiTable();
+        const dayJeiQi = fullDate.lunar.getJieQi();
+
+        if (dayJeiQi && isChangeJeiQi(dayJeiQi)) {
+            let solarTermHint = `今日屬24節氣「${dayJeiQi}」，節氣轉換時間為「${table[dayJeiQi].toYmdHms()}」。若占卦時間為轉換之後，`;
+            if (dayJeiQi === '立春') {
+                solarTermHint += '則年、月令須調整為下一年、月份。';
             } else {
-                fullGua.addHint(`${solarTermHint}若是，則月令須調整為下一月份。如: 2021/5/5(三)，立夏，節氣轉換時間=14:48。14:48以前用辰月；以後用巳月`);
+                solarTermHint += '月令須調整為下一月份。';
             }
+            fullGua.addHint(solarTermHint);
         }
 
         // this.benefactor(fullGua);
         fullGua.timePeriod = this.getTimePeriod(date);
-        fullGua.void = this.calculateVoid(fullDate.solar2lunarData.gzDay.charAt(0) as HeavenlyStem, fullDate.solar2lunarData.gzDay.charAt(1) as EarthlyBranch);
+        fullGua.void = this.calculateVoid(fullDate.lunar.getDayGan() as HeavenlyStem, fullDate.lunar.getDayZhi() as EarthlyBranch);
         this.filledVoid(fullGua);
     }
 
@@ -569,16 +582,15 @@ export class FullGuaFactory {
     /**
      * @param d 日期
      */
-    private static transLunarDate(d: Date): {solar2lunarData: SolarLunarData, lunarDate:string, solarDate: string} {
+    private static transLunarDate(d: Date): { lunarDate:string, solarDate: string, lunar: Lunar } {
         const date = dayjs(d);
         const year = date.year();
         const month = date.month() + 1;
         const day = date.date();
-        const solar2lunarData = solarlunar.solar2lunar(year, month, day);
-        const lunarDate = `${solar2lunarData.gzYear}-${solar2lunarData.gzMonth}-${solar2lunarData.gzDay}`;
+        const lunar = Lunar.fromDate(d);
+        const lunarDate = `${lunar.getYearInGanZhiExact()}-${lunar.getMonthInGanZhiExact()}-${lunar.getDayInGanZhiExact()}`;
         const solarDate = `${year}-${month}-${day}`;
-
-        return { solar2lunarData, lunarDate, solarDate };
+        return { lunar, lunarDate, solarDate };
     }
 
     /**

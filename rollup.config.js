@@ -25,7 +25,7 @@ export default [
         useTsconfigDeclarationDir: true
     }),
     nodeResolve({
-      moduleDirectories: ['node_modules', 'node_modules/dayjs', 'node_modules/solarlunar'],
+      moduleDirectories: ['node_modules', 'node_modules/dayjs', 'node_modules/lunar-typescript'],
     }),
     commonjs({
       transformMixedEsModules: true,
