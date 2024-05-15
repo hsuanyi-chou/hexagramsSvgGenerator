@@ -11,6 +11,7 @@ import { getElement } from '../util/util';
 import { guaWords } from './guaWords';
 import { CHT } from '../config/lunar-typescript/lunar.cht';
 import { isChangeJeiQi } from '../config/lunar-typescript/jei-qi.config';
+import { GOD_72, GOD_OF_WEALTH, GUA_SERIAL_SONG } from './scripture-content.constant';
 
 
 enum MONSTER {
@@ -661,30 +662,33 @@ export class FullGuaFactory {
         if (!guaWord) {
             throw new Error(`找不到經書(addScriptures)，卦名：${fullGua.originalName}`);
         }
-
         if (mutual && mutual.length !== 0) {
-            mutual.forEach(m => {
-                switch(m) {
+
+            const fullYaoContent = `
+        初爻：${guaWord.one}
+        二爻：${guaWord.two}
+        三爻：${guaWord.three}
+        四爻：${guaWord.four}
+        五爻：${guaWord.five}
+        上爻：${guaWord.six}`;
+
+            const mutualContent = mutual.map(m => {
+                switch (m) {
                     case 1:
-                        fullGua.addScripture({title: '初爻', content: guaWord.one});
-                        break;
+                        return `初爻：${guaWord.one}`;
                     case 2:
-                        fullGua.addScripture({title: '二爻', content: guaWord.two});
-                        break;
+                        return `二爻：${guaWord.two}`;
                     case 3:
-                        fullGua.addScripture({title: '三爻', content: guaWord.three});
-                        break;
+                        return `三爻：${guaWord.three}`;
                     case 4:
-                        fullGua.addScripture({title: '四爻', content: guaWord.four});
-                        break;
+                        return `四爻：${guaWord.four}`;
                     case 5:
-                        fullGua.addScripture({title: '五爻', content: guaWord.five});
-                        break;
+                        return `五爻：${guaWord.five}`;
                     case 6:
-                        fullGua.addScripture({title: '上爻', content: guaWord.six});
-                        break;
+                        return `上爻：${guaWord.six}`;
                 }
-            });
+            }).join('\n');
+            fullGua.addScripture({title: '動爻解析', content: mutualContent, scripture: fullYaoContent});
         }
     }
 
@@ -697,11 +701,11 @@ export class FullGuaFactory {
         if (!guaWord) {
             throw new Error(`找不到經書(addScriptures)，卦名：${fullGua.originalName}`);
         }
-        fullGua.addScripture({title: '釋', content: guaWord.mean});
-        fullGua.addScripture({title: '五路財神經', content: guaWord.fiveMoney});
-        fullGua.addScripture({title: '稽首七十二天師加持世界和平共轉法輪寶誥', content: guaWord.seventyTwoGod.join('')});
-        fullGua.addScripture({title: '序卦傳', content: guaWord.serialGua});
-        fullGua.addScripture({title: '唯心用易歌訣', content: guaWord.heartSong});
+        fullGua.addScripture({ title: '釋', content: guaWord.mean });
+        fullGua.addScripture({ title: '五路財神經', content: guaWord.fiveMoney, scripture:GOD_OF_WEALTH });
+        fullGua.addScripture({ title: '稽首七十二天師加持世界和平共轉法輪寶誥', content: guaWord.seventyTwoGod.join(''), scripture: GOD_72 });
+        fullGua.addScripture({ title: '序卦傳', content: guaWord.serialGua, scripture: GUA_SERIAL_SONG });
+        fullGua.addScripture({ title: '唯心用易歌訣', content: guaWord.heartSong });
     }
 
     /**
