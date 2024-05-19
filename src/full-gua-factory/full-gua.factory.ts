@@ -11,7 +11,7 @@ import { getElement } from '../util/util';
 import { guaWords } from './guaWords';
 import { CHT } from '../config/lunar-typescript/lunar.cht';
 import { isChangeJeiQi } from '../config/lunar-typescript/jei-qi.config';
-import { GOD_72, GOD_OF_WEALTH, GUA_SERIAL_SONG } from './scripture-content.constant';
+import { GOD_72, GOD_OF_WEALTH, GUA_SERIAL_SONG, HEART_SONG } from './scripture-content.constant';
 
 
 enum MONSTER {
@@ -705,7 +705,7 @@ export class FullGuaFactory {
         fullGua.addScripture({ title: '五路財神經', content: guaWord.fiveMoney, scripture:GOD_OF_WEALTH });
         fullGua.addScripture({ title: '稽首七十二天師加持世界和平共轉法輪寶誥', content: guaWord.seventyTwoGod.join(''), scripture: GOD_72 });
         fullGua.addScripture({ title: '序卦傳', content: guaWord.serialGua, scripture: GUA_SERIAL_SONG });
-        fullGua.addScripture({ title: '唯心用易歌訣', content: guaWord.heartSong });
+        fullGua.addScripture({ title: '唯心用易歌訣', content: guaWord.heartSong, scripture: HEART_SONG });
     }
 
     /**
