@@ -59,6 +59,7 @@ export interface IFullGua {
 export interface Scripture {
     title: string; // 書名
     content: string; // 內容
+    scripture?: string;
 }
 
 export interface ShihYingPosition {
