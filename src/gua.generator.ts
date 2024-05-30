@@ -28,6 +28,8 @@ export class GuaGenerator {
   private TOP_GAP = 25; // 上方留白間距 (Y軸)
   private LEFT_GAP = 10; // 左邊留白間距 (X軸)
 
+  private showGenTime = true; // 是否顯示占卦時間
+
   private config: GuaConfiguration = {
     WIDTH: 600, // 圖片寬度
     HEIGHT: 800, // 圖片長度
@@ -152,6 +154,7 @@ export class GuaGenerator {
    */
   buildGua(param: CreateParams): GuaResult {
     const fullGua = this.fullGuaFactory.create(param);
+    this.showGenTime = param.showGenTime ?? true;
     return { fullGua, svg: this.createSvg(fullGua, param.date) };
   }
 
@@ -169,6 +172,7 @@ export class GuaGenerator {
    * @param param 日期區間
    */
   buildBatchFateGua(param: BatchFateGuaParams): GuaResult[] {
+    this.showGenTime = param.showGenTime ?? true;
     return this.fullGuaFactory.createBatchFateGua(param)
         .map(fullGua => ({ fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) }));
   }
@@ -280,12 +284,14 @@ export class GuaGenerator {
       x: this.LEFT_GAP,
     };
 
-    text += this.genSvgTextComponent({
-      id: 'genTime',
-      text: `時間：${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss (dd)')}`,
-      y: this.TOP_GAP,
-        ...base
-    });
+   if (this.showGenTime) {
+      text += this.genSvgTextComponent({
+        id: 'genTime',
+        text: `時間：${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss (dd)')}`,
+        y: this.TOP_GAP,
+          ...base
+      });
+   }
 
     if (fullGua.genGuaBase.thing) {
       text += this.genSvgTextComponent({

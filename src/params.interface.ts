@@ -4,6 +4,8 @@ import { RandomNum } from './money-gua.interface';
 export interface BaseParams {
     /** 事由 */
     thing?: string;
+    /** 是否顯示生成時間 */
+    showGenTime?: boolean;
 }
 
 /**
@@ -55,6 +57,8 @@ export interface BatchFateGuaParams {
     beginDate: Date;
     endDate: Date;
     cutAt2300?: boolean;
+    /** 是否顯示生成時間 */
+    showGenTime?: boolean;
 }
 
 /**
