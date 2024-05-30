@@ -10,6 +10,7 @@
     "dev": "ts-node src/dev/dev.ts",
     "gen64guaSvg": "ts-node src/dev/64gua-svg-generator.ts",
     "md-gen": "ts-node src/dev/md-gen/md-gen.ts",
+    "md-svg-gen": "ts-node src/dev/64gua-svg-generator.ts",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",

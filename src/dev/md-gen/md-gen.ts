@@ -16,7 +16,11 @@ for (const fullGua of fullGuaArray) {
         text += buildContent(fileGua, fullGua.fileName);
     }
     // console.log(text);
-    fs.writeFileSync(`${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}.mdx`, text);
+    const folder = `${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}`;
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder);
+    }
+    fs.writeFileSync(`${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}/page.mdx`, text);
     console.log(`${fullGua.fileName}.md產生完成！`);
 }
 
@@ -34,13 +38,16 @@ function buildMdHeader(fullGua: FullGua, date: string) {
     //     fullGua.hints.forEach(h => text += `${TAB_SPACE}- ${fullGua.hints}\n`);
     // }
     // text += `---\n\n`;
-    let text = `# ${fullGua.name}\n\n`;
+    let text = `export const metadata = {
+  title: '${fullGua.name}',
+};\n\n`
+    text += `# ${fullGua.name}\n\n`;
     return text;
 }
 
 function buildContent(fileGua: IChingResult, fileName: string) {
     let text = `## ${fileGua.name}\n`;
-    text += `\n![](/images/gua/${fileName}.svg)\n\n`;
+    text += `\n![](/64gua/${fileName}.svg)\n\n`;
     text += `### 釋\n\n${fileGua.mean}\n\n`;
     text += `### 初爻\n\n${fileGua.one}\n\n`;
     text += `### 二爻\n\n${fileGua.two}\n\n`;
@@ -62,9 +69,6 @@ function buildContent(fileGua: IChingResult, fileName: string) {
         text += `${fileGua.description}\n\n`;
     }
 
-    // 增加 mdx 底下的 export
-    text += `import MdxLayout from '@app/mdx-layout';\n`;
-    text += `export default ({ children }) => <MdxLayout>{children}</MdxLayout>`;
     return text;
 }
 

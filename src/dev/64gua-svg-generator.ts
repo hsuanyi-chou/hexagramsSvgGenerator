@@ -20,7 +20,7 @@ function svgGenerator() {
     for (const j of guaArray) {
       console.log(`目前產生的卦：${i.gua}${j.gua}`);
       const gua = guaGen.buildGua({ up: i.gua, down: j.gua, mutual: [] });
-      fs.writeFileSync(`${process.cwd()}/genSVGFile/${i.id}${j.id}.svg`, gua.svg);
+      fs.writeFileSync(`${process.cwd()}/src/dev/genSVGFile/${i.id}${j.id}.svg`, gua.svg);
     }
   }
   console.log(`產生svg完成！`);
