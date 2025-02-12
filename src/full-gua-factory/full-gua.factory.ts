@@ -415,7 +415,7 @@ export class FullGuaFactory {
 
 
         // 潤月會是負值= =. 所以要用絕對值來包
-        return this.create({
+        const fullGua = this.create({
             up: this.transDigitToGua(Math.abs(fullDate.lunar.getDay())),
             down: this.transDigitToGua(Math.abs(fullDate.lunar.getMonth())),
             mutual: withMutual ? this.timeToMutual(date): [],
@@ -423,6 +423,8 @@ export class FullGuaFactory {
             cutAt2300,
             thing,
         });
+        fullGua.genPersonality();
+        return fullGua;
     }
 
     /**

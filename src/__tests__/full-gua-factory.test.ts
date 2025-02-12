@@ -59,6 +59,14 @@ describe('產生命卦', () => {
     })
 });
 
+test('命卦個性', () => {
+    const date = new Date('1990-06-25T11:20:00.000');
+
+    const fateGua = FULL_GUA_FACTORY.createFateGua({ date });
+    const personality = fateGua.getPersonality();
+    expect(personality.length).not.toEqual(0);
+});
+
 test('批量產生命卦', () => {
     const beginDate = new Date('2022-08-02T11:20:00.000');
     const endDate = new Date('2022-08-05T11:20:00.000');

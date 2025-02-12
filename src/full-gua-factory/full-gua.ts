@@ -1,4 +1,6 @@
 import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture, GenGuaBase } from '../gua.interface';
+import { RELATIVE_PERSONALITY, EARTHLY_BRANCHES_PERSONALITY, MONSTER_PERSONALITY } from '../constant/fate-gua-personality';
+
 export class FullGua implements IFullGua {
     genGuaBase!: GenGuaBase;
     originalName!: string; // 原本卦名(用來取得經文內容用)
@@ -23,6 +25,12 @@ export class FullGua implements IFullGua {
     void: EarthlyBranch[] = []; // 空亡
 
     solver: any[] = [];
+
+    /**
+     * 命卦用，個性
+     * 非命卦則為空陣列
+     */
+    personality: string[] = [];
 
     constructor(name: string, description: string, yao: Yao[], heavenlyStems: HeavenlyStems, gung: Gung,
         hidden?: Yao[], hints?: string[]) {
@@ -75,4 +83,19 @@ export class FullGua implements IFullGua {
     getChineseLunarDate(): string {
         return `${this.lunarYear} 年 ${this.lunarMonth} 月 ${this.lunarDay} 日 ${this.timePeriod} 時`;
     }
+
+    getPersonality(): string[] {
+        return this.personality;
+    }
+
+    genPersonality(): void {
+        const shih = this.yao[this.HeavenlyStems.shihPosition - 1];
+
+        const relative = RELATIVE_PERSONALITY.find(p => shih.relative === p.relative)?.personality || [];
+        const earthBranch = EARTHLY_BRANCHES_PERSONALITY.find(p => shih.earthlyBranch === p.earthlyBranch)?.personality || [];
+        const monster = MONSTER_PERSONALITY.find(p => shih.monster === p.monster)?.personality || [];
+
+        this.personality = [...relative, ...earthBranch, ...monster];
+    }
+
 }
