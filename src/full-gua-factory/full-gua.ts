@@ -1,5 +1,5 @@
 import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture, GenGuaBase } from '../gua.interface';
-import { RELATIVE_PERSONALITY, EARTHLY_BRANCHES_PERSONALITY, MONSTER_PERSONALITY } from '../constant/fate-gua-personality';
+import { RELATIVE_PERSONALITY, EARTHLY_BRANCHES_PERSONALITY, MONSTER_PERSONALITY, HYT_SUGGESTIONS } from '../constant/fate-gua-personality';
 
 export class FullGua implements IFullGua {
     genGuaBase!: GenGuaBase;
@@ -94,8 +94,8 @@ export class FullGua implements IFullGua {
         const relative = RELATIVE_PERSONALITY.find(p => shih.relative === p.relative)?.personality || [];
         const earthBranch = EARTHLY_BRANCHES_PERSONALITY.find(p => shih.earthlyBranch === p.earthlyBranch)?.personality || [];
         const monster = MONSTER_PERSONALITY.find(p => shih.monster === p.monster)?.personality || [];
-
-        this.personality = [...relative, ...earthBranch, ...monster];
+        const hyt = HYT_SUGGESTIONS.find(p => this.originalName === p.guaName)?.suggestions || [];
+        this.personality = [...relative, ...earthBranch, ...monster, ...hyt];
     }
 
 }
