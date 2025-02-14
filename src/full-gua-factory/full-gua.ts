@@ -1,5 +1,6 @@
 import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture, GenGuaBase } from '../gua.interface';
 import { RELATIVE_PERSONALITY, EARTHLY_BRANCHES_PERSONALITY, MONSTER_PERSONALITY, HYT_SUGGESTIONS } from '../constant/fate-gua-personality';
+import { guaWords } from './guaWords';
 
 export class FullGua implements IFullGua {
     genGuaBase!: GenGuaBase;
@@ -26,6 +27,16 @@ export class FullGua implements IFullGua {
 
     solver: any[] = [];
 
+    guaMean: string = '';
+    classicalSix = {
+        one: '',
+        two: '',
+        three: '',
+        four: '',
+        five: '',
+        six: '',
+    };
+
     /**
      * 命卦用，個性
      * 非命卦則為空陣列
@@ -40,6 +51,7 @@ export class FullGua implements IFullGua {
         this.yao = yao;
         this.HeavenlyStems = heavenlyStems;
         this.gung = gung;
+        this.genGuaMeaning();
 
         if (hidden) {
             this.hidden = [...hidden];
@@ -98,4 +110,11 @@ export class FullGua implements IFullGua {
         this.personality = [...relative, ...earthBranch, ...monster, ...hyt];
     }
 
+    private genGuaMeaning(): void {
+        const guaWord = guaWords.find(p => this.originalName === p.guaIndex);
+        if (guaWord) {
+            this.guaMean = guaWord.guaMean;
+            this.classicalSix = guaWord.classicalSix;
+        }
+    }
 }

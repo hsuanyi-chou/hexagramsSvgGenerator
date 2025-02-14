@@ -1,4 +1,4 @@
-import { FullGuaFactory } from '../full-gua-factory';
+import { FullGuaFactory, guaWords } from '../full-gua-factory';
 import { Gua } from '../gua.interface';
 
 const FULL_GUA_FACTORY = new FullGuaFactory();
@@ -85,6 +85,7 @@ describe('產生卦象', () => {
                guaName: '乾為天之姤',
                gung: '乾',
                scripturesLength: 6,
+               guaMean: guaWords.find(p => p.guaIndex === '乾為天')?.guaMean,
            }
        },
        {
@@ -96,6 +97,7 @@ describe('產生卦象', () => {
                guaName: '雷天大壯之豐',
                gung: '坤',
                scripturesLength: 6,
+               guaMean: guaWords.find(p => p.guaIndex === '雷天大壯')?.guaMean,
            }
        },
        {
@@ -107,6 +109,7 @@ describe('產生卦象', () => {
                guaName: '火地晉',
                gung: '乾',
                scripturesLength: 5,
+               guaMean: guaWords.find(p => p.guaIndex === '火地晉')?.guaMean,
            }
        },
    ].forEach(situation => {
@@ -121,7 +124,10 @@ describe('產生卦象', () => {
        });
        test(`卦象: ${expectedResult.guaName}，經書長度應為${expectedResult.scripturesLength}`, () => {
            expect(res.scriptures.length).toEqual(expectedResult.scripturesLength);
-       })
+       });
+       test(`卦象: ${expectedResult.guaName}，卦象解釋應為${expectedResult.guaMean}`, () => {
+           expect(res.guaMean).toBe(expectedResult.guaMean);
+       });
 
    });
 });
