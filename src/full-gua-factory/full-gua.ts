@@ -110,7 +110,7 @@ export class FullGua implements IFullGua {
         this.personality = [...relative, ...earthBranch, ...monster, ...hyt];
     }
 
-    private genGuaMeaning(): void {
+    genGuaMeaning(): void {
         const guaWord = guaWords.find(p => this.originalName === p.guaIndex);
         if (guaWord) {
             this.guaMean = guaWord.guaMean;
