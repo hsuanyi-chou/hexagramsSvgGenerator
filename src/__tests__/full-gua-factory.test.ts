@@ -86,6 +86,7 @@ describe('產生卦象', () => {
                gung: '乾',
                scripturesLength: 6,
                guaMean: guaWords.find(p => p.guaIndex === '乾為天')?.guaMean,
+               guaMeanDetail: guaWords.find(p => p.guaIndex === '乾為天')?.guaMeanDetail,
            }
        },
        {
@@ -98,6 +99,8 @@ describe('產生卦象', () => {
                gung: '坤',
                scripturesLength: 6,
                guaMean: guaWords.find(p => p.guaIndex === '雷天大壯')?.guaMean,
+               guaMeanDetail: guaWords.find(p => p.guaIndex === '雷天大壯')?.guaMeanDetail,
+
            }
        },
        {
@@ -110,6 +113,8 @@ describe('產生卦象', () => {
                gung: '乾',
                scripturesLength: 5,
                guaMean: guaWords.find(p => p.guaIndex === '火地晉')?.guaMean,
+               guaMeanDetail: guaWords.find(p => p.guaIndex === '火地晉')?.guaMeanDetail,
+
            }
        },
    ].forEach(situation => {
@@ -127,6 +132,9 @@ describe('產生卦象', () => {
        });
        test(`卦象: ${expectedResult.guaName}，卦象解釋應為${expectedResult.guaMean}`, () => {
            expect(res.guaMean).toBe(expectedResult.guaMean);
+       });
+       test(`卦象: ${expectedResult.guaName}，卦象解釋應為${expectedResult.guaMeanDetail}`, () => {
+           expect(res.guaMeanDetail).toBe(expectedResult.guaMeanDetail);
        });
 
    });

@@ -28,6 +28,7 @@ export class FullGua implements IFullGua {
     solver: any[] = [];
 
     guaMean: string = '';
+    guaMeanDetail: string = '';
     classicalSix = {
         one: '',
         two: '',
@@ -114,6 +115,7 @@ export class FullGua implements IFullGua {
         const guaWord = guaWords.find(p => this.originalName === p.guaIndex);
         if (guaWord) {
             this.guaMean = guaWord.guaMean;
+            this.guaMeanDetail = guaWord.guaMeanDetail;
             this.classicalSix = guaWord.classicalSix;
         }
     }
