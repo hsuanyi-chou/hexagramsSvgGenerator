@@ -87,6 +87,7 @@ describe('產生卦象', () => {
                scripturesLength: 6,
                guaMean: guaWords.find(p => p.guaIndex === '乾為天')?.guaMean,
                guaMeanDetail: guaWords.find(p => p.guaIndex === '乾為天')?.guaMeanDetail,
+               guaMeanDetailMutual: guaWords.find(p => p.guaIndex === '天風姤')?.guaMeanDetail,
            }
        },
        {
@@ -100,7 +101,7 @@ describe('產生卦象', () => {
                scripturesLength: 6,
                guaMean: guaWords.find(p => p.guaIndex === '雷天大壯')?.guaMean,
                guaMeanDetail: guaWords.find(p => p.guaIndex === '雷天大壯')?.guaMeanDetail,
-
+               guaMeanDetailMutual: guaWords.find(p => p.guaIndex === '雷火豐')?.guaMeanDetail,
            }
        },
        {
@@ -114,7 +115,7 @@ describe('產生卦象', () => {
                scripturesLength: 5,
                guaMean: guaWords.find(p => p.guaIndex === '火地晉')?.guaMean,
                guaMeanDetail: guaWords.find(p => p.guaIndex === '火地晉')?.guaMeanDetail,
-
+               guaMeanDetailMutual: '',
            }
        },
    ].forEach(situation => {
@@ -133,8 +134,11 @@ describe('產生卦象', () => {
        test(`卦象: ${expectedResult.guaName}，卦象解釋應為${expectedResult.guaMean}`, () => {
            expect(res.guaMean).toBe(expectedResult.guaMean);
        });
-       test(`卦象: ${expectedResult.guaName}，卦象解釋應為${expectedResult.guaMeanDetail}`, () => {
+       test(`卦象: ${expectedResult.guaName}，卦象詳解應為${expectedResult.guaMeanDetail}`, () => {
            expect(res.guaMeanDetail).toBe(expectedResult.guaMeanDetail);
+       });
+       test(`卦象: ${expectedResult.guaName}，變卦詳解應為${expectedResult.guaMeanDetailMutual}`, () => {
+           expect(res.guaMeanDetailMutual).toBe(expectedResult.guaMeanDetailMutual);
        });
 
    });
