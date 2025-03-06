@@ -28,7 +28,8 @@ export class FullGua implements IFullGua {
     solver: any[] = [];
 
     guaMean: string = '';
-    guaMeanDetail: string = '';
+    guaMeanDetail: string = ''; // 卦義詳解
+    guaMeanDetailMutual: string = ''; // 變卦卦義詳解
     classicalSix = {
         one: '',
         two: '',
@@ -118,5 +119,8 @@ export class FullGua implements IFullGua {
             this.guaMeanDetail = guaWord.guaMeanDetail;
             this.classicalSix = guaWord.classicalSix;
         }
+    }
+    genGuaMeaningMutual(gaMeanDetailMutual = ''): void {
+        this.guaMeanDetailMutual = gaMeanDetailMutual;
     }
 }

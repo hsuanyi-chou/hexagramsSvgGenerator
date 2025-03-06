@@ -652,6 +652,12 @@ export class FullGuaFactory {
             fullGua.name += `之${mutualFullGua.name.substring(2)}`;
         }
         fullGua.description += `，${mutualFullGua.description}`;
+
+        if (mutual.length > 0) {
+            const guaWord = guaWords.find(g => g.guaIndex === mutualFullGua.originalName)
+            fullGua.genGuaMeaningMutual(guaWord?.guaMeanDetail)
+        }
+
     }
 
     /**
