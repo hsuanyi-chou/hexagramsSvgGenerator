@@ -655,7 +655,7 @@ export class FullGuaFactory {
 
         if (mutual.length > 0) {
             const guaWord = guaWords.find(g => g.guaIndex === mutualFullGua.originalName)
-            fullGua.genGuaMeaningMutual(guaWord?.guaMeanDetail)
+            fullGua.genGuaMeaningMutual(`${guaWord?.guaMean}${guaWord?.guaMeanDetail}`)
         }
 
     }

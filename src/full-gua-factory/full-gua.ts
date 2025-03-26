@@ -117,10 +117,17 @@ export class FullGua implements IFullGua {
         if (guaWord) {
             this.guaMean = guaWord.guaMean;
             this.guaMeanDetail = guaWord.guaMeanDetail;
-            this.classicalSix = guaWord.classicalSix;
+            this.classicalSix = {
+                one: `${guaWord.classicalSix.one}${guaWord.one}`,
+                two: `${guaWord.classicalSix.two}${guaWord.two}`,
+                three: `${guaWord.classicalSix.three} ${guaWord.three}`,
+                four: `${guaWord.classicalSix.four}${guaWord.four}`,
+                five: `${guaWord.classicalSix.five}${guaWord.five}`,
+                six: `${guaWord.classicalSix.six}${guaWord.six}`,
+            };
         }
     }
-    genGuaMeaningMutual(gaMeanDetailMutual = ''): void {
-        this.guaMeanDetailMutual = gaMeanDetailMutual;
+    genGuaMeaningMutual(guaMeanDetailMutual = ''): void {
+        this.guaMeanDetailMutual = guaMeanDetailMutual;
     }
 }
