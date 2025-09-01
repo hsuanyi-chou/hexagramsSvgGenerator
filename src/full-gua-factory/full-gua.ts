@@ -127,6 +127,7 @@ export class FullGua implements IFullGua {
             };
         }
     }
+    /** 本卦有拆開guaMean, guaMeanDetail，變卦傳入是直接 guaMean + guaMeanDetail */
     genGuaMeaningMutual(guaMeanDetailMutual = ''): void {
         this.guaMeanDetailMutual = guaMeanDetailMutual;
     }
