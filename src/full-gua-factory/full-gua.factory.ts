@@ -638,7 +638,7 @@ export class FullGuaFactory {
      */
     private genMutual(up: Gua, down: Gua, mutual: number[], fullGua: FullGua) {
         const mutualFullGua = this.getMutualFullGua(up, down, mutual);
-        console.log(mutualFullGua.name)
+
         fullGua.mutual = mutual.map( n => ({
             earthlyBranch: mutualFullGua.yao[n - 1].earthlyBranch,
             position: mutualFullGua.yao[n - 1].position,
