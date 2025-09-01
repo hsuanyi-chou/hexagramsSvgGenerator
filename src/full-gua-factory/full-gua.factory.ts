@@ -657,6 +657,12 @@ export class FullGuaFactory {
             const guaWord = guaWords.find(g => g.guaIndex === mutualFullGua.originalName)
             fullGua.genGuaMeaningMutual(`${guaWord?.guaMean}${guaWord?.guaMeanDetail}`)
         }
+        if (fullGua.hints.find(h => h.includes('六合卦')) && mutualFullGua.hints.find(h => h.includes('六沖卦'))) {
+            fullGua.addHint('大卦合化沖');
+        }
+        if (fullGua.hints.find(h => h.includes('六沖卦')) && mutualFullGua.hints.find(h => h.includes('六合卦'))) {
+            fullGua.addHint('大卦沖化合');
+        }
 
     }
 

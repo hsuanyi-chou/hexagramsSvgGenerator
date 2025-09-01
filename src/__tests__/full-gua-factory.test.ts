@@ -165,7 +165,18 @@ describe('節氣轉換', () => {
         const res = FULL_GUA_FACTORY.createFateGua({ date: new Date('2024-03-20T11:20:00.000') });
         expect(res.hints.includes('今日屬24節氣「春分」')).toBeFalsy();
     });
-})
+});
+
+describe('六合化六沖、六沖化六合', () => {
+    it('六合化六沖', () => {
+        const res = FULL_GUA_FACTORY.create({ up: '天', down: '地', mutual: [1] });
+        expect(res.hints.includes('大卦合化沖')).toBeTruthy();
+    });
+    it('六沖化六合', () => {
+        const res = FULL_GUA_FACTORY.create({ up: '雷', down: '雷', mutual: [1] });
+        expect(res.hints.includes('大卦沖化合')).toBeTruthy();
+    });
+});
 
 xdescribe('天乙貴人', () => {
     [
