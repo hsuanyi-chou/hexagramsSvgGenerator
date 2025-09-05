@@ -5,7 +5,7 @@ const FULL_GUA_FACTORY = new FullGuaFactory();
 
 describe('數字轉成卦', () => {
     const guaText = ['地', '天', '澤', '火', '雷', '風', '水', '山'];
-    const testSituation = [];
+    const testSituation: { digit: number; expectedResult: string }[] = [];
     for (let i = 0; i <= 100; i++) {
         testSituation.push({digit: i, expectedResult: guaText[i % 8]});
     }
@@ -75,6 +75,10 @@ test('批量產生命卦', () => {
 });
 
 describe('產生卦象', () => {
+    const guaMeanDetailMutualExpected= (mutualGua: string) => {
+        const gua = guaWords.find(p => p.guaIndex === mutualGua);
+        return `${gua?.guaMean}${gua?.guaMeanDetail}`;
+    }
    [
        {
            up: '天' as Gua,
@@ -87,7 +91,7 @@ describe('產生卦象', () => {
                scripturesLength: 6,
                guaMean: guaWords.find(p => p.guaIndex === '乾為天')?.guaMean,
                guaMeanDetail: guaWords.find(p => p.guaIndex === '乾為天')?.guaMeanDetail,
-               guaMeanDetailMutual: guaWords.find(p => p.guaIndex === '天風姤')?.guaMeanDetail,
+               guaMeanDetailMutual: guaMeanDetailMutualExpected('天風姤'),
            }
        },
        {
@@ -101,7 +105,7 @@ describe('產生卦象', () => {
                scripturesLength: 6,
                guaMean: guaWords.find(p => p.guaIndex === '雷天大壯')?.guaMean,
                guaMeanDetail: guaWords.find(p => p.guaIndex === '雷天大壯')?.guaMeanDetail,
-               guaMeanDetailMutual: guaWords.find(p => p.guaIndex === '雷火豐')?.guaMeanDetail,
+               guaMeanDetailMutual: guaMeanDetailMutualExpected('雷火豐'),
            }
        },
        {
@@ -121,7 +125,8 @@ describe('產生卦象', () => {
    ].forEach(situation => {
        const { up, down, mutual, date, expectedResult } = situation;
        const res = FULL_GUA_FACTORY.create({up, down, mutual, date});
-
+       // debug 印出五行描述。因為組合字串 + 日期是 new Date()。現行不好補單測
+       //  console.log(res.yao)
        test(`輸入:${up}, ${down}, ${mutual}，產生卦象: ${expectedResult.guaName}`, () => {
            expect(res.name).toBe(expectedResult.guaName);
        });
@@ -165,7 +170,18 @@ describe('節氣轉換', () => {
         const res = FULL_GUA_FACTORY.createFateGua({ date: new Date('2024-03-20T11:20:00.000') });
         expect(res.hints.includes('今日屬24節氣「春分」')).toBeFalsy();
     });
-})
+});
+
+describe('六合化六沖、六沖化六合', () => {
+    it('六合化六沖', () => {
+        const res = FULL_GUA_FACTORY.create({ up: '天', down: '地', mutual: [1] });
+        expect(res.hints.includes('大卦合化沖')).toBeTruthy();
+    });
+    it('六沖化六合', () => {
+        const res = FULL_GUA_FACTORY.create({ up: '雷', down: '雷', mutual: [1] });
+        expect(res.hints.includes('大卦沖化合')).toBeTruthy();
+    });
+});
 
 xdescribe('天乙貴人', () => {
     [

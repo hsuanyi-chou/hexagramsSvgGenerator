@@ -1,3 +1,4 @@
+import { FullGua } from '../full-gua-factory/full-gua';
 import { Elements, EarthlyBranch } from '../gua.interface';
 
 /**

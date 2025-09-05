@@ -388,6 +388,7 @@ export class FullGuaFactory {
         if (date) {
             this.genDate(fullGua, date, !!cutAt2300);
             this.genMonster(fullGua);
+            fullGua.genSixYaoDescription();
         }
         return fullGua;
     }
@@ -638,6 +639,7 @@ export class FullGuaFactory {
      */
     private genMutual(up: Gua, down: Gua, mutual: number[], fullGua: FullGua) {
         const mutualFullGua = this.getMutualFullGua(up, down, mutual);
+
         fullGua.mutual = mutual.map( n => ({
             earthlyBranch: mutualFullGua.yao[n - 1].earthlyBranch,
             position: mutualFullGua.yao[n - 1].position,
@@ -656,6 +658,12 @@ export class FullGuaFactory {
         if (mutual.length > 0) {
             const guaWord = guaWords.find(g => g.guaIndex === mutualFullGua.originalName)
             fullGua.genGuaMeaningMutual(`${guaWord?.guaMean}${guaWord?.guaMeanDetail}`)
+        }
+        if (fullGua.hints.find(h => h.includes('六合卦')) && mutualFullGua.hints.find(h => h.includes('六沖卦'))) {
+            fullGua.addHint('大卦合化沖');
+        }
+        if (fullGua.hints.find(h => h.includes('六沖卦')) && mutualFullGua.hints.find(h => h.includes('六合卦'))) {
+            fullGua.addHint('大卦沖化合');
         }
 
     }
