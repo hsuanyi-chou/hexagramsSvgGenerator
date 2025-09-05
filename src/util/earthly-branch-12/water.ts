@@ -89,7 +89,7 @@ export const earthlyBranchRatDay = ({ compare }: Pick<IEarthlyBranchProps, 'comp
 }
 
 // --------------------- 亥 豬 pig ---------------------
-export const earthlyBranchPPigMonth = ({ compare }: Pick<IEarthlyBranchProps, 'compare'>):IMonthEarthlyBranchReturn => {
+export const earthlyBranchPigMonth = ({ compare }: Pick<IEarthlyBranchProps, 'compare'>):IMonthEarthlyBranchReturn => {
     switch(compare) {
         case '子':
             return ['旺'];

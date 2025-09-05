@@ -1,16 +1,9 @@
-// 月: 值旺相休困剋沖墓絕
-// 動爻: 回頭剋、回頭沖、休、囚、絕、進、退、墓
-// 有個hard Code的12地支處理表，回傳`旺、生、剋、沖、休、囚、絕、進、退、墓`，在月日上面，則把`旺, 進, 退` 變成 `旺`。在動爻: 生,剋,沖 前面增加`化回頭`
-
-/**
- * 特例:
- * 1. 水土共長生，在處理日時: 土要判斷長生、帝旺、墓時，要搭配月地支
- * 2. 金的長生是巳，公共函式會是火剋金
- * 3. 變爻時，要判斷長生、墓，不需要帝旺，會是化進、退
- * 4. 月只有基本的值旺衰
- */
-
 import { EarthlyBranch } from "../gua.interface";
+import { earthlyBranchDragonMonth, earthlyBranchGoatMonth, earthlyBranchOxMonth, earthlyBranchDogMonth, earthlyBranchOxDay, earthlyBranchGoatDay, earthlyBranchDragonDay, earthlyBranchDogDay, earthlyBranchOxMutual, earthlyBranchDragonMutual, earthlyBranchDogMutual, earthlyBranchGoatMutual } from "./earthly-branch-12/earth";
+import { earthlyBranchRatMonth, earthlyBranchPigMonth, earthlyBranchRatDay, earthlyBranchPigDay, earthlyBranchRatMutual, earthlyBranchPigMutual } from "./earthly-branch-12/water";
+import { earthlyBranchHorseDay, earthlyBranchHorseMonth, earthlyBranchHorseMutual, earthlyBranchSnakeDay, earthlyBranchSnakeMutual, earthlyBranchSnakeMonth } from "./earthly-branch-12/fire";
+import { earthlyBranchRabbitDay, earthlyBranchRabbitMonth, earthlyBranchRabbitMutual, earthlyBranchTigerDay, earthlyBranchTigerMonth, earthlyBranchTigerMutual } from "./earthly-branch-12/wood";
+import { earthlyBranchMonkeyMonth, earthlyBranchRoosterDay, earthlyBranchRoosterMonth, earthlyBranchMonkeyDay, earthlyBranchRoosterMutual, earthlyBranchMonkeyMutual } from "./earthly-branch-12/gold";
 
 export type IEarthlyBranchProps = {
     target: EarthlyBranch;
@@ -32,3 +25,90 @@ export type IMutualEarthlyBranchReturn = (
     | '動化回頭沖剋' | '動化回頭沖'
     | '動入墓'  | '動化休' | '動化囚' | '動化絕'
     | '伏吟')[];
+
+export const earthlyBranchMonth = ({target, compare}:Omit<IEarthlyBranchProps, 'handle12LongLife'>): string => {
+  switch(target) {
+    case '子':
+        return `月${earthlyBranchRatMonth({ compare }).join('')}`;
+    case '丑':
+        return `月${earthlyBranchOxMonth({ compare }).join('')}`;
+    case '寅':
+        return `月${earthlyBranchTigerMonth({ compare }).join('')}`;
+    case '卯':
+        return `月${earthlyBranchRabbitMonth({ compare }).join('')}`;
+    case '辰':
+        return `月${earthlyBranchDragonMonth({ compare }).join('')}`;
+    case '巳':
+        return `月${earthlyBranchSnakeMonth({ compare }).join('')}`;
+    case '午':
+        return `月${earthlyBranchHorseMonth({ compare }).join('')}`;
+    case '未':
+      return `月${earthlyBranchGoatMonth({ compare }).join('')}`;
+    case '申':
+      return `月${earthlyBranchMonkeyMonth({ compare }).join('')}`;
+    case '酉':
+      return `月${earthlyBranchRoosterMonth({ compare }).join('')}`;
+    case '戌':
+        return `月${earthlyBranchDogMonth({ compare }).join('')}`;
+    case '亥':
+      return `月${earthlyBranchPigMonth({ compare }).join('')}`;
+    }
+}
+
+export const earthlyBranchDay = ({target, ...props}: IEarthlyBranchProps): string => {
+  switch(target) {
+    case '子':
+      return `日${earthlyBranchRatDay(props).join('')}`;
+    case '丑':
+      return `日${earthlyBranchOxDay(props).join('')}`;
+    case '寅':
+      return `日${earthlyBranchTigerDay(props).join('')}`;
+    case '卯':
+      return `日${earthlyBranchRabbitDay(props).join('')}`;
+    case '辰':
+      return `日${earthlyBranchDragonDay(props).join('')}`;
+    case '巳':
+      return `日${earthlyBranchSnakeDay(props).join('')}`;
+    case '午':
+      return `日${earthlyBranchHorseDay(props).join('')}`;
+    case '未':
+      return `日${earthlyBranchGoatDay(props).join('')}`;
+    case '申':
+      return `日${earthlyBranchMonkeyDay(props).join('')}`;
+    case '酉':
+      return `日${earthlyBranchRoosterDay(props).join('')}`;
+    case '戌':
+      return `日${earthlyBranchDogDay(props).join('')}`;
+    case '亥':
+      return `日${earthlyBranchPigDay(props).join('')}`;
+  }
+}
+
+export const earthlyBranchMutual = ({ target, compare }:Omit<IEarthlyBranchProps, 'handle12LongLife'>): string => {
+  switch(target) {
+    case '子':
+      return earthlyBranchRatMutual({ compare }).join('、');
+    case '丑':
+      return earthlyBranchOxMutual({ compare }).join('、');
+    case '寅':
+      return earthlyBranchTigerMutual({ compare }).join('、');
+    case '卯':
+      return earthlyBranchRabbitMutual({ compare }).join('、');
+    case '辰':
+      return earthlyBranchDragonMutual({ compare }).join('、');
+    case '巳':
+      return earthlyBranchSnakeMutual({ compare }).join('、');
+    case '午':
+      return earthlyBranchHorseMutual({ compare }).join('、');
+    case '未':
+      return earthlyBranchGoatMutual({ compare }).join('、');
+    case '申':
+      return earthlyBranchMonkeyMutual({ compare }).join('、');
+    case '酉':
+      return earthlyBranchRoosterMutual({ compare }).join('、');
+    case '戌':
+      return earthlyBranchDogMutual({ compare }).join('、');
+    case '亥':
+      return earthlyBranchPigMutual({ compare }).join('、');
+  }
+}

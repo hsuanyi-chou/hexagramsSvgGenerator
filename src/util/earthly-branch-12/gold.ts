@@ -30,7 +30,7 @@ export const earthlyBranchMonkeyMonth = ({ compare }: Pick<IEarthlyBranchProps, 
        }
 }
 
-export const earthlyBranchMoneyDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
+export const earthlyBranchMonkeyDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
     switch(compare) {
         case '子':
             return ['休'];
@@ -59,7 +59,7 @@ export const earthlyBranchMoneyDay = ({ compare }: Pick<IEarthlyBranchProps, 'co
        }
 }
 
-export const earthlyBranchMoneyMutual = ({ compare }: Pick<IEarthlyBranchProps, 'compare'>):IMutualEarthlyBranchReturn => {
+export const earthlyBranchMonkeyMutual = ({ compare }: Pick<IEarthlyBranchProps, 'compare'>):IMutualEarthlyBranchReturn => {
     switch(compare) {
         case '子':
             return ['動化休'];
