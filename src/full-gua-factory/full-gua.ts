@@ -137,18 +137,29 @@ export class FullGua implements IFullGua {
         const lunarMonth = this.lunarMonth.substring(1) as EarthlyBranch;
         const lunarDay = this.lunarDay.substring(1) as EarthlyBranch;
         this.yao.forEach((eachYao, index) => {
-            eachYao.description = '';
-            if (this.HeavenlyStems.shihPosition === eachYao.position) {
-                eachYao.description = `世爻，${eachYao.void ? '空亡。' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}。`;
-            }
-            if (this.HeavenlyStems.yingPosition === eachYao.position) {
-                eachYao.description = `應爻，${eachYao.void ? '空亡。' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}。`;
-            }
             const mutual = this.mutual.find(p => p.position === eachYao.position);
-            if (mutual) {
-                eachYao.description += `${eachYao.position}爻動，${eachYao.void ? '動不為空亡。' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}，${earthlyBranchMutual({target: eachYao.earthlyBranch, compare: mutual.earthlyBranch})}。`;
+
+            eachYao.description = '';
+            if (this.HeavenlyStems.shihPosition === eachYao.position || this.HeavenlyStems.yingPosition === eachYao.position) {
+                const isShih = this.HeavenlyStems.shihPosition === eachYao.position;
+                const shihYingText = `${isShih ? '世爻' : '應爻'}`;
+                eachYao.description = `${shihYingText}，`;
+                if (mutual) {
+                    eachYao.description = `${eachYao.position}爻${shihYingText}動，`
+                }
+                // 月X日Y
+                eachYao.description += `${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}`;
+                if (mutual) {
+                    eachYao.description += `，${eachYao.void ? '動不為空亡，' : ''}${earthlyBranchMutual({target: eachYao.earthlyBranch, compare: mutual.earthlyBranch})}。`;
+                } else {
+                    eachYao.description += `${eachYao.void ? '，空亡' : ''}。`;
+                }
+                
+                return;
             }
-            
+            if (mutual) {
+                eachYao.description = `${eachYao.position}爻動，${eachYao.void ? '動不為空亡，' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}，${earthlyBranchMutual({target: eachYao.earthlyBranch, compare: mutual.earthlyBranch})}。`;
+            }
         })
     }
 }
