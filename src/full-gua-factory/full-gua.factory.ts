@@ -388,6 +388,7 @@ export class FullGuaFactory {
         if (date) {
             this.genDate(fullGua, date, !!cutAt2300);
             this.genMonster(fullGua);
+            fullGua.genSixYaoDescription();
         }
         return fullGua;
     }

@@ -55,25 +55,3 @@ export function elementRelative(target: Elements, compare: Elements): boolean {
             return compare === '金' || compare === '土';
     }
 }
-
-/**
- * 依據地支月日，回傳月日旺衰
- * 如: 月旺日休
- * @param fullGua 
- */
-export function getLunarDescription(fullGua: FullGua) {
-    const lunarMonth = fullGua.lunarMonth.substring(1) as EarthlyBranch;
-    const lunarDay = fullGua.lunarDay.substring(1) as EarthlyBranch;
-    const lunarMonthElement = getElement(lunarMonth);
-    const lunarDayElement = getElement(lunarDay);
-    return `${lunarMonthElement}旺${lunarDayElement}休`;
-}
-
-/** 五行比對 旺相休困剋沖墓絕 */
-const LunarElementCompare = ({lunarElement, yaoElement}: {lunarElement: Elements, yaoElement: Elements}) => {
-    if (lunarElement === yaoElement) {
-        return '值';
-    }
-   
-}
-

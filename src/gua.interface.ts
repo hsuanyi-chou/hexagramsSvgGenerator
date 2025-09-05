@@ -20,13 +20,14 @@ export interface Yao {
     void?: boolean; // 空亡
     position: number; // 位置 (配合陣列，由0開始)
     isYangYao?: boolean // 陰陽爻 (true = 陽；false = 陰)
+    description?: string; // 月日動爻五行生剋說明
 }
 
 export interface HeavenlyStems {
     shih: HeavenlyStem;
-    shihPosition: number;
+    shihPosition: number; // 由 1 開始
     ying: HeavenlyStem;
-    yingPosition: number;
+    yingPosition: number; // 由 1 開始
 }
 export interface Gung {
     name: GungName;

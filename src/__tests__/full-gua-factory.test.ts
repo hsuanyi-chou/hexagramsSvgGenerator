@@ -5,7 +5,7 @@ const FULL_GUA_FACTORY = new FullGuaFactory();
 
 describe('數字轉成卦', () => {
     const guaText = ['地', '天', '澤', '火', '雷', '風', '水', '山'];
-    const testSituation = [];
+    const testSituation: { digit: number; expectedResult: string }[] = [];
     for (let i = 0; i <= 100; i++) {
         testSituation.push({digit: i, expectedResult: guaText[i % 8]});
     }
@@ -125,7 +125,8 @@ describe('產生卦象', () => {
    ].forEach(situation => {
        const { up, down, mutual, date, expectedResult } = situation;
        const res = FULL_GUA_FACTORY.create({up, down, mutual, date});
-
+       // debug 印出五行描述。因為組合字串 + 日期是 new Date()。現行不好補單測
+       //  console.log(res.yao)
        test(`輸入:${up}, ${down}, ${mutual}，產生卦象: ${expectedResult.guaName}`, () => {
            expect(res.name).toBe(expectedResult.guaName);
        });
@@ -142,7 +143,6 @@ describe('產生卦象', () => {
            expect(res.guaMeanDetail).toBe(expectedResult.guaMeanDetail);
        });
        test(`卦象: ${expectedResult.guaName}，變卦詳解應為${expectedResult.guaMeanDetailMutual}`, () => {
-        console.log(res.guaMeanDetailMutual);
            expect(res.guaMeanDetailMutual).toBe(expectedResult.guaMeanDetailMutual);
        });
 

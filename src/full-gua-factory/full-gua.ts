@@ -1,6 +1,7 @@
 import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture, GenGuaBase } from '../gua.interface';
 import { RELATIVE_PERSONALITY, EARTHLY_BRANCHES_PERSONALITY, MONSTER_PERSONALITY, HYT_SUGGESTIONS } from '../constant/fate-gua-personality';
 import { guaWords } from './guaWords';
+import { earthlyBranchDay, earthlyBranchMonth, earthlyBranchMutual } from '../util/earthly-branch.util';
 
 export class FullGua implements IFullGua {
     genGuaBase!: GenGuaBase;
@@ -130,5 +131,24 @@ export class FullGua implements IFullGua {
     /** 本卦有拆開guaMean, guaMeanDetail，變卦傳入是直接 guaMean + guaMeanDetail */
     genGuaMeaningMutual(guaMeanDetailMutual = ''): void {
         this.guaMeanDetailMutual = guaMeanDetailMutual;
+    }
+
+    genSixYaoDescription(): void {
+        const lunarMonth = this.lunarMonth.substring(1) as EarthlyBranch;
+        const lunarDay = this.lunarDay.substring(1) as EarthlyBranch;
+        this.yao.forEach((eachYao, index) => {
+            eachYao.description = '';
+            if (this.HeavenlyStems.shihPosition === eachYao.position) {
+                eachYao.description = `世爻，${eachYao.void ? '空亡。' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}。`;
+            }
+            if (this.HeavenlyStems.yingPosition === eachYao.position) {
+                eachYao.description = `應爻，${eachYao.void ? '空亡。' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}。`;
+            }
+            const mutual = this.mutual.find(p => p.position === eachYao.position);
+            if (mutual) {
+                eachYao.description += `${eachYao.position}爻動，${eachYao.void ? '動不為空亡。' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}，${earthlyBranchMutual({target: eachYao.earthlyBranch, compare: mutual.earthlyBranch})}。`;
+            }
+            
+        })
     }
 }
