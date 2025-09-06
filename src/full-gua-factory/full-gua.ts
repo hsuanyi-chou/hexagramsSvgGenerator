@@ -2,6 +2,7 @@ import { IFullGua, Yao, HeavenlyStems, Gung, EarthlyBranch, Scripture, GenGuaBas
 import { RELATIVE_PERSONALITY, EARTHLY_BRANCHES_PERSONALITY, MONSTER_PERSONALITY, HYT_SUGGESTIONS } from '../constant/fate-gua-personality';
 import { guaWords } from './guaWords';
 import { earthlyBranchDay, earthlyBranchMonth, earthlyBranchMutual } from '../util/earthly-branch.util';
+import { isDarkMutual } from '../util/util';
 
 export class FullGua implements IFullGua {
     genGuaBase!: GenGuaBase;
@@ -133,6 +134,12 @@ export class FullGua implements IFullGua {
         this.guaMeanDetailMutual = guaMeanDetailMutual;
     }
 
+    getIsDarkMutual(): void {
+        this.yao.forEach(eachYao => {
+            eachYao.isDarkMutual = isDarkMutual({ yao: eachYao, lunarMonth: this.lunarMonth.substring(1) as EarthlyBranch, lunarDay: this.lunarDay.substring(1) as EarthlyBranch });
+        });
+    }
+
     genSixYaoDescription(): void {
         const lunarMonth = this.lunarMonth.substring(1) as EarthlyBranch;
         const lunarDay = this.lunarDay.substring(1) as EarthlyBranch;
@@ -152,13 +159,19 @@ export class FullGua implements IFullGua {
                 if (mutual) {
                     eachYao.description += `，${eachYao.void ? '動不為空亡，' : ''}${earthlyBranchMutual({target: eachYao.earthlyBranch, compare: mutual.earthlyBranch})}。`;
                 } else {
-                    eachYao.description += `${eachYao.void ? '，空亡' : ''}。`;
+                    eachYao.description += `${eachYao.isDarkMutual ? '，暗動' : ''}${!eachYao.isDarkMutual && eachYao.void ? '，空亡' : ''}。`;
                 }
                 
                 return;
             }
             if (mutual) {
                 eachYao.description = `${eachYao.position}爻動，${eachYao.void ? '動不為空亡，' : ''}${earthlyBranchMonth({target: eachYao.earthlyBranch, compare: lunarMonth})}${earthlyBranchDay({target: eachYao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth }})}，${earthlyBranchMutual({target: eachYao.earthlyBranch, compare: mutual.earthlyBranch})}。`;
+                return;
+            }
+
+            if (eachYao.isDarkMutual) {
+                eachYao.description = `${eachYao.position}爻暗動${eachYao.void ? '，暗動不為空亡' : ''}。`;
+                return;
             }
         })
     }
