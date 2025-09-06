@@ -21,6 +21,7 @@ export interface Yao {
     position: number; // 位置 (配合陣列，由0開始)
     isYangYao?: boolean // 陰陽爻 (true = 陽；false = 陰)
     description?: string; // 月日動爻五行生剋說明
+    isDarkMutual?: boolean; // 是否暗動
 }
 
 export interface HeavenlyStems {

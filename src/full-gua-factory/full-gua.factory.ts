@@ -388,6 +388,7 @@ export class FullGuaFactory {
         if (date) {
             this.genDate(fullGua, date, !!cutAt2300);
             this.genMonster(fullGua);
+            fullGua.getIsDarkMutual();
             fullGua.genSixYaoDescription();
         }
         return fullGua;
@@ -640,13 +641,14 @@ export class FullGuaFactory {
     private genMutual(up: Gua, down: Gua, mutual: number[], fullGua: FullGua) {
         const mutualFullGua = this.getMutualFullGua(up, down, mutual);
 
-        fullGua.mutual = mutual.map( n => ({
-            earthlyBranch: mutualFullGua.yao[n - 1].earthlyBranch,
-            position: mutualFullGua.yao[n - 1].position,
-            relative: this.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch),
-            void: false
-            })
-        );
+        if (mutual.length > 0) {
+            fullGua.mutual = mutual.map( n => ({
+                earthlyBranch: mutualFullGua.yao[n - 1].earthlyBranch,
+                position: mutualFullGua.yao[n - 1].position,
+                relative: this.getRelative(fullGua.gung.element, mutualFullGua.yao[n - 1].earthlyBranch),
+                void: false
+            }));
+        }
 
         if (mutualFullGua.name.search('為') > 0) {
             fullGua.name += `之${mutualFullGua.name.charAt(0)}`;

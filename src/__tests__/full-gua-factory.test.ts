@@ -126,7 +126,7 @@ describe('產生卦象', () => {
        const { up, down, mutual, date, expectedResult } = situation;
        const res = FULL_GUA_FACTORY.create({up, down, mutual, date});
        // debug 印出五行描述。因為組合字串 + 日期是 new Date()。現行不好補單測
-       //  console.log(res.yao)
+        // console.log(res.yao)
        test(`輸入:${up}, ${down}, ${mutual}，產生卦象: ${expectedResult.guaName}`, () => {
            expect(res.name).toBe(expectedResult.guaName);
        });
@@ -171,6 +171,25 @@ describe('節氣轉換', () => {
         expect(res.hints.includes('今日屬24節氣「春分」')).toBeFalsy();
     });
 });
+
+describe('暗動', () => {
+    it('月值日沖', () => {
+        const res = FULL_GUA_FACTORY.create({ up: '水', down: '天', mutual: [], date: new Date('2025-09-06T11:20:00.000') });
+        expect(res.yao[3].isDarkMutual).toBeTruthy();
+        expect(res.yao[2].isDarkMutual).toBeFalsy();
+    });
+    it('月生日沖', () => {
+        const res = FULL_GUA_FACTORY.create({ up: '水', down: '天', mutual: [], date: new Date('2025-07-20T11:20:00.000') });
+        expect(res.yao[3].isDarkMutual).toBeTruthy();
+        expect(res.yao[2].isDarkMutual).toBeFalsy();
+    });
+    it('月旺日沖', () => {
+        const res = FULL_GUA_FACTORY.create({ up: '水', down: '天', mutual: [], date: new Date('2025-09-18T11:20:00.000') });
+        expect(res.yao[3].isDarkMutual).toBeTruthy();
+        expect(res.yao[2].isDarkMutual).toBeFalsy();
+    });
+});
+
 
 describe('六合化六沖、六沖化六合', () => {
     it('六合化六沖', () => {

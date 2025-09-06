@@ -1,5 +1,6 @@
 import { FullGua } from '../full-gua-factory/full-gua';
-import { Elements, EarthlyBranch } from '../gua.interface';
+import { Elements, EarthlyBranch, Yao } from '../gua.interface';
+import { earthlyBranchDay, earthlyBranchMonth } from './earthly-branch.util';
 
 /**
  * 傳入天干、地支，回傳五行 (天干還沒做，用到機會少)
@@ -54,4 +55,24 @@ export function elementRelative(target: Elements, compare: Elements): boolean {
         case '金':
             return compare === '金' || compare === '土';
     }
+}
+
+/**
+ * 是否暗動
+ * @param yao 爻
+ * @param lunarMonth 農曆月
+ * @param lunarDay 農曆日
+ * @return true=暗動、false=不是暗動
+ */
+export const isDarkMutual = ({ yao, lunarMonth, lunarDay }:{ yao: Yao, lunarMonth: EarthlyBranch, lunarDay: EarthlyBranch }): boolean => {
+
+    const month = earthlyBranchMonth({ target: yao.earthlyBranch, compare: lunarMonth });
+    if (!month.match(/旺|值|生/)) {
+        return false;
+    }
+    const day = earthlyBranchDay({ target: yao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth } });
+    if (!day.includes('沖')) {
+        return false;
+    }
+    return true;
 }
