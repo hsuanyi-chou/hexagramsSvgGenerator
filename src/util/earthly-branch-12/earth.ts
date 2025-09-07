@@ -1,5 +1,5 @@
 import { IDayEarthlyBranchReturn, IEarthlyBranchProps, IMonthEarthlyBranchReturn, IMutualEarthlyBranchReturn } from "../earthly-branch.util"
-import { getElement } from "../util";
+import { getElement, isMonthWang } from "../util";
 // --------------------- 丑 牛 Ox ---------------------
 export const earthlyBranchOxMonth = ({ compare }: Pick<IEarthlyBranchProps, 'compare'>):IMonthEarthlyBranchReturn => {
     switch(compare) {
@@ -30,10 +30,15 @@ export const earthlyBranchOxMonth = ({ compare }: Pick<IEarthlyBranchProps, 'com
    }
 }
 
-export const earthlyBranchOxDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
+export const earthlyBranchOxDay = ({ compare, handle12LongLife }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
     switch(compare) {
         case '子':
-            return ['帝旺', '合'];
+            const result: IDayEarthlyBranchReturn = ['合'];
+            if (isMonthWang({ compare: '丑', lunarMonth: handle12LongLife.month })) {
+                return [...result, '帝旺'];
+            } else {
+                return [...result, '囚'];
+            }
         case '丑':
             return ['值'];
         case '寅':
@@ -43,13 +48,21 @@ export const earthlyBranchOxDay = ({ compare }: Pick<IEarthlyBranchProps, 'compa
         case '辰':
             return ['墓'];
         case '巳':
-            return ['絕'];
+            if (isMonthWang({ compare: '丑', lunarMonth: handle12LongLife.month })) {
+                return ['生'];
+            } else {
+                return ['絕'];
+            }
         case '午':
             return ['生'];
         case '未':
             return ['沖'];
         case '申':
-            return ['長生'];
+            if (isMonthWang({ compare: '丑', lunarMonth: handle12LongLife.month })) {
+                return ['長生'];
+            } else {
+                return ['休'];
+            }
         case '酉':
             return ['休'];
         case '戌':
@@ -118,10 +131,14 @@ export const earthlyBranchDragonMonth = ({ compare }: Pick<IEarthlyBranchProps, 
    }
 }
 
-export const earthlyBranchDragonDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
+export const earthlyBranchDragonDay = ({ compare, handle12LongLife }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
     switch(compare) {
         case '子':
-            return ['帝旺'];
+            if (isMonthWang({ compare: '辰', lunarMonth: handle12LongLife.month })) {
+                return ['帝旺'];
+            } else {
+                return ['囚'];
+            }
         case '丑':
             return ['旺'];
         case '寅':
@@ -131,13 +148,21 @@ export const earthlyBranchDragonDay = ({ compare }: Pick<IEarthlyBranchProps, 'c
         case '辰':
             return ['值'];
         case '巳':
-            return ['絕'];
+            if (isMonthWang({ compare: '辰', lunarMonth: handle12LongLife.month })) {
+                return ['生'];
+            } else {
+                return ['絕'];
+            }
         case '午':
             return ['生'];
         case '未':
             return ['旺'];
         case '申':
-            return ['長生'];
+            if (isMonthWang({ compare: '辰', lunarMonth: handle12LongLife.month })) {
+                return ['長生'];
+            } else {
+                return ['休'];
+            }
         case '酉':
             return ['合'];
         case '戌':
@@ -206,10 +231,14 @@ export const earthlyBranchGoatMonth = ({ compare }: Pick<IEarthlyBranchProps, 'c
    }
 }
 
-export const earthlyBranchGoatDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
+export const earthlyBranchGoatDay = ({ compare, handle12LongLife }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
     switch(compare) {
         case '子':
-            return ['帝旺'];
+            if (isMonthWang({ compare, lunarMonth: handle12LongLife.month })) {
+                return ['帝旺'];
+            } else {
+                return ['囚'];
+            }
         case '丑':
             return ['沖'];
         case '寅':
@@ -219,13 +248,21 @@ export const earthlyBranchGoatDay = ({ compare }: Pick<IEarthlyBranchProps, 'com
         case '辰':
             return ['墓'];
         case '巳':
-            return ['絕'];
+            if (isMonthWang({ compare: '未', lunarMonth: handle12LongLife.month })) {
+                return ['生'];
+            } else {
+                return ['絕'];
+            }
         case '午':
             return ['生', '合'];
         case '未':
             return ['值'];
         case '申':
-            return ['長生'];
+            if (isMonthWang({ compare: '未', lunarMonth: handle12LongLife.month })) {
+                return ['長生'];
+            } else {
+                return ['休'];
+            }
         case '酉':
             return ['合'];
         case '戌':
@@ -294,10 +331,14 @@ export const earthlyBranchDogMonth = ({ compare }: Pick<IEarthlyBranchProps, 'co
    }
 }
 
-export const earthlyBranchDogDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
+export const earthlyBranchDogDay = ({ compare, handle12LongLife }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
     switch(compare) {
         case '子':
-            return ['帝旺'];
+            if (isMonthWang({ compare, lunarMonth: handle12LongLife.month })) {
+                return ['帝旺'];
+            } else {
+                return ['囚'];
+            }
         case '丑':
             return ['旺'];
         case '寅':
@@ -307,13 +348,21 @@ export const earthlyBranchDogDay = ({ compare }: Pick<IEarthlyBranchProps, 'comp
         case '辰':
             return ['墓', '沖'];
         case '巳':
-            return ['絕'];
+            if (isMonthWang({ compare: '戌', lunarMonth: handle12LongLife.month })) {
+                return ['生'];
+            } else {
+                return ['絕'];
+            }
         case '午':
             return ['生'];
         case '未':
             return ['旺'];
         case '申':
-            return ['長生'];
+            if (isMonthWang({ compare: '戌', lunarMonth: handle12LongLife.month })) {
+                return ['長生'];
+            } else {
+                return ['休'];
+            }
         case '酉':
             return ['休'];
         case '戌':

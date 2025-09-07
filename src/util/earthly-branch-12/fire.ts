@@ -30,7 +30,7 @@ export const earthlyBranchSnakeMonth = ({ compare }: Pick<IEarthlyBranchProps, '
    }
 }
 
-export const earthlyBranchSnakeDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
+export const earthlyBranchSnakeDay = ({ compare, handle12LongLife }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
     switch(compare) {
         case '子':
             return ['剋'];
@@ -55,7 +55,7 @@ export const earthlyBranchSnakeDay = ({ compare }: Pick<IEarthlyBranchProps, 'co
         case '戌':
             return ['墓'];
         case '亥':
-            return ['絕', '沖'];
+            return [ '沖', '絕'];
     }
 }
 
@@ -118,10 +118,10 @@ export const earthlyBranchHorseMonth = ({ compare }: Pick<IEarthlyBranchProps, '
    }
 }
 
-export const earthlyBranchHorseDay = ({ compare }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
+export const earthlyBranchHorseDay = ({ compare, handle12LongLife }: Pick<IEarthlyBranchProps, 'compare' | 'handle12LongLife'>): IDayEarthlyBranchReturn => {
     switch(compare) {
         case '子':
-            return ['沖','剋'];
+            return ['沖', '剋'];
         case '丑':
             return ['休'];
         case '寅':
