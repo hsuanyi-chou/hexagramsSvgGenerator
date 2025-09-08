@@ -39,7 +39,7 @@ export const earthlyBranchMonkeyDay = ({ compare, handle12LongLife }: Pick<IEart
             return ['墓'];
         case '寅':
             const result: IDayEarthlyBranchReturn = ['沖'];
-            if (isMonthWang({ compare: '申', lunarMonth: handle12LongLife.month })) {
+            if (isMonthWang({ target: '申', lunarMonth: handle12LongLife.month })) {
                 return result;
             } else {
                 return [...result, '絕'];
@@ -50,7 +50,7 @@ export const earthlyBranchMonkeyDay = ({ compare, handle12LongLife }: Pick<IEart
             return ['生'];
         case '巳':
             const result2: IDayEarthlyBranchReturn = ['合'];
-            if (isMonthWang({ compare: '申', lunarMonth: handle12LongLife.month })) {
+            if (isMonthWang({ target: '申', lunarMonth: handle12LongLife.month })) {
                 return [...result2, '長生'];
             } else {
                 return result2;
@@ -137,7 +137,7 @@ export const earthlyBranchRoosterDay = ({ compare, handle12LongLife }: Pick<IEar
         case '丑':
             return ['墓'];
         case '寅':
-            if (isMonthWang({ compare: '酉', lunarMonth: handle12LongLife.month })) {
+            if (isMonthWang({ target: '酉', lunarMonth: handle12LongLife.month })) {
                 return ['囚'];
             } else {
                 return ['絕'];
@@ -147,7 +147,7 @@ export const earthlyBranchRoosterDay = ({ compare, handle12LongLife }: Pick<IEar
         case '辰':
             return ['生', '合'];
         case '巳':
-            if (isMonthWang({ compare: '酉', lunarMonth: handle12LongLife.month })) {
+            if (isMonthWang({ target: '酉', lunarMonth: handle12LongLife.month })) {
                 return ['長生'];
             } else {
                 return ['剋'];

@@ -65,7 +65,7 @@ export function elementRelative(target: Elements, compare: Elements): boolean {
  * @return true=暗動、false=不是暗動
  */
 export const isDarkMutual = ({ yao, lunarMonth, lunarDay }:{ yao: Yao, lunarMonth: EarthlyBranch, lunarDay: EarthlyBranch }): boolean => {
-    if (!isMonthWang({ compare: yao.earthlyBranch, lunarMonth })) {
+    if (!isMonthWang({ target: yao.earthlyBranch, lunarMonth })) {
         return false;
     }
     const day = earthlyBranchDay({ target: yao.earthlyBranch, compare: lunarDay, handle12LongLife: { variant: '月', month: lunarMonth } });
@@ -81,7 +81,7 @@ export const isDarkMutual = ({ yao, lunarMonth, lunarDay }:{ yao: Yao, lunarMont
  * @param lunarMonth 月的地支
  * @return true=旺相、false=衰
  */
-export const isMonthWang = ({ compare, lunarMonth }:{ compare: EarthlyBranch, lunarMonth: EarthlyBranch }): boolean => {
-    const month = earthlyBranchMonth({ target: compare, compare: lunarMonth });
+export const isMonthWang = ({ target, lunarMonth }:{ target: EarthlyBranch, lunarMonth: EarthlyBranch }): boolean => {
+    const month = earthlyBranchMonth({ target: target, compare: lunarMonth });
     return !!month.match(/旺|值|生/);
 }

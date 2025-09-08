@@ -73,7 +73,7 @@ export const earthlyBranchRatDay = ({ compare, handle12LongLife }: Pick<IEarthly
         case '辰':
             return ['墓'];
         case '巳':
-            if (isMonthWang({ compare: '子', lunarMonth: handle12LongLife.month })) {
+            if (isMonthWang({ target: '子', lunarMonth: handle12LongLife.month })) {
                 return ['囚'];
             } else {
                 return ['絕'];
@@ -166,7 +166,7 @@ export const earthlyBranchPigDay = ({ compare, handle12LongLife }: Pick<IEarthly
             return ['墓'];
         case '巳':
             const result: IDayEarthlyBranchReturn = ['沖'];
-            if (isMonthWang({ compare: '亥', lunarMonth: handle12LongLife.month })) {
+            if (isMonthWang({ target: '亥', lunarMonth: handle12LongLife.month })) {
                 return result;
             } else {
                 return [...result, '絕'];
