@@ -24,16 +24,25 @@ describe('產生命卦', () => {
         void: ['申', '酉'],
         name: '地雷復之坤',
         thing: '王小明 男命',
-      }
-    }
-  ].forEach(situation => {
+      },
+    },
+  ].forEach((situation) => {
     test(`輸入:${situation.birth}, ${situation.thing}，產生命卦: ${situation.expectedResult.name}`, () => {
-      const res = GUA_GENERATOR.buildFateGua({ date: situation.birth, thing: situation.thing });
-      expect(res.fullGua.genGuaBase.date).toEqual(situation.expectedResult.date);
-      expect(res.fullGua.getChineseLunarDate()).toEqual(situation.expectedResult.lunarDate);
+      const res = GUA_GENERATOR.buildFateGua({
+        date: situation.birth,
+        thing: situation.thing,
+      });
+      expect(res.fullGua.genGuaBase.date).toEqual(
+        situation.expectedResult.date,
+      );
+      expect(res.fullGua.getChineseLunarDate()).toEqual(
+        situation.expectedResult.lunarDate,
+      );
       expect(res.fullGua.void).toEqual(situation.expectedResult.void);
       expect(res.fullGua.name).toEqual(situation.expectedResult.name);
-      expect(res.fullGua.genGuaBase.thing).toEqual(situation.expectedResult.thing);
+      expect(res.fullGua.genGuaBase.thing).toEqual(
+        situation.expectedResult.thing,
+      );
     });
   });
 });
@@ -47,9 +56,16 @@ test('批量產生命卦', () => {
 
 test('產生卦象', () => {
   const date = new Date('1990-06-25T11:20:00.000');
-  const res = GUA_GENERATOR.buildGua({ up: '火', down: '風', mutual: [1], date });
+  const res = GUA_GENERATOR.buildGua({
+    up: '火',
+    down: '風',
+    mutual: [1],
+    date,
+  });
   expect(res.fullGua.genGuaBase.date).toBe(date);
-  expect(res.fullGua.getChineseLunarDate()).toBe('庚午 年 壬午 月 辛酉 日 午 時')
+  expect(res.fullGua.getChineseLunarDate()).toBe(
+    '庚午 年 壬午 月 辛酉 日 午 時',
+  );
   expect(res.fullGua.void).toEqual(['子', '丑']);
   expect(res.fullGua.name).toBe('火風鼎之大有');
 });
@@ -58,29 +74,43 @@ describe('時間取卦', () => {
   test('時間取卦，傳入非14碼數字', () => {
     try {
       GUA_GENERATOR.buildGuaByTime({ time: '12345' });
-    } catch(e: any) {
-      expect(e.message).toEqual('傳入時間錯誤！僅支援年月日時分秒(YYYYMMDDHHmmss) 14碼數字！');
+    } catch (e: any) {
+      expect(e.message).toEqual(
+        '傳入時間錯誤！僅支援年月日時分秒(YYYYMMDDHHmmss) 14碼數字！',
+      );
     }
   });
 
   test('時間取卦(年月日時分秒)', () => {
     const res = GUA_GENERATOR.buildGuaByTime({ time: '20220226134521' });
-    expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe('2022/2/26 下午1:45:21');
-    expect(res.fullGua.getChineseLunarDate()).toBe('壬寅 年 壬寅 月 庚戌 日 未 時')
+    expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe(
+      '2022/2/26 下午1:45:21',
+    );
+    expect(res.fullGua.getChineseLunarDate()).toBe(
+      '壬寅 年 壬寅 月 庚戌 日 未 時',
+    );
     expect(res.fullGua.name).toBe('坤為地之豫');
   });
 
   test('時間取卦(年月日時分秒)，當時分秒有0時，轉換數字會變成單一的0', () => {
     const res = GUA_GENERATOR.buildGuaByTime({ time: '19900625120000' });
-    expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe('1990/6/25 下午12:00:00');
-    expect(res.fullGua.getChineseLunarDate()).toBe('庚午 年 壬午 月 辛酉 日 午 時')
+    expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe(
+      '1990/6/25 下午12:00:00',
+    );
+    expect(res.fullGua.getChineseLunarDate()).toBe(
+      '庚午 年 壬午 月 辛酉 日 午 時',
+    );
     expect(res.fullGua.name).toBe('地火明夷之復');
   });
 
   test('時間取卦(年月日時分秒)，當整除0時，會傳入動0爻', () => {
     const res = GUA_GENERATOR.buildGuaByTime({ time: '20220124170301' });
-    expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe('2022/1/24 下午5:03:01');
-    expect(res.fullGua.getChineseLunarDate()).toBe('辛丑 年 辛丑 月 丁丑 日 酉 時')
+    expect(res.fullGua.genGuaBase.date!.toLocaleString('zh-TW')).toBe(
+      '2022/1/24 下午5:03:01',
+    );
+    expect(res.fullGua.getChineseLunarDate()).toBe(
+      '辛丑 年 辛丑 月 丁丑 日 酉 時',
+    );
     expect(res.fullGua.name).toBe('雷地豫之晉');
   });
 });
@@ -106,7 +136,7 @@ describe('金錢卦(含圖)', () => {
       date,
       thing: '測試產卦',
       shakeNumRecords: ['010', '010', '010', '010', '010', '111'],
-    }
+    };
     GUA_GENERATOR.buildMoneyGuaBy(param);
     const res = GUA_GENERATOR.getMoneyGuaBuildData();
     expect(res.date).toEqual(date);
@@ -124,5 +154,4 @@ describe('金錢卦(含圖)', () => {
     const expected = GUA_GENERATOR.buildMoneyGuaBy(params);
     expect(res).toEqual(expected);
   });
-
 });

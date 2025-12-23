@@ -5,92 +5,101 @@ import * as fs from 'fs';
 
 const file: IChingResult[] = iChingFileReader();
 
-const fullGuaArray = genFullGuaArray() as Array<{ fileName: string, fullGua: FullGua }>;
+const fullGuaArray = genFullGuaArray() as Array<{
+  fileName: string;
+  fullGua: FullGua;
+}>;
 
 for (const fullGua of fullGuaArray) {
-    console.log(`markdown檔案產生中…正在產生${fullGua.fileName}.md檔案內容`);
-    console.log(`卦：${fullGua.fullGua.name}`);
-    let text = buildMdHeader(fullGua.fullGua, '2020-11-26');
-    const fileGua = file.find(f => f.guaIndex === fullGua.fullGua.name);
-    if (fileGua) {
-        text += buildContent(fileGua, fullGua.fileName);
-    }
-    // console.log(text);
-    const folder = `${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}`;
-    if (!fs.existsSync(folder)) {
-        fs.mkdirSync(folder);
-    }
-    fs.writeFileSync(`${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}/page.mdx`, text);
-    console.log(`${fullGua.fileName}.md產生完成！`);
+  console.log(`markdown檔案產生中…正在產生${fullGua.fileName}.md檔案內容`);
+  console.log(`卦：${fullGua.fullGua.name}`);
+  let text = buildMdHeader(fullGua.fullGua, '2020-11-26');
+  const fileGua = file.find((f) => f.guaIndex === fullGua.fullGua.name);
+  if (fileGua) {
+    text += buildContent(fileGua, fullGua.fileName);
+  }
+  // console.log(text);
+  const folder = `${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}`;
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder);
+  }
+  fs.writeFileSync(
+    `${process.cwd()}/src/dev/md-gen/genMdFiles/${fullGua.fileName}/page.mdx`,
+    text,
+  );
+  console.log(`${fullGua.fileName}.md產生完成！`);
 }
 
-
 function buildMdHeader(fullGua: FullGua, date: string) {
-    // const TAB_SPACE = ' ';
-    // let text = `---\n`;
-    // text += `title: ${fullGua.name}\n`
-    // text += `date: ${date}\n`;
-    // text += `categories:\n`;
-    // text += `${TAB_SPACE}- 64卦\n`;
-    // text += `tags:\n`;
-    // text += `${TAB_SPACE}- ${fullGua.gung.name}\n`;
-    // if (fullGua.hints.length !== 0) {
-    //     fullGua.hints.forEach(h => text += `${TAB_SPACE}- ${fullGua.hints}\n`);
-    // }
-    // text += `---\n\n`;
-    let text = `export const metadata = {
+  // const TAB_SPACE = ' ';
+  // let text = `---\n`;
+  // text += `title: ${fullGua.name}\n`
+  // text += `date: ${date}\n`;
+  // text += `categories:\n`;
+  // text += `${TAB_SPACE}- 64卦\n`;
+  // text += `tags:\n`;
+  // text += `${TAB_SPACE}- ${fullGua.gung.name}\n`;
+  // if (fullGua.hints.length !== 0) {
+  //     fullGua.hints.forEach(h => text += `${TAB_SPACE}- ${fullGua.hints}\n`);
+  // }
+  // text += `---\n\n`;
+  let text = `export const metadata = {
   title: '${fullGua.name}',
-};\n\n`
-    text += `# ${fullGua.name}\n\n`;
-    return text;
+};\n\n`;
+  text += `# ${fullGua.name}\n\n`;
+  return text;
 }
 
 function buildContent(fileGua: IChingResult, fileName: string) {
-    let text = `## ${fileGua.name}\n`;
-    text += `\n![](/64gua/${fileName}.svg)\n\n`;
-    text += `### 釋\n\n${fileGua.mean}\n\n`;
-    text += `### 初爻\n\n${fileGua.one}\n\n`;
-    text += `### 二爻\n\n${fileGua.two}\n\n`;
-    text += `### 三爻\n\n${fileGua.three}\n\n`;
-    text += `### 四爻\n\n${fileGua.four}\n\n`;
-    text += `### 五爻\n\n${fileGua.five}\n\n`;
-    text += `### 上爻\n\n${fileGua.six}\n\n`;
-    text += `## 五路財神經\n\n${fileGua.fiveMoney}\n\n`;
-    text += `## 稽首七十二天師加持世界和平共轉法輪寶誥\n\n`;
-    if (fileGua.seventyTwoGod.length === 2) {
-        text += `${fileGua.seventyTwoGod.join('\n\n')}\n\n`;
-    } else {
-        text += `${fileGua.seventyTwoGod[0]}\n\n${fileGua.seventyTwoGod[1]}\n\n`;
-        text += `${fileGua.seventyTwoGod[2]}\n\n${fileGua.seventyTwoGod[3]}\n\n`;
-    }
-    text += `## 序卦傳\n\n${fileGua.serialGua}\n\n`;
-    text += `## 唯心用易歌訣\n\n${fileGua.heartSong}\n\n`;
-    if (fileGua.description) {
-        text += `${fileGua.description}\n\n`;
-    }
+  let text = `## ${fileGua.name}\n`;
+  text += `\n![](/64gua/${fileName}.svg)\n\n`;
+  text += `### 釋\n\n${fileGua.mean}\n\n`;
+  text += `### 初爻\n\n${fileGua.one}\n\n`;
+  text += `### 二爻\n\n${fileGua.two}\n\n`;
+  text += `### 三爻\n\n${fileGua.three}\n\n`;
+  text += `### 四爻\n\n${fileGua.four}\n\n`;
+  text += `### 五爻\n\n${fileGua.five}\n\n`;
+  text += `### 上爻\n\n${fileGua.six}\n\n`;
+  text += `## 五路財神經\n\n${fileGua.fiveMoney}\n\n`;
+  text += `## 稽首七十二天師加持世界和平共轉法輪寶誥\n\n`;
+  if (fileGua.seventyTwoGod.length === 2) {
+    text += `${fileGua.seventyTwoGod.join('\n\n')}\n\n`;
+  } else {
+    text += `${fileGua.seventyTwoGod[0]}\n\n${fileGua.seventyTwoGod[1]}\n\n`;
+    text += `${fileGua.seventyTwoGod[2]}\n\n${fileGua.seventyTwoGod[3]}\n\n`;
+  }
+  text += `## 序卦傳\n\n${fileGua.serialGua}\n\n`;
+  text += `## 唯心用易歌訣\n\n${fileGua.heartSong}\n\n`;
+  if (fileGua.description) {
+    text += `${fileGua.description}\n\n`;
+  }
 
-    return text;
+  return text;
 }
 
 function genFullGuaArray() {
-    const guaArray: Array<{ id: number, gua: Gua }> = [
-        { id: 1, gua: '天' },
-        { id: 2, gua: '澤' },
-        { id: 3, gua: '火' },
-        { id: 4, gua: '雷' },
-        { id: 5, gua: '風' },
-        { id: 6, gua: '水' },
-        { id: 7, gua: '山' },
-        { id: 8, gua: '地' }
-    ];
-    const fullGuaFactory = new FullGuaFactory();
-    const fullGuaList = [];
-    for (const up of guaArray) {
-        for (const down of guaArray) {
-            const fullGua = fullGuaFactory.create({up: up.gua, down: down.gua, mutual: []});
-            fullGuaList.push({ fileName: `${up.id}${down.id}`, fullGua });
-        }
+  const guaArray: Array<{ id: number; gua: Gua }> = [
+    { id: 1, gua: '天' },
+    { id: 2, gua: '澤' },
+    { id: 3, gua: '火' },
+    { id: 4, gua: '雷' },
+    { id: 5, gua: '風' },
+    { id: 6, gua: '水' },
+    { id: 7, gua: '山' },
+    { id: 8, gua: '地' },
+  ];
+  const fullGuaFactory = new FullGuaFactory();
+  const fullGuaList = [];
+  for (const up of guaArray) {
+    for (const down of guaArray) {
+      const fullGua = fullGuaFactory.create({
+        up: up.gua,
+        down: down.gua,
+        mutual: [],
+      });
+      fullGuaList.push({ fileName: `${up.id}${down.id}`, fullGua });
     }
+  }
 
-    return fullGuaList;
+  return fullGuaList;
 }
