@@ -8,7 +8,7 @@ import {
   BuildFateGuaParams,
   BuildGuaByTimeParams,
   CreateParams,
-  MoneyGuaParams
+  MoneyGuaParams,
 } from './params.interface';
 import zhTW from 'dayjs/locale/zh-tw';
 
@@ -63,12 +63,12 @@ export class GuaGenerator {
     GAP: 15, // 每行間距
     FONT_SIZE: 19, // 文字大小
     FONT_COLOR: '#3b3a3a', // 文字顏色
-  }
+  };
 
   private readonly TITLE_TOP_Y = this.TOP_GAP + 50; // 標題上方的高度
   private readonly TEXT_LENGTH = 85; // 文字六親 + 地支 (如官鬼 亥)的長度距離
   private readonly HIDDEN_SPACE = 20; // 變爻跟伏藏之間的距離
-  
+
   private readonly TEXT_Y_POSITION = this.config.DOWN_FIRST_YAO + 10;
 
   private readonly YAO_FONT_SIZE = 24;
@@ -76,12 +76,14 @@ export class GuaGenerator {
   private readonly YAO_X_POSITION = 285; // 爻的X軸位置常數。用來控制整個卦的位置(本卦、變爻、伏藏、六獸、天干世應，都依此來計算相對位置)
 
   private readonly SHIH_FIRST_YAO_RELATIVE_POSITION = 26; // 世爻第一爻相對位置常數
-  private readonly SHIH_FIRST_YAO = this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
+  private readonly SHIH_FIRST_YAO =
+    this.config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION; // 世爻第一爻位置(y軸)
 
   constructor(config?: GuaConfiguration) {
     if (config) {
       this.config = config;
-      this.SHIH_FIRST_YAO = config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
+      this.SHIH_FIRST_YAO =
+        config.DOWN_FIRST_YAO + this.SHIH_FIRST_YAO_RELATIVE_POSITION;
     }
     dayjs.locale({
       ...zhTW,
@@ -144,7 +146,7 @@ export class GuaGenerator {
 
     return {
       fullGua,
-      svg: this.createSvg(fullGua, fullGua.genGuaBase.date)
+      svg: this.createSvg(fullGua, fullGua.genGuaBase.date),
     };
   }
 
@@ -155,7 +157,7 @@ export class GuaGenerator {
   buildGua(param: CreateParams): GuaResult {
     const fullGua = this.fullGuaFactory.create(param);
     this.showGenTime = param.showGenTime ?? true;
-    return { fullGua, svg: this.createSvg(fullGua, param.date) };
+    return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
   }
 
   /**
@@ -164,7 +166,7 @@ export class GuaGenerator {
    */
   buildFateGua(params: BuildFateGuaParams): GuaResult {
     const fullGua = this.fullGuaFactory.createFateGua({ ...params });
-    return { fullGua, svg: this.createSvg(fullGua, params.date) };
+    return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
   }
 
   /**
@@ -173,8 +175,10 @@ export class GuaGenerator {
    */
   buildBatchFateGua(param: BatchFateGuaParams): GuaResult[] {
     this.showGenTime = param.showGenTime ?? true;
-    return this.fullGuaFactory.createBatchFateGua(param)
-        .map(fullGua => ({ fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) }));
+    return this.fullGuaFactory.createBatchFateGua(param).map((fullGua) => ({
+      fullGua,
+      svg: this.createSvg(fullGua, fullGua.genGuaBase.date),
+    }));
   }
 
   /**
@@ -187,13 +191,15 @@ export class GuaGenerator {
    */
   buildGuaByTime({ time, thing = '' }: BuildGuaByTimeParams): GuaResult {
     if (!time.match(/^\d{14}$/)) {
-      throw new Error('傳入時間錯誤！僅支援年月日時分秒(YYYYMMDDHHmmss) 14碼數字！');
+      throw new Error(
+        '傳入時間錯誤！僅支援年月日時分秒(YYYYMMDDHHmmss) 14碼數字！',
+      );
     }
 
     const pattern = new RegExp(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/);
-    const matched = pattern.exec(time)
+    const matched = pattern.exec(time);
     if (!matched) {
-      throw new Error('14碼日期錯誤!')
+      throw new Error('14碼日期錯誤!');
     }
 
     const year = parseInt(matched[REGEXP_TIME_PATTERN.YEAR], 10);
@@ -204,15 +210,20 @@ export class GuaGenerator {
     const ss = parseInt(matched[REGEXP_TIME_PATTERN.SECOND], 10);
 
     // console.log(`${year} ${month} ${day} ${HH} ${mm} ${ss}`);
-    const buildTime = dayjs().locale('zh-TW')
-      .set('year', year).set('month', month - 1).set('date', day)
-      .set('hour', HH).set('minute', mm).set('second', ss);
+    const buildTime = dayjs()
+      .locale('zh-TW')
+      .set('year', year)
+      .set('month', month - 1)
+      .set('date', day)
+      .set('hour', HH)
+      .set('minute', mm)
+      .set('second', ss);
 
     const basic = this.genGuaBasisByTime(time.substring(8));
     return this.buildGua({
-      date: buildTime.toDate(),
+      date: buildTime.toDate().toString(),
       thing,
-      ...basic
+      ...basic,
     });
   }
 
@@ -220,18 +231,22 @@ export class GuaGenerator {
    * 傳入6碼時間，回傳上卦、下卦、動爻
    * @param time
    */
-  private genGuaBasisByTime(time: string): {up: Gua, down: Gua, mutual: number[]} {
+  private genGuaBasisByTime(time: string): {
+    up: Gua;
+    down: Gua;
+    mutual: number[];
+  } {
     if (!time.match(/^\d{6}$/)) {
       throw new Error('僅能傳入6碼數字時間');
     }
-    const timeArray: number[] = time.split('').map(t => parseInt(t, 10));
+    const timeArray: number[] = time.split('').map((t) => parseInt(t, 10));
     const downCounts = timeArray[0] + timeArray[1] + timeArray[2];
     const upCounts = timeArray[3] + timeArray[4] + timeArray[5];
 
     return {
       up: this.fullGuaFactory.transDigitToGua(upCounts % 8),
       down: this.fullGuaFactory.transDigitToGua(downCounts % 8),
-      mutual: [(downCounts + upCounts) % 6 || 6] // 當整除為0時，實為動六爻，用JS語法糖直接轉成6 (0轉型false，故變6)
+      mutual: [(downCounts + upCounts) % 6 || 6], // 當整除為0時，實為動六爻，用JS語法糖直接轉成6 (0轉型false，故變6)
     };
   }
 
@@ -241,15 +256,16 @@ export class GuaGenerator {
    * @param date 日期
    */
   private createSvg(fullGua: FullGua, date?: Date): string {
-    return `<!-- Created By Hexagrams-SVG-Generator -->\n` +
-           `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
-           `<defs><style type="text/css">
+    return (
+      `<!-- Created By Hexagrams-SVG-Generator -->\n` +
+      `<svg width="${this.config.WIDTH}" height="${this.config.HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n` +
+      `<defs><style type="text/css">
               @import url('https://fonts.google.com/specimen/Roboto+Condensed?selection.family=Roboto+Condensed');
             </style></defs>` +
-           `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
-           `${this.drawFullGua(fullGua, date)}</svg>`;
+      `<g><title>background</title>\n<rect fill="#ffffff" id="GUA" height="${this.config.HEIGHT}" width="${this.config.WIDTH}" y="-1" x="-1"/>\n</g>\n` +
+      `${this.drawFullGua(fullGua, date)}</svg>`
+    );
   }
-
 
   /**
    * step 1: 繪製全卦
@@ -259,11 +275,33 @@ export class GuaGenerator {
   private drawFullGua(fullGua: FullGua, date?: Date): string {
     let gua = `<g>\n<title>Layer 1</title>\n`;
     gua += this.drawTopInfo(fullGua);
-    gua += this.drawSixYao(fullGua.yao, this.YAO_X_POSITION, this.config.DOWN_FIRST_YAO);
+    gua += this.drawSixYao(
+      fullGua.yao,
+      this.YAO_X_POSITION,
+      this.config.DOWN_FIRST_YAO,
+    );
     gua += this.drawShihYingAndHeavenlyStem(fullGua);
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.yao, 'yao', '本卦', this.config.EARTHLY_BRANCH_COLOR, this.YAO_X_POSITION - this.TEXT_LENGTH);
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.hidden, 'hidden', '伏藏', this.config.HIDDEN_COLOR, this.YAO_X_POSITION - (this.TEXT_LENGTH * 3 + this.HIDDEN_SPACE));
-    gua += this.drawRelativesAndEarthlyBranches(fullGua.mutual, 'mutual', '變爻', this.config.MUTUAL_COLOR, this.YAO_X_POSITION - this.TEXT_LENGTH * 2);
+    gua += this.drawRelativesAndEarthlyBranches(
+      fullGua.yao,
+      'yao',
+      '本卦',
+      this.config.EARTHLY_BRANCH_COLOR,
+      this.YAO_X_POSITION - this.TEXT_LENGTH,
+    );
+    gua += this.drawRelativesAndEarthlyBranches(
+      fullGua.hidden,
+      'hidden',
+      '伏藏',
+      this.config.HIDDEN_COLOR,
+      this.YAO_X_POSITION - (this.TEXT_LENGTH * 3 + this.HIDDEN_SPACE),
+    );
+    gua += this.drawRelativesAndEarthlyBranches(
+      fullGua.mutual,
+      'mutual',
+      '變爻',
+      this.config.MUTUAL_COLOR,
+      this.YAO_X_POSITION - this.TEXT_LENGTH * 2,
+    );
     gua += this.drawMonsters(fullGua.yao, this.config.MONSTER_COLOR);
     gua += this.drawMutual(fullGua.yao, fullGua.mutual);
     gua += this.drawVoid(fullGua);
@@ -284,21 +322,21 @@ export class GuaGenerator {
       x: this.LEFT_GAP,
     };
 
-   if (this.showGenTime) {
+    if (this.showGenTime) {
       text += this.genSvgTextComponent({
         id: 'genTime',
         text: `時間：${dayjs(fullGua.genGuaBase.date).format('YYYY/MM/DD HH:mm:ss (dd)')}`,
         y: this.TOP_GAP,
-          ...base
+        ...base,
       });
-   }
+    }
 
     if (fullGua.genGuaBase.thing) {
       text += this.genSvgTextComponent({
         id: 'thing',
         text: `事由：${fullGua.genGuaBase.thing}`,
-        y: this.TOP_GAP + (this.TOP_INFO_CONFIG.GAP * 2),
-        ...base
+        y: this.TOP_GAP + this.TOP_INFO_CONFIG.GAP * 2,
+        ...base,
       });
     }
 
@@ -312,8 +350,12 @@ export class GuaGenerator {
   private drawShihYingAndHeavenlyStem(fullGua: FullGua): string {
     let text = '';
     const x = this.YAO_X_POSITION + 42;
-    const shihY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
-    const yingY = this.SHIH_FIRST_YAO - this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
+    const shihY =
+      this.SHIH_FIRST_YAO -
+      this.config.YAO_GAP * (fullGua.HeavenlyStems.shihPosition - 1);
+    const yingY =
+      this.SHIH_FIRST_YAO -
+      this.config.YAO_GAP * (fullGua.HeavenlyStems.yingPosition - 1);
 
     text += this.genSvgTextComponent({
       id: `shih`,
@@ -376,16 +418,18 @@ export class GuaGenerator {
       y: this.TITLE_TOP_Y,
     });
 
-    text += yaos.map( (yao, i) => 
-      this.genSvgTextComponent({
-        id: `monster_${i}`, 
-        text: `${yao.monster}`,
-        color,
-        fontSize: this.YAO_FONT_SIZE,
-        x,
-        y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
-      })
-    ).join('');
+    text += yaos
+      .map((yao, i) =>
+        this.genSvgTextComponent({
+          id: `monster_${i}`,
+          text: `${yao.monster}`,
+          color,
+          fontSize: this.YAO_FONT_SIZE,
+          x,
+          y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
+        }),
+      )
+      .join('');
     return text;
   }
 
@@ -397,15 +441,24 @@ export class GuaGenerator {
   private drawMutual(yaos: Yao[], mutual: Yao[]): string {
     const circleX = this.YAO_X_POSITION + 50;
     const crossX = this.YAO_X_POSITION + 38;
-    
-    return mutual.map(m => {
-      const circleY = this.config.DOWN_FIRST_YAO - (m.position - 1) * this.config.YAO_GAP;
-      if (yaos[m.position - 1].isYangYao) {
-        return GuaGenerator.genCircleComponent(`mutual_${m.position}`, circleX, circleY, 11, 'red');
-      } else {
-        return GuaGenerator.genCrossComponent(crossX, circleY - 10, 'red');
-      }
-    }).join('');
+
+    return mutual
+      .map((m) => {
+        const circleY =
+          this.config.DOWN_FIRST_YAO - (m.position - 1) * this.config.YAO_GAP;
+        if (yaos[m.position - 1].isYangYao) {
+          return GuaGenerator.genCircleComponent(
+            `mutual_${m.position}`,
+            circleX,
+            circleY,
+            11,
+            'red',
+          );
+        } else {
+          return GuaGenerator.genCrossComponent(crossX, circleY - 10, 'red');
+        }
+      })
+      .join('');
   }
 
   /**
@@ -417,15 +470,48 @@ export class GuaGenerator {
     const r = 14;
     const color = '#858585';
     let voidCircle = '';
-    voidCircle += fullGua.yao.map(y => y.void ? 
-      GuaGenerator.genCircleComponent(`yao_void_${y.position}`, x, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
-    ).join('');
-    voidCircle += fullGua.mutual.map(y => y.void ?
-      GuaGenerator.genCircleComponent(`mutual_void_${y.position}`, x - this.TEXT_LENGTH, this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color) : ''
-      ).join('');
-    voidCircle += fullGua.hidden.map(y => y.void ?
-      GuaGenerator.genCircleComponent(`hidden_void_${y.position}`, x - (this.TEXT_LENGTH * 2 + this.HIDDEN_SPACE),
-        this.config.DOWN_FIRST_YAO - this.config.YAO_GAP * (y.position - 1), r, color): '').join('');
+    voidCircle += fullGua.yao
+      .map((y) =>
+        y.void
+          ? GuaGenerator.genCircleComponent(
+              `yao_void_${y.position}`,
+              x,
+              this.config.DOWN_FIRST_YAO -
+                this.config.YAO_GAP * (y.position - 1),
+              r,
+              color,
+            )
+          : '',
+      )
+      .join('');
+    voidCircle += fullGua.mutual
+      .map((y) =>
+        y.void
+          ? GuaGenerator.genCircleComponent(
+              `mutual_void_${y.position}`,
+              x - this.TEXT_LENGTH,
+              this.config.DOWN_FIRST_YAO -
+                this.config.YAO_GAP * (y.position - 1),
+              r,
+              color,
+            )
+          : '',
+      )
+      .join('');
+    voidCircle += fullGua.hidden
+      .map((y) =>
+        y.void
+          ? GuaGenerator.genCircleComponent(
+              `hidden_void_${y.position}`,
+              x - (this.TEXT_LENGTH * 2 + this.HIDDEN_SPACE),
+              this.config.DOWN_FIRST_YAO -
+                this.config.YAO_GAP * (y.position - 1),
+              r,
+              color,
+            )
+          : '',
+      )
+      .join('');
     return voidCircle;
   }
 
@@ -443,19 +529,32 @@ export class GuaGenerator {
     const COMMON_CONFIG = {
       color: this.config.SIDE_INFO_COLOR,
       fontSize: this.YAO_FONT_SIZE,
-      y: this.TITLE_TOP_Y
+      y: this.TITLE_TOP_Y,
     };
     if (date) {
       leftSideX += 50;
-      text += this.genTitleTextComponent({id: 'side_date', text:`占期：${fullGua.getChineseLunarDate()}`, x: leftSideX,  ...COMMON_CONFIG});
+      text += this.genTitleTextComponent({
+        id: 'side_date',
+        text: `占期：${fullGua.getChineseLunarDate()}`,
+        x: leftSideX,
+        ...COMMON_CONFIG,
+      });
       count++;
       voidText = `空：${fullGua.void.join('、')}`;
     }
-    text += this.genTitleTextComponent({id:'side_gung', text:`宮：${fullGua.gung.name}︵${fullGua.gung.element}︶   ${voidText}`,
-            x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
+    text += this.genTitleTextComponent({
+      id: 'side_gung',
+      text: `宮：${fullGua.gung.name}︵${fullGua.gung.element}︶   ${voidText}`,
+      x: leftSideX + TITLE_GAP * count,
+      ...COMMON_CONFIG,
+    });
     count++;
-    text += this.genTitleTextComponent({id: 'side_gua_name', text:`卦名：${fullGua.name}︵${fullGua.description}︶`,
-            x: leftSideX + TITLE_GAP * count, ...COMMON_CONFIG});
+    text += this.genTitleTextComponent({
+      id: 'side_gua_name',
+      text: `卦名：${fullGua.name}︵${fullGua.description}︶`,
+      x: leftSideX + TITLE_GAP * count,
+      ...COMMON_CONFIG,
+    });
     count++;
     return text;
   }
@@ -467,10 +566,13 @@ export class GuaGenerator {
    * @param y
    */
   private drawSixYao(yaos: Yao[], x: number, y: number): string {
-    return yaos.map( (yao, i) => yao.isYangYao ? 
-      this.drawYangYao(`yao_${i}`, x, y - this.config.YAO_GAP * i) : 
-      this.drawYinYao(`yao_${i}`, x, y - this.config.YAO_GAP * i)
-    ).join('');
+    return yaos
+      .map((yao, i) =>
+        yao.isYangYao
+          ? this.drawYangYao(`yao_${i}`, x, y - this.config.YAO_GAP * i)
+          : this.drawYinYao(`yao_${i}`, x, y - this.config.YAO_GAP * i),
+      )
+      .join('');
   }
 
   /**
@@ -481,8 +583,10 @@ export class GuaGenerator {
    */
   private drawYinYao(id: string, x: number, y: number) {
     const x2 = x + this.config.YIN_LENGTH;
-    return `<line stroke="${this.config.YAO_COLOR}" id="${id + '-1'}" x1="${x}" y1="${y}" x2="${x2}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n` + 
-           `<line stroke="${this.config.YAO_COLOR}" id="${id + '-2'}" x1="${x2 + this.config.YIN_GAP}" y1="${y}" x2="${x2 + this.config.YIN_GAP + this.config.YIN_LENGTH}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n`;
+    return (
+      `<line stroke="${this.config.YAO_COLOR}" id="${id + '-1'}" x1="${x}" y1="${y}" x2="${x2}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n` +
+      `<line stroke="${this.config.YAO_COLOR}" id="${id + '-2'}" x1="${x2 + this.config.YIN_GAP}" y1="${y}" x2="${x2 + this.config.YIN_GAP + this.config.YIN_LENGTH}" y2="${y}" stroke-width="${this.config.YAO_BOLD}" fill="none"/>\n`
+    );
   }
 
   /**
@@ -503,7 +607,13 @@ export class GuaGenerator {
    * @param x X 軸
    * @return 繪製出來的svg
    */
-  private drawRelativesAndEarthlyBranches(yaos: Yao[], id: string, titleText: string, color: string, x: number) {
+  private drawRelativesAndEarthlyBranches(
+    yaos: Yao[],
+    id: string,
+    titleText: string,
+    color: string,
+    x: number,
+  ) {
     if (yaos.length === 0) {
       return '';
     }
@@ -517,16 +627,18 @@ export class GuaGenerator {
       y: this.TITLE_TOP_Y,
     });
 
-    text += yaos.map( (yao, i) => 
-      this.genSvgTextComponent({
-        id: `${id}_${i}`, 
-        text: `${yao.relative} ${yao.earthlyBranch}`,
-        color,
-        fontSize: this.YAO_FONT_SIZE,
-        x,
-        y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
-      })
-    ).join('');
+    text += yaos
+      .map((yao, i) =>
+        this.genSvgTextComponent({
+          id: `${id}_${i}`,
+          text: `${yao.relative} ${yao.earthlyBranch}`,
+          color,
+          fontSize: this.YAO_FONT_SIZE,
+          x,
+          y: this.TEXT_Y_POSITION - (yao.position - 1) * this.config.YAO_GAP,
+        }),
+      )
+      .join('');
     return text;
   }
 
@@ -534,19 +646,36 @@ export class GuaGenerator {
    * 產生svg text 元件
    * @param svgTextConfig
    */
-  private genSvgTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}): string {
-    return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
-           `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
-    
+  private genSvgTextComponent(svgTextConfig: {
+    id: string;
+    text: string;
+    color: string;
+    fontSize: number;
+    x: number;
+    y: number;
+  }): string {
+    return (
+      `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="${svgTextConfig.id}" ` +
+      `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`
+    );
   }
 
   /**
    * 產生svg text 元件
    * @param svgTextConfig
    */
-  private genTitleTextComponent(svgTextConfig: {id: string, text: string, color: string, fontSize: number, x: number, y: number}): string {
-    return `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="title_${svgTextConfig.id}" style="writing-mode: tb; glyph-orientation-vertical: 0;" ` +
-           `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`;
+  private genTitleTextComponent(svgTextConfig: {
+    id: string;
+    text: string;
+    color: string;
+    fontSize: number;
+    x: number;
+    y: number;
+  }): string {
+    return (
+      `<text xml:space="preserve" text-anchor="start" font-family="${this.config.FONT_FAMILY}" font-size="${svgTextConfig.fontSize}" id="title_${svgTextConfig.id}" style="writing-mode: tb; glyph-orientation-vertical: 0;" ` +
+      `y="${svgTextConfig.y}" x="${svgTextConfig.x}" stroke-opacity="null" stroke-width="0" stroke="#000" fill="${svgTextConfig.color}">${svgTextConfig.text}</text>\n`
+    );
   }
 
   /**
@@ -557,7 +686,13 @@ export class GuaGenerator {
    * @param r 半徑
    * @param color 顏色
    */
-  private static genCircleComponent(id: string, x: number, y: number, r: number, color: string): string {
+  private static genCircleComponent(
+    id: string,
+    x: number,
+    y: number,
+    r: number,
+    color: string,
+  ): string {
     return `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="${color}" stroke-width="2" fill-opacity="0" />\n`;
   }
 
@@ -567,8 +702,14 @@ export class GuaGenerator {
    * @param y y軸
    * @param color 顏色
    */
-  private static genCrossComponent(x: number, y: number, color: string): string {
-    return `<line x1="${x}" y1="${y}" x2="${x + 25}" y2="${y + 20}" stroke="${color}" stroke-width="2" /> ` + 
-           `<line x1="${x + 25}" y1="${y}" x2="${x}" y2="${y + 20}" stroke="${color}" stroke-width="2" />\n`;
+  private static genCrossComponent(
+    x: number,
+    y: number,
+    color: string,
+  ): string {
+    return (
+      `<line x1="${x}" y1="${y}" x2="${x + 25}" y2="${y + 20}" stroke="${color}" stroke-width="2" /> ` +
+      `<line x1="${x + 25}" y1="${y}" x2="${x}" y2="${y + 20}" stroke="${color}" stroke-width="2" />\n`
+    );
   }
 }

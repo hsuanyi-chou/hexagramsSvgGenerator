@@ -175,7 +175,7 @@ export const GUA_SERIAL_SONG = `
 
 艮漸歸妹豐旅巽，兌渙節兮中孚至，
 
-小過既濟兼未濟，是為下經三十四。`
+小過既濟兼未濟，是為下經三十四。`;
 
 export const GOD_72 = `
 恭維
@@ -544,7 +544,7 @@ export const GOD_72 = `
 
 從此無苦厄　聞者生智慧
 
-信者生信心　天下早太平`
+信者生信心　天下早太平`;
 
 export const HEART_SONG = `
 奉請
@@ -742,4 +742,4 @@ export const HEART_SONG = `
 
 
 於天運歲次巳丑年閏五月十一日
-`
+`;

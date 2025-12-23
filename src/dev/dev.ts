@@ -1,5 +1,5 @@
 import { GuaGenerator } from '../gua.generator';
-import {FullGuaFactory } from '../full-gua-factory';
+import { FullGuaFactory } from '../full-gua-factory';
 
 // 測試產svg
 const date = new Date('2021-05-27T11:20:00.000');
