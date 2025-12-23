@@ -20,7 +20,7 @@ export interface CreateParams extends BaseParams {
   /** 動爻(數字陣列) */
   mutual: number[];
   /** 日期 */
-  date?: Date;
+  date?: string;
   /** 是否 23:00 換日 */
   cutAt2300?: boolean;
 }
@@ -29,7 +29,7 @@ export interface CreateParams extends BaseParams {
  * 基礎命卦 參數
  */
 export interface CreateFateGuaParams extends BaseParams {
-  date: Date;
+  date: string;
   cutAt2300?: boolean;
 }
 
@@ -38,7 +38,7 @@ export interface CreateFateGuaParams extends BaseParams {
  */
 export interface GenFateGuaParams extends BaseParams {
   /** 日期 */
-  date: Date;
+  date: string;
   /** 是否要動爻 */
   withMutual: boolean;
   /** 是否 23:00 換日 */
@@ -47,15 +47,15 @@ export interface GenFateGuaParams extends BaseParams {
 
 export interface BuildFateGuaParams extends BaseParams {
   /** 日期 */
-  date: Date;
+  date: string;
 }
 
 /**
  * 批量命卦 參數
  */
 export interface BatchFateGuaParams {
-  beginDate: Date;
-  endDate: Date;
+  beginDate: string;
+  endDate: string;
   cutAt2300?: boolean;
   /** 是否顯示生成時間 */
   showGenTime?: boolean;
@@ -75,5 +75,5 @@ export interface MoneyGuaParams extends BaseParams {
   /** 搖卦數字記錄，供網址回產卦象 */
   shakeNumRecords: RandomNum[];
   /** 搖卦日期 */
-  date: Date;
+  date: string;
 }

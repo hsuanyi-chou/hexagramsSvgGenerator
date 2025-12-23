@@ -97,6 +97,7 @@ export class FullGuaFactory {
    * @return 全卦
    */
   create({ up, down, mutual, date, cutAt2300, thing }: CreateParams): FullGua {
+    const parsedDate = date ? FullGuaFactory.parseDateInput(date) : undefined;
     if (
       up !== '天' &&
       up !== '澤' &&
@@ -808,9 +809,9 @@ export class FullGuaFactory {
     }
     this.addScriptures(fullGua);
 
-    fullGua.addGenGuaBase({ up, down, date, mutual, thing });
-    if (date) {
-      this.genDate(fullGua, date, !!cutAt2300);
+    fullGua.addGenGuaBase({ up, down, date: parsedDate, mutual, thing });
+    if (parsedDate) {
+      this.genDate(fullGua, parsedDate, !!cutAt2300);
       this.genMonster(fullGua);
       fullGua.getIsDarkMutual();
       fullGua.genSixYaoDescription();
@@ -842,15 +843,16 @@ export class FullGuaFactory {
     cutAt2300,
     thing,
   }: GenFateGuaParams): FullGua {
+    const parsedDate = FullGuaFactory.parseDateInput(date);
     const fullDate = FullGuaFactory.transLunarDate(
-      cutAt2300 ? FullGuaFactory.transDateAfter2300(date) : date,
+      cutAt2300 ? FullGuaFactory.transDateAfter2300(parsedDate) : parsedDate,
     );
 
     // 潤月會是負值= =. 所以要用絕對值來包
     const fullGua = this.create({
       up: this.transDigitToGua(Math.abs(fullDate.lunar.getDay())),
       down: this.transDigitToGua(Math.abs(fullDate.lunar.getMonth())),
-      mutual: withMutual ? this.timeToMutual(date) : [],
+      mutual: withMutual ? this.timeToMutual(parsedDate) : [],
       date,
       cutAt2300,
       thing,
@@ -870,9 +872,17 @@ export class FullGuaFactory {
     endDate,
     cutAt2300 = false,
   }: BatchFateGuaParams): FullGua[] {
+    const begin = FullGuaFactory.parseDateInput(beginDate);
+    const end = FullGuaFactory.parseDateInput(endDate);
     const solver = new BatchFateGuaSolver();
-    return this.getDatesBetween(new Date(beginDate), new Date(endDate))
-      .map((date) => this.genFateGua({ date, withMutual: false, cutAt2300 }))
+    return this.getDatesBetween(new Date(begin), new Date(end))
+      .map((date) =>
+        this.genFateGua({
+          date: date.toString(),
+          withMutual: false,
+          cutAt2300,
+        }),
+      )
       .map((fullGua: FullGua) => {
         fullGua.solver.push({
           description: '世爻旺相',
@@ -880,6 +890,17 @@ export class FullGuaFactory {
         });
         return fullGua;
       });
+  }
+
+  /**
+   * 將字串或 Date 轉成有效 Date
+   */
+  static parseDateInput(date: string | Date): Date {
+    const parsed = dayjs(date);
+    if (!parsed.isValid()) {
+      throw new Error(`傳入日期格式錯誤，無法解析：${date}`);
+    }
+    return parsed.toDate();
   }
 
   /**

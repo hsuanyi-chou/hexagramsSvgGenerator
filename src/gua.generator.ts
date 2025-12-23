@@ -157,7 +157,7 @@ export class GuaGenerator {
   buildGua(param: CreateParams): GuaResult {
     const fullGua = this.fullGuaFactory.create(param);
     this.showGenTime = param.showGenTime ?? true;
-    return { fullGua, svg: this.createSvg(fullGua, param.date) };
+    return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
   }
 
   /**
@@ -166,7 +166,7 @@ export class GuaGenerator {
    */
   buildFateGua(params: BuildFateGuaParams): GuaResult {
     const fullGua = this.fullGuaFactory.createFateGua({ ...params });
-    return { fullGua, svg: this.createSvg(fullGua, params.date) };
+    return { fullGua, svg: this.createSvg(fullGua, fullGua.genGuaBase.date) };
   }
 
   /**
@@ -221,7 +221,7 @@ export class GuaGenerator {
 
     const basic = this.genGuaBasisByTime(time.substring(8));
     return this.buildGua({
-      date: buildTime.toDate(),
+      date: buildTime.toDate().toString(),
       thing,
       ...basic,
     });

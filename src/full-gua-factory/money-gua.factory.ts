@@ -35,7 +35,7 @@ export class MoneyGuaFactory {
    * 底層產金錢卦函式，依據 buildData 產卦
    * 供 build()、buildBy() 呼叫
    */
-  private buildByInnerData(): FullGua {
+  private buildByInnerData(dateStr?: string): FullGua {
     const { yingYangArray, mutual, date, thing } = this.buildData;
     if (yingYangArray.length < this.MAX_COUNT) {
       throw new Error(`產卦失敗！(build)，陰陽爻數量不足`);
@@ -47,7 +47,13 @@ export class MoneyGuaFactory {
     const down = this.fullGuaFactory.transYingYangYaoToGua(downDigit);
     const up = this.fullGuaFactory.transYingYangYaoToGua(upDigit);
 
-    return this.fullGuaFactory.create({ up, down, mutual, date, thing });
+    return this.fullGuaFactory.create({
+      up,
+      down,
+      mutual,
+      date: dateStr ?? date.toString(),
+      thing,
+    });
   }
 
   /**
@@ -56,8 +62,9 @@ export class MoneyGuaFactory {
    */
   build(thing = ''): FullGua {
     this.buildData.thing = thing;
-    this.buildData.date = new Date();
-    return this.buildByInnerData();
+    const now = new Date();
+    this.buildData.date = now;
+    return this.buildByInnerData(now.toString());
   }
 
   /**
@@ -72,8 +79,8 @@ export class MoneyGuaFactory {
       this.shakeBy(randomNum as RandomNum),
     );
     this.buildData.thing = thing;
-    this.buildData.date = date;
-    return this.buildByInnerData();
+    this.buildData.date = FullGuaFactory.parseDateInput(date);
+    return this.buildByInnerData(date);
   }
 
   /**

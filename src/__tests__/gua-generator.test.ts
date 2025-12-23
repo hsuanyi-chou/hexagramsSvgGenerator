@@ -5,7 +5,7 @@ const GUA_GENERATOR = new GuaGenerator();
 describe('產生命卦', () => {
   [
     {
-      birth: new Date('2021-05-27T11:20:00.000'),
+      birth: '2021-05-27T11:20:00.000',
       thing: undefined,
       expectedResult: {
         date: new Date('2021-05-27T11:20:00.000'),
@@ -16,7 +16,7 @@ describe('產生命卦', () => {
       },
     },
     {
-      birth: new Date('2021-05-27T11:20:00.000'),
+      birth: '2021-05-27T11:20:00.000',
       thing: '王小明 男命',
       expectedResult: {
         date: new Date('2021-05-27T11:20:00.000'),
@@ -48,21 +48,21 @@ describe('產生命卦', () => {
 });
 
 test('批量產生命卦', () => {
-  const beginDate = new Date('2022-08-02T11:20:00.000');
-  const endDate = new Date('2022-08-05T11:20:00.000');
+  const beginDate = '2022-08-02T11:20:00.000';
+  const endDate = '2022-08-05T11:20:00.000';
   const res = GUA_GENERATOR.buildBatchFateGua({ beginDate, endDate });
   expect(res.length).toEqual(4);
 });
 
 test('產生卦象', () => {
-  const date = new Date('1990-06-25T11:20:00.000');
+  const date = '1990-06-25T11:20:00.000';
   const res = GUA_GENERATOR.buildGua({
     up: '火',
     down: '風',
     mutual: [1],
     date,
   });
-  expect(res.fullGua.genGuaBase.date).toBe(date);
+  expect(res.fullGua.genGuaBase.date).toEqual(new Date(date));
   expect(res.fullGua.getChineseLunarDate()).toBe(
     '庚午 年 壬午 月 辛酉 日 午 時',
   );
@@ -131,7 +131,7 @@ describe('金錢卦(含圖)', () => {
   });
 
   test('取得金錢卦參數', () => {
-    const date = new Date();
+  const date = '2024-12-01T09:00:00.000';
     const param: MoneyGuaParams = {
       date,
       thing: '測試產卦',
@@ -139,7 +139,7 @@ describe('金錢卦(含圖)', () => {
     };
     GUA_GENERATOR.buildMoneyGuaBy(param);
     const res = GUA_GENERATOR.getMoneyGuaBuildData();
-    expect(res.date).toEqual(date);
+  expect(res.date.getTime()).toEqual(new Date(date).getTime());
     expect(res.mutual).toEqual([6]);
     expect(res.thing).toEqual(param.thing);
     expect(res.shakeNumRecords).toEqual(param.shakeNumRecords);
@@ -151,7 +151,10 @@ describe('金錢卦(含圖)', () => {
     }
     const res = GUA_GENERATOR.buildMoneyGua();
     const params = GUA_GENERATOR.getMoneyGuaBuildData();
-    const expected = GUA_GENERATOR.buildMoneyGuaBy(params);
+    const expected = GUA_GENERATOR.buildMoneyGuaBy({
+      ...params,
+      date: params.date.toString(),
+    });
     expect(res).toEqual(expected);
   });
 });

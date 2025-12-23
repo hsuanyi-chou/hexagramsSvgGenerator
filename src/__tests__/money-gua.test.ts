@@ -53,7 +53,11 @@ describe('金錢卦', () => {
   it('給予參數(如網址列)產金錢卦(buildBy)', () => {
     const res = moneyGua.instantBuild('測試卦例');
     const { shakeNumRecords, thing, date } = moneyGua.getBuildData();
-    const expectedRes = moneyGua.buildBy({ shakeNumRecords, thing, date });
+    const expectedRes = moneyGua.buildBy({
+      shakeNumRecords,
+      thing,
+      date: date.toString(),
+    });
     expect(res).toEqual(expectedRes);
   });
 });
